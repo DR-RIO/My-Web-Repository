@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Action } from "svelte/action";
+	import type { Snippet } from "svelte";
 
 	import VolumeButton from "../atoms/VolumeButton.svelte";
 	import VolumeSlider from "../atoms/VolumeSlider.svelte";
@@ -13,6 +14,7 @@
 		onSliderPointerDown: (event: PointerEvent) => void;
 		onSliderKeyDown: (event: KeyboardEvent) => void;
 		ariaLabel: string;
+		children?: Snippet;
 	}
 
 	const {
@@ -24,10 +26,10 @@
 		onSliderPointerDown,
 		onSliderKeyDown,
 		ariaLabel,
+		children,
 	}: Props = $props();
 </script>
 
-<!-- svelte-ignore slot_element_deprecated -->
 <div class="bottom-controls flex items-center gap-2">
 	<VolumeButton {volume} {isMuted} onclick={onVolumeButtonClick} />
 	<VolumeSlider
@@ -38,5 +40,5 @@
 		onkeydown={onSliderKeyDown}
 		{ariaLabel}
 	/>
-	<slot />
+	{@render children?.()}
 </div>

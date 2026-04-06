@@ -195,13 +195,20 @@ class MusicPlayerStore {
 			};
 		}
 
-		if (this.state.willAutoPlay || this.state.isPlaying) {
+		// 只有明确需要自动播放时才播放（移除了 || this.state.isPlaying 条件）
+		if (this.state.willAutoPlay) {
 			const playPromise = this.audio?.play();
 			if (playPromise !== undefined) {
-				playPromise.catch(() => {
-					this.state.autoplayFailed = true;
-					this.state.isPlaying = false;
-				});
+				playPromise
+					.then(() => {
+						this.state.isPlaying = true;
+						this.broadcastState();
+					})
+					.catch(() => {
+						this.state.autoplayFailed = true;
+						this.state.isPlaying = false;
+						this.broadcastState();
+					});
 			}
 		}
 		this.broadcastState();
@@ -298,6 +305,7 @@ class MusicPlayerStore {
 			this.state.isLoading = false;
 
 			if (this.state.playlist.length > 0) {
+				// 修改为 false，页面刷新后不自动播放
 				this.loadSong(this.state.playlist[0], false);
 			}
 		} catch (e) {
@@ -339,11 +347,12 @@ class MusicPlayerStore {
 		if (this.state.playlist.length === 0) {
 			this.showError("本地播放列表为空");
 		} else {
+			// 修改为 false，页面刷新后不自动播放
 			this.loadSong(this.state.playlist[0], false);
 		}
 	}
 
-	private loadSong(song: Song, autoPlay = true): void {
+	private loadSong(song: Song, autoPlay = false): void {
 		if (!song) {
 			return;
 		}
@@ -356,6 +365,7 @@ class MusicPlayerStore {
 			}
 		}
 		this.state.willAutoPlay = autoPlay;
+		this.state.isPlaying = false;  // 重置播放状态
 		if (this.audio) {
 			this.audio.src = getAssetPath(song.url);
 			this.audio.load();
@@ -519,8 +529,6 @@ class MusicPlayerStore {
 
 	toggleExpanded(): void {
 		this.state.isExpanded = !this.state.isExpanded;
-		// 保持与原先 usePlayerState.toggleExpandedUI 一致的联动行为：
-		// 展开时强制取消隐藏，并关闭播放列表，避免状态组合异常
 		if (this.state.isExpanded) {
 			this.state.showPlaylist = false;
 			this.state.isHidden = false;
@@ -530,8 +538,6 @@ class MusicPlayerStore {
 
 	toggleHidden(): void {
 		this.state.isHidden = !this.state.isHidden;
-		// 保持与原先 usePlayerState.toggleHiddenUI 一致的联动行为：
-		// 隐藏时收起播放器并关闭播放列表，防止展开 UI 悬挂在小球旁边
 		if (this.state.isHidden) {
 			this.state.isExpanded = false;
 			this.state.showPlaylist = false;

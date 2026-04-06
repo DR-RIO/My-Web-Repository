@@ -194,6 +194,12 @@ export interface SiteConfig {
 	favicon: Favicon[];
 	showLastModified: boolean; // 控制"上次编辑"卡片显示的开关
 	pageProgressBar?: PageProgressBarConfig; // 页面顶部进度条配置
+
+	// ... 其他属性
+    thirdPartyAnalytics?: {
+        enable: boolean;
+        clarityId: string;
+    };
 }
 
 export interface Favicon {
@@ -355,6 +361,7 @@ export interface MusicPlayerConfig {
 	id: string; // 歌单ID
 	server: string; // 音乐源服务器
 	type: string; // 音乐类型
+	floatingEntryMode?: "default" | "fab";
 }
 
 export interface FooterConfig {

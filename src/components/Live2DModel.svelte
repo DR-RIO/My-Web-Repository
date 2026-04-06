@@ -33,9 +33,9 @@
   const messages = [
     { text: 'こんにちは！', translation: '你好呀！', emotion: '🌸' },
     { text: '今日も頑張ってね！', translation: '今天也要加油哦！', emotion: '💪' },
-    { text: '一緒に遊ぼう！', translation: '一起玩吧！', emotion: '🎮' },
+    { text: '一緒に遊ぼう！', translation: '一起Play吧！', emotion: '🎮' },
     { text: 'お腹すいたな〜', translation: '肚子饿了呢~', emotion: '🍜' },
-    { text: 'また明日ね！', translation: '明天见啦！', emotion: '👋' }
+    { text: '好きだよ〜', translation: '喜欢你哟~', emotion: '😘' }
   ];
 
   function loadSavedState() {
@@ -174,7 +174,7 @@
     dialogTimer = setTimeout(() => {
       showDialog = false;
       dialogTimer = null;
-    }, 2600);
+    }, 4000);
 
     clickTimeout = setTimeout(() => {
       clickTimeout = null;

@@ -59,7 +59,7 @@ export const siteConfig: SiteConfig = {
 		// 顶栏标题图标路径，默认使用 public/assets/home/home.png
 		icon: "https://cdn.jsdelivr.net/gh/DR-RIO/Website-Picture-Repository@main/favicon.webp",
 		// 网站Logo图片路径
-		logo: "https://cdn.jsdelivr.net/gh/DR-RIO/Website-Picture-Repository@main/Logo.webp",
+		logo: "https://s41.ax1x.com/2026/04/07/peNLlHx.png",
 	},
 
 	// 页面自动缩放配置
@@ -132,9 +132,8 @@ export const siteConfig: SiteConfig = {
 			], // 桌面横幅图片
 			mobile: [
 				"https://s41.ax1x.com/2026/04/06/peNM6N6.jpg",
-			    "https://s41.ax1x.com/2026/04/06/peNMc4K.jpg",
-			    "https://s41.ax1x.com/2026/04/06/peNMyAx.jpg",
-				
+				"https://s41.ax1x.com/2026/04/06/peNMc4K.jpg",
+				"https://s41.ax1x.com/2026/04/06/peNMyAx.jpg",
 			], // 移动横幅图片
 		}, // 使用本地横幅图片
 
@@ -237,6 +236,11 @@ export const siteConfig: SiteConfig = {
 		height: 3, // 进度条高度 3px
 		duration: 6000, // 动画时长 6s
 	},
+
+	thirdPartyAnalytics: {
+		enable: false, // 是否启用第三方统计（Microsoft Clarity），默认关闭，启用可能影响 Lighthouse 评分
+		clarityId: "", // Clarity 项目 ID
+	},
 };
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
@@ -274,7 +278,7 @@ export const navBarConfig: NavBarConfig = {
 			children: [
 				{
 					name: "GitHub",
-					url: "https://github.com/DR-RIO/My-Web-Repository",
+					url: "https://github.com/DR-RIO",
 					external: true,
 					icon: "fa7-brands:github",
 				},
@@ -364,12 +368,12 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "https://cdn.jsdelivr.net/gh/DR-RIO/Website-Picture-Repository@main/tx.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
+	avatar: "https://s41.ax1x.com/2026/04/07/peNOQzQ.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
 	name: "人IO",
-	bio: "高三生兼萌新前端打字手，努力学习ing",
+	bio: "高三生兼萌新前端码字手，努力学习ing",
 	typewriter: {
 		enable: true, // 启用个人简介打字机效果
-		speed: 80, // 打字速度（毫秒）
+		speed: 150, // 打字速度（毫秒）
 	},
 	links: [
 		{
@@ -444,7 +448,7 @@ export const commentConfig: CommentConfig = {
 	enable: true, // 保持开启，评论组件才会显示
 	system: "twikoo", // 已选对 twikoo，不用改
 	twikoo: {
-		// 核心修改：换成你的 Netlify 域名（去掉后面的 /functions/twikoo）
+		// 核心修改：换成你的 Netlify 域名
 		envId: "https://twikoo-server.netlify.app/.netlify/functions/twikoo", 
 		lang: SITE_LANG, // 保持和网站语言一致，不用改
 	},
@@ -470,7 +474,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "哈喽！这里是公告栏哦！", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "[前端工程小资历]: 正在调试和优化开源项目。现在为内测期间。如发现某些组件颜色不对，请关闭手机自带深色模式。(好吧深色模式你凌驾与我之上，我拿你没办法 T-T)", // 公告内容
+	content: "[前端工程小资历]: 正在调试和优化开源项目。现在为内测期间。深色模式组件渲染异常已经被我修复了, darkmode你还得练～", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
@@ -483,8 +487,9 @@ export const announcementConfig: AnnouncementConfig = {
 export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true, // 启用音乐播放器功能
 	showFloatingPlayer: true, // 显示悬浮播放器 UI
+	floatingEntryMode: "default", // 悬浮入口模式："default" 为独立悬浮播放器，"fab" 为集成到通用 FAB 组件
 	mode: "meting", // 音乐播放器模式，可选 "local" 或 "meting"
-	meting_api:"https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r", // Meting API 地址
+	meting_api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r", // Meting API 地址
 	id: "17845098657", // 歌单ID
 	server: "netease", // 音乐源服务器。有的meting的api源支持更多平台,一般来说,netease=网易云音乐, tencent=QQ音乐, kugou=酷狗音乐, xiami=虾米音乐, baidu=百度音乐
 	type: "playlist", // 播单类型
@@ -633,7 +638,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 };
 
 export const sakuraConfig: SakuraConfig = {
-	enable: true, // 默认关闭樱花特效
+	enable: true, // 启用樱花特效
 	sakuraNum: 8, // 樱花数量
 	limitTimes: -1, // 樱花越界限制次数，-1为无限循环
 	size: {
@@ -666,7 +671,7 @@ export const pioConfig: import("./types/config").PioConfig = {
 	position: "left", // 模型位置
 	width: 280, // 默认宽度
 	height: 250, // 默认高度
-	mode: "draggable", // 默认为可拖拽模式
+	mode: "draggable", // 默认可拖拽模式
 	hiddenOnMobile: true, // 默认在移动设备上隐藏
 	dialog: {
 		welcome: "Welcome to My Website!", // 欢迎词
@@ -679,7 +684,7 @@ export const pioConfig: import("./types/config").PioConfig = {
 		home: "Click here to go back to homepage!", // 首页提示
 		skin: ["Want to see my new outfit?", "The new outfit looks great~"], // 换装提示
 		close: "QWQ See you next time~", // 关闭提示
-		link: "https://github.com/matsuzaka-yuki/Mizuki", // 关于链接
+		link: "https://space.bilibili.com/631922709", // 关于链接
 	},
 };
 
