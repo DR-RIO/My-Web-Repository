@@ -1,0 +1,16 @@
+name: 每日自动更新追番数据
+
+on:
+    schedule:
+        # 每天 UTC 18:00 运行 = 北京时间次日凌晨 2:00
+        - cron: "0 18 * * *"
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: 触发 Cloudflare 重新部署
+              run: |
+                  curl -X POST https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/238ae4b4-7dba-4fdf-91e1-6c62554c11ad
