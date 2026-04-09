@@ -10,8 +10,8 @@
     /* 基础颜色变量 - 使用 !important 确保旧浏览器能显示颜色 */
     /* 注意：这里使用基于 --hue 的计算，这样当 --hue 变化时颜色会自动更新 */
     --hue: 255;
-    /* 调整 HSL 参数以更接近 OKLCH(0.55 0.12 255) 的视觉效果 */
-    --primary: hsl(calc(var(--hue) * 1) 60% 50%) !important;
+    /* 使用 oklch(0.7 0.14 255) 转换后的 HSL 颜色作为默认颜色 */
+    --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: hsl(255 20% 95%) !important;
     --card-bg: #ffffff !important;
     --card-bg-transparent: rgba(255, 255, 255, 0.8) !important;
@@ -19,7 +19,7 @@
     --line-color: rgba(0, 0, 0, 0.1) !important;
     
     /* 按钮相关颜色 - 基于 --hue 计算 */
-    --btn-content: hsl(calc(var(--hue) * 1) 50% 40%) !important;
+    --btn-content: hsl(calc(var(--hue) * 1) 50% 60%) !important;
     --btn-regular-bg: hsl(calc(var(--hue) * 1) 25% 90%) !important;
     --btn-regular-bg-hover: hsl(calc(var(--hue) * 1) 35% 85%) !important;
     --btn-regular-bg-active: hsl(calc(var(--hue) * 1) 45% 78%) !important;
@@ -29,7 +29,7 @@
     --btn-card-bg-active: hsl(calc(var(--hue) * 1) 20% 88%) !important;
     
     /* 其他颜色 - 基于 --hue 计算 */
-    --title-active: hsl(calc(var(--hue) * 1) 50% 40%) !important;
+    --title-active: hsl(calc(var(--hue) * 1) 50% 60%) !important;
     --line-divider: rgba(0, 0, 0, 0.08) !important;
     --meta-divider: rgba(0, 0, 0, 0.2) !important;
     --content-meta: rgba(0, 0, 0, 0.7) !important;
@@ -62,13 +62,13 @@
     --toc-badge-bg: hsl(calc(var(--hue) * 1) 45% 88%) !important;
     --toc-btn-hover: hsl(calc(var(--hue) * 1) 15% 92%) !important;
     --toc-btn-active: hsl(calc(var(--hue) * 1) 20% 88%) !important;
-    --toc-item-active: hsl(calc(var(--hue) * 1) 55% 48%) !important;
+    --toc-item-active: hsl(calc(var(--hue) * 1) 55% 65%) !important;
   }
 
   /* 暗色主题 */
   :root.dark {
-    /* 调整 HSL 参数以更接近 OKLCH(0.55 0.12 255) 在暗色模式下的视觉效果 */
-    --primary: hsl(calc(var(--hue) * 1) 60% 60%) !important;
+    /* 使用 oklch(0.7 0.14 255) 转换后的 HSL 颜色作为默认颜色 */
+    --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: hsl(255 15% 12%) !important;
     --card-bg: hsl(255 12% 18%) !important;
     --card-bg-transparent: rgba(23, 23, 23, 0.8) !important;
@@ -86,7 +86,7 @@
     --btn-card-bg-active: hsl(calc(var(--hue) * 1) 15% 27%) !important;
     
     /* 其他颜色 - 基于 --hue 计算 */
-    --title-active: hsl(calc(var(--hue) * 1) 50% 55%) !important;
+    --title-active: hsl(calc(var(--hue) * 1) 50% 65%) !important;
     --line-divider: rgba(255, 255, 255, 0.08) !important;
     --meta-divider: rgba(255, 255, 255, 0.2) !important;
     --content-meta: rgba(255, 255, 255, 0.6) !important;
@@ -117,7 +117,7 @@
     --toc-badge-bg: hsl(calc(var(--hue) * 1) 15% 25%) !important;
     --toc-btn-hover: hsl(calc(var(--hue) * 1) 8% 15%) !important;
     --toc-btn-active: hsl(calc(var(--hue) * 1) 10% 18%) !important;
-    --toc-item-active: hsl(calc(var(--hue) * 1) 45% 50%) !important;
+    --toc-item-active: hsl(calc(var(--hue) * 1) 45% 65%) !important;
   }
 
   /* 全屏壁纸模式下的半透明卡片背景 */
@@ -152,7 +152,7 @@
     background: hsl(255 10% 45%) !important;
   }
   .btn-regular-dark.success {
-    background: hsl(calc(var(--hue) * 1) 60% 60%) !important;
+    background: hsl(calc(var(--hue) * 1) 60% 70%) !important;
   }
 
   :root.dark .btn-regular-dark {
@@ -170,15 +170,15 @@
     background: var(--color-selection-bar) !important;
   }
   .btn-rainbow {
-    background: linear-gradient(135deg, var(--primary) 0%, hsl(calc(var(--hue) * 1 + 30) 60% 50%) 100%) !important;
+    background: linear-gradient(135deg, var(--primary) 0%, hsl(calc(var(--hue) * 1 + 30) 60% 70%) 100%) !important;
     box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3) !important;
   }
   .btn-rainbow:hover {
-    background: linear-gradient(135deg, hsl(calc(var(--hue) * 1) 50% 40%) 0%, hsl(calc(var(--hue) * 1 + 30) 50% 40%) 100%) !important;
+    background: linear-gradient(135deg, hsl(calc(var(--hue) * 1) 50% 60%) 0%, hsl(calc(var(--hue) * 1 + 30) 50% 60%) 100%) !important;
     box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4) !important;
   }
   .btn-rainbow:active {
-    background: linear-gradient(135deg, hsl(calc(var(--hue) * 1) 60% 55%) 0%, hsl(calc(var(--hue) * 1 + 30) 60% 55%) 100%) !important;
+    background: linear-gradient(135deg, hsl(calc(var(--hue) * 1) 60% 75%) 0%, hsl(calc(var(--hue) * 1 + 30) 60% 75%) 100%) !important;
     box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4) !important;
   }
 
@@ -248,7 +248,7 @@
 
   /* 修复 spoiler 效果 */
   :root:not(.dark) .custom-md spoiler {
-    --_spoiler-mask: hsl(calc(var(--hue) * 1) 50% 60%) !important;
+    --_spoiler-mask: hsl(calc(var(--hue) * 1) 50% 70%) !important;
   }
 
   /* 修复 SharePoster */
@@ -291,7 +291,7 @@
     /* 为 Chrome 旧版本添加额外的颜色修复 */
     .chrome-legacy-fix {
       --hue: 255;
-      --primary: hsl(calc(var(--hue) * 1) 60% 50%) !important;
+      --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
       --page-bg: hsl(255 20% 95%) !important;
     }
   }
@@ -302,13 +302,13 @@
   /* IE10+ 特定样式 */
   :root {
     --hue: 255;
-    --primary: hsl(calc(var(--hue) * 1) 60% 50%) !important;
+    --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: #f5f5f7 !important;
     --card-bg: #ffffff !important;
   }
   
   :root.dark {
-    --primary: hsl(calc(var(--hue) * 1) 60% 60%) !important;
+    --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: #1a1a2e !important;
     --card-bg: #16213e !important;
   }
