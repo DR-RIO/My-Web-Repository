@@ -178,7 +178,8 @@ class MusicPlayerStore {
 		this.showError(i18n(Key.musicPlayerErrorSong));
 
 		if (this.state.playlist.length > 1) {
-			setTimeout(() => this.next(true), SKIP_ERROR_DELAY);
+			// 修改为 false，跳转到下一首时不自动播放
+			setTimeout(() => this.next(false), SKIP_ERROR_DELAY);
 		} else if (this.state.playlist.length <= 1) {
 			this.showError(i18n(Key.musicPlayerErrorEmpty));
 		}
