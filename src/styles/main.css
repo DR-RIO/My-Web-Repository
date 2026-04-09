@@ -93,37 +93,41 @@ html {
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* 淡出旧视图 - 使用更平滑的曲线 */
+  /* 淡出旧视图 - 使用滑动效果 */
   ::view-transition-old(root) {
-    animation-name: theme-fade-out;
+    animation-name: theme-slide-out;
     /* 确保背景色同步切换 */
     z-index: 2;
   }
 
-  /* 淡入新视图 - 使用更平滑的曲线 */
+  /* 淡入新视图 - 使用滑动效果 */
   ::view-transition-new(root) {
-    animation-name: theme-fade-in;
+    animation-name: theme-slide-in;
     /* 确保新视图在上层 */
     z-index: 1;
   }
 
-  /* 定义淡出动画 - 使用更平滑的缓动函数 */
-  @keyframes theme-fade-out {
+  /* 定义滑动淡出动画 - 从左到右 */
+  @keyframes theme-slide-out {
     0% {
       opacity: 1;
+      transform: translateX(0);
     }
     100% {
       opacity: 0;
+      transform: translateX(100%);
     }
   }
 
-  /* 定义淡入动画 - 从下层淡入 */
-  @keyframes theme-fade-in {
+  /* 定义滑动淡入动画 - 从右到左 */
+  @keyframes theme-slide-in {
     0% {
       opacity: 0;
+      transform: translateX(-100%);
     }
     100% {
       opacity: 1;
+      transform: translateX(0);
     }
   }
 

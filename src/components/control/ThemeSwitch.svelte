@@ -11,6 +11,7 @@ let isChanging = false;
 
 onMount(() => {
     mode = getStoredTheme();
+    setupSwupListeners();
 });
 
 function switchScheme(newMode: LIGHT_DARK_MODE) {
@@ -30,7 +31,9 @@ function toggleScheme() {
 }
 
 // Swup 钩子监听
-if (typeof window !== "undefined") {
+function setupSwupListeners() {
+    if (typeof window === "undefined") return;
+
     const handleContentReplace = () => {
         requestAnimationFrame(() => {
             const newMode = getStoredTheme();
@@ -40,9 +43,11 @@ if (typeof window !== "undefined") {
         });
     };
 
+    // 立即尝试设置 Swup 钩子
     if ((window as any).swup && (window as any).swup.hooks) {
         (window as any).swup.hooks.on("content:replace", handleContentReplace);
     } else {
+        // 监听 swup:enable 事件
         document.addEventListener("swup:enable", () => {
             if ((window as any).swup && (window as any).swup.hooks) {
                 (window as any).swup.hooks.on("content:replace", handleContentReplace);
@@ -50,6 +55,10 @@ if (typeof window !== "undefined") {
         });
     }
 
+    // 监听 popstate 事件，确保浏览器后退/前进时主题保持一致
+    window.addEventListener("popstate", handleContentReplace);
+
+    // 监听 DOMContentLoaded 事件
     document.addEventListener("DOMContentLoaded", () => {
         requestAnimationFrame(() => {
             const newMode = getStoredTheme();

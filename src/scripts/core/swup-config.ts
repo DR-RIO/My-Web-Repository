@@ -19,6 +19,7 @@ export const SWUP_SELECTORS = {
 	// 需要持久化的元素
 	persistElements: [
 		"#navbar-wrapper",
+		"#banner-wrapper",
 		"#sidebar",
 		".music-player",
 		"#pio-container",

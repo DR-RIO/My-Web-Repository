@@ -157,20 +157,22 @@ const cdnDomains = ["https://cdn.jsdelivr.net", "https://unpkg.com"];
 	}
 
 	// ========== 3. 拦截系统深色模式检测（核心） ==========
-	window.__ORIGINAL_MATCH_MEDIA = window.matchMedia;
-	window.matchMedia = function (query) {
-		if (query === "(prefers-color-scheme: dark)") {
-			return {
-				matches: false,
-				media: query,
-				addEventListener: function () {},
-				removeEventListener: function () {},
-				addListener: function () {},
-				removeListener: function () {},
-			};
-		}
-		return window.__ORIGINAL_MATCH_MEDIA.call(this, query);
-	};
+	if (!window.__ORIGINAL_MATCH_MEDIA) {
+		window.__ORIGINAL_MATCH_MEDIA = window.matchMedia;
+		window.matchMedia = function (query) {
+			if (query === "(prefers-color-scheme: dark)") {
+				return {
+					matches: false,
+					media: query,
+					addEventListener: function () {},
+					removeEventListener: function () {},
+					addListener: function () {},
+					removeListener: function () {},
+				};
+			}
+			return window.__ORIGINAL_MATCH_MEDIA(query);
+		};
+	}
 
 	// Load the hue from local storage
 	const hue = localStorage.getItem("hue") || configHue;

@@ -225,7 +225,7 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 	<!-- 轮播脚本：随机起始 + 帧收集 + Ken Burns + Crossfade + 触摸/鼠标事件 -->
 	{isCarouselEnabled && (
 		<script is:inline data-swup-ignore-script>
-			(function initBannerCarousel() {
+			(window.initBannerCarousel = function initBannerCarousel() {
 				var container = document.getElementById('banner-carousel');
 				if (!container) return;
 
@@ -233,6 +233,7 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				var desktopCount = parseInt(container.dataset.desktopCount || '0', 10);
 				var interval = parseInt(container.dataset.carouselInterval || '6000', 10);
 				var FADE_MS = parseInt(container.dataset.fadeMs || '1500', 10);
+				var pauseOnHover = container.dataset.pauseOnHover !== 'false'; // 默认暂停
 
 				if (mobileCount <= 1 && desktopCount <= 1) return;
 
@@ -250,21 +251,17 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				function rememberInitialFrame(slotClass) {
 					var slot = container.querySelector('.' + slotClass);
 					if (!slot) return;
-					if (!window.__bannerInitialFrameHtml[slotClass]) {
-						window.__bannerInitialFrameHtml[slotClass] = slot.innerHTML;
-					}
+					window.__bannerInitialFrameHtml[slotClass] = slot.innerHTML;
 				}
 
 				rememberInitialFrame('banner-image-slot-mobile');
 				rememberInitialFrame('banner-image-slot-desktop');
 
-				// 随机起始索引（Swup 导航间保留，F5 刷新重置）
-				if (typeof window.__bannerRandomIndex === 'undefined') {
-					window.__bannerRandomIndex = {
-						mobile: mobileCount > 1 ? Math.floor(Math.random() * mobileCount) : 0,
-						desktop: desktopCount > 1 ? Math.floor(Math.random() * desktopCount) : 0
-					};
-				}
+				// 随机起始索引（每次页面加载时重新生成）
+				window.__bannerRandomIndex = {
+					mobile: mobileCount > 1 ? Math.floor(Math.random() * mobileCount) : 0,
+					desktop: desktopCount > 1 ? Math.floor(Math.random() * desktopCount) : 0
+				};
 
 				// 从 template 替换默认图片
 				function applyRandom(slotClass, tplClass, randomIndex) {
@@ -281,11 +278,10 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				applyRandom('banner-image-slot-mobile', 'banner-tpl-mobile', window.__bannerRandomIndex.mobile);
 				applyRandom('banner-image-slot-desktop', 'banner-tpl-desktop', window.__bannerRandomIndex.desktop);
 
-				// 收集所有帧 HTML 字符串（仅首次）
+				// 收集所有帧 HTML 字符串（每次都重新收集）
 				if (!window.__bannerCarouselFrames) window.__bannerCarouselFrames = {};
 
 				function collectFrames(slotClass, tplClass) {
-					if (window.__bannerCarouselFrames[slotClass]) return;
 					var frames = [];
 					var initialFrame = window.__bannerInitialFrameHtml && window.__bannerInitialFrameHtml[slotClass];
 					var slot = container.querySelector('.' + slotClass);
@@ -304,12 +300,11 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				collectFrames('banner-image-slot-mobile', 'banner-tpl-mobile');
 				collectFrames('banner-image-slot-desktop', 'banner-tpl-desktop');
 
-				if (typeof window.__bannerCarouselIndex === 'undefined') {
-					window.__bannerCarouselIndex = {
-						mobile: window.__bannerRandomIndex ? window.__bannerRandomIndex.mobile : 0,
-						desktop: window.__bannerRandomIndex ? window.__bannerRandomIndex.desktop : 0
-					};
-				}
+				// 初始化轮播索引
+				window.__bannerCarouselIndex = {
+					mobile: window.__bannerRandomIndex ? window.__bannerRandomIndex.mobile : 0,
+					desktop: window.__bannerRandomIndex ? window.__bannerRandomIndex.desktop : 0
+				};
 
 				// 断点检测（md = 768px）
 				function isSlotHiddenByBreakpoint(slot) {
@@ -564,14 +559,10 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					container.addEventListener('touchend', onTouchEnd, { passive: true });
 				}
 
-				// 鼠标悬停暂停（桌面端）- 绑定到 wrapper 确保事件不被拦截
-				var pauseOnHover = container.dataset.pauseOnHover === 'true';
+				// 鼠标悬停暂停（桌面端）
 				if (pauseOnHover) {
-					var wrapper = document.getElementById('banner-wrapper');
-					if (wrapper) {
-						wrapper.addEventListener('mouseenter', onMouseEnter);
-						wrapper.addEventListener('mouseleave', onMouseLeave);
-					}
+					container.addEventListener('mouseenter', onMouseEnter);
+					container.addEventListener('mouseleave', onMouseLeave);
 				}
 
 				startCarousel();
@@ -587,10 +578,9 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 						container.removeEventListener('touchmove', onTouchMove);
 						container.removeEventListener('touchend', onTouchEnd);
 					}
-					var wrapper = document.getElementById('banner-wrapper');
-					if (wrapper) {
-						wrapper.removeEventListener('mouseenter', onMouseEnter);
-						wrapper.removeEventListener('mouseleave', onMouseLeave);
+					if (pauseOnHover) {
+						container.removeEventListener('mouseenter', onMouseEnter);
+						container.removeEventListener('mouseleave', onMouseLeave);
 					}
 					isCrossfading = { mobile: false, desktop: false };
 				};

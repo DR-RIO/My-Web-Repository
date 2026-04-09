@@ -100,8 +100,7 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 	// 检查浏览器是否支持 View Transitions API
 	if (
 		needsThemeChange &&
-		document.startViewTransition &&
-		!window.matchMedia("(prefers-reduced-motion: reduce)").matches
+		document.startViewTransition
 	) {
 		// 添加标记类，表示正在使用 View Transitions
 		document.documentElement.classList.add(

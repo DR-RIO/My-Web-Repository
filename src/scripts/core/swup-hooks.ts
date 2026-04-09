@@ -161,6 +161,11 @@ export class SwupHooksManager {
 			// 同步主题状态
 			this.syncThemeState();
 
+			// 重新初始化轮播
+			if (typeof (window as any).initBannerCarousel === "function") {
+				(window as any).initBannerCarousel();
+			}
+
 			// 触发页面加载完成事件
 			this.dispatchPageLoadedEvent();
 		});
