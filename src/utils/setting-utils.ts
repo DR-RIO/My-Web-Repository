@@ -15,6 +15,15 @@ export function getDefaultHue(): number {
 	if (!configCarrier) {
 		return Number.parseInt(fallback);
 	}
+	
+	// 检测浏览器是否支持 OKLCH 颜色格式
+	const supportsOklch = CSS.supports('color', 'oklch(0% 0 0)');
+	
+	// 现代浏览器使用配置中的值，旧浏览器使用 205
+	if (!supportsOklch) {
+		return 205;
+	}
+	
 	return Number.parseInt(configCarrier.dataset.hue || fallback);
 }
 
