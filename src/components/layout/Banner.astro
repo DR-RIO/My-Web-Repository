@@ -154,8 +154,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				(function () {
 					const getRandomImage = (images, storageKey) => {
 						if (Array.isArray(images)) {
-							if (images.length === 0) {return null;}
-							if (images.length === 1) {return images[0];}
+							if (images.length === 0) return null;
+							if (images.length === 1) return images[0];
 
 							const lastIndex = sessionStorage.getItem(storageKey);
 							let newIndex;
@@ -237,6 +237,13 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 
 				if (mobileCount <= 1 && desktopCount <= 1) return;
 
+				// 检查轮播图是否已经初始化，如果已经初始化，直接返回
+				if (window.__bannerCarouselInitialized) {
+					// 轮播图已经初始化，直接启动轮播
+					startCarousel();
+					return;
+				}
+
 				// 清理上一次 Swup 导航遗留的监听器和定时器
 				if (window.__bannerCarouselCleanup) {
 					window.__bannerCarouselCleanup();
@@ -257,11 +264,13 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				rememberInitialFrame('banner-image-slot-mobile');
 				rememberInitialFrame('banner-image-slot-desktop');
 
-				// 随机起始索引（每次页面加载时重新生成）
-				window.__bannerRandomIndex = {
-					mobile: mobileCount > 1 ? Math.floor(Math.random() * mobileCount) : 0,
-					desktop: desktopCount > 1 ? Math.floor(Math.random() * desktopCount) : 0
-				};
+				// 随机起始索引（Swup 导航间保留，F5 刷新重置）
+				if (typeof window.__bannerRandomIndex === 'undefined') {
+					window.__bannerRandomIndex = {
+						mobile: mobileCount > 1 ? Math.floor(Math.random() * mobileCount) : 0,
+						desktop: desktopCount > 1 ? Math.floor(Math.random() * desktopCount) : 0
+					};
+				}
 
 				// 从 template 替换默认图片
 				function applyRandom(slotClass, tplClass, randomIndex) {
@@ -366,7 +375,18 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					if (isSlotHiddenByBreakpoint(oldSlot)) return;
 
 					isCrossfading[type] = true;
-					window.__bannerCarouselIndex[type] = targetIndex;
+					// 确保 targetIndex 在有效范围内
+					window.__bannerCarouselIndex[type] = targetIndex % frames.length;
+
+					// 保存轮播状态到 localStorage
+					try {
+						localStorage.setItem('bannerCarouselState', JSON.stringify({
+							randomIndex: window.__bannerRandomIndex,
+							carouselIndex: window.__bannerCarouselIndex
+						}));
+					} catch (e) {
+						// localStorage 存储失败，忽略错误
+					}
 
 					// 清理快速交互可能残留的中间层
 					cleanupOrphanedLayers(slotClass, oldSlot);
@@ -376,23 +396,55 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					newSlot.className = baseClass;
 					newSlot.style.opacity = '0';
 					newSlot.style.transition = 'opacity ' + FADE_MS + 'ms ease-in-out';
-					newSlot.innerHTML = frames[targetIndex];
+					newSlot.innerHTML = frames[targetIndex % frames.length];
 					oldSlot.parentNode.insertBefore(newSlot, oldSlot.nextSibling);
 
-					// 双 rAF：确保 opacity:0 已绘制，然后同时触发淡入 + Ken Burns
-					requestAnimationFrame(function() {
-						requestAnimationFrame(function() {
-							newSlot.style.opacity = '1';
-							newSlot.classList.add('banner-kb');
-						});
-					});
+					// 预加载图片，确保图片加载完成后再进行淡入
+					var images = newSlot.querySelectorAll('img');
+					var loadedCount = 0;
+					var totalImages = images.length;
 
-					// 淡入完成后：移除旧层，清理 transition，释放锁
-					setTimeout(function() {
-						if (oldSlot.parentNode) oldSlot.parentNode.removeChild(oldSlot);
-						newSlot.style.transition = '';
-						isCrossfading[type] = false;
-					}, FADE_MS + 50);
+					if (totalImages === 0) {
+						// 没有图片，直接淡入
+						fadeInNewSlot();
+					} else {
+						// 有图片，等待所有图片加载完成后再淡入
+						images.forEach(function(img) {
+							var imgElement = new Image();
+							imgElement.onload = function() {
+								loadedCount++;
+								if (loadedCount === totalImages) {
+									fadeInNewSlot();
+								}
+							};
+							imgElement.onerror = function() {
+								loadedCount++;
+								if (loadedCount === totalImages) {
+									fadeInNewSlot();
+								}
+							};
+							imgElement.src = img.src;
+						});
+					}
+
+					function fadeInNewSlot() {
+						// 双 rAF：确保 opacity:0 已绘制，然后同时触发淡入 + Ken Burns
+						requestAnimationFrame(function() {
+							requestAnimationFrame(function() {
+								newSlot.style.opacity = '1';
+								newSlot.classList.add('banner-kb');
+							});
+						});
+
+						// 淡入完成后：移除旧层，清理 transition，释放锁
+						setTimeout(function() {
+							if (oldSlot.parentNode) oldSlot.parentNode.removeChild(oldSlot);
+							newSlot.style.transition = '';
+							isCrossfading[type] = false;
+						},
+						FADE_MS + 50
+					);
+					}
 				}
 
 				// 自动轮播用的 crossfade（前进到下一张）
@@ -400,7 +452,7 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					var frames = window.__bannerCarouselFrames[slotClass];
 					if (!frames || frames.length === 0) return;
 					var currentIndex = window.__bannerCarouselIndex[type];
-					var nextIndex = (currentIndex + 1) % frames.length;
+					var nextIndex = (currentIndex + 1) % totalCount;
 					crossfadeToIndex(slotClass, totalCount, type, nextIndex);
 				}
 
@@ -583,7 +635,12 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 						container.removeEventListener('mouseleave', onMouseLeave);
 					}
 					isCrossfading = { mobile: false, desktop: false };
+					// 重置初始化标志，确保下次导航时重新初始化
+					window.__bannerCarouselInitialized = false;
 				};
+
+				// 标记轮播图已初始化
+				window.__bannerCarouselInitialized = true;
 			})();
 		</script>
 	)}

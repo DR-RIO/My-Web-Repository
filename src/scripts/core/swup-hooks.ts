@@ -162,7 +162,7 @@ export class SwupHooksManager {
 			this.syncThemeState();
 
 			// 重新初始化轮播
-			if (typeof (window as any).initBannerCarousel === "function") {
+			if (typeof (window as any).initBannerCarousel === "function" && !(window as any).__bannerCarouselInitialized) {
 				(window as any).initBannerCarousel();
 			}
 
