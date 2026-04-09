@@ -9,7 +9,7 @@
   :root {
     /* 基础颜色变量 - 使用 !important 确保旧浏览器能显示颜色 */
     /* 注意：这里使用基于 --hue 的计算，这样当 --hue 变化时颜色会自动更新 */
-    --hue: 255;
+    --hue: 205;
     /* 使用 oklch(0.7 0.14 255) 转换后的 HSL 颜色作为默认颜色 */
     --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: hsl(255 20% 95%) !important;
@@ -68,6 +68,7 @@
   /* 暗色主题 */
   :root.dark {
     /* 使用 oklch(0.7 0.14 255) 转换后的 HSL 颜色作为默认颜色 */
+    --hue: 205;
     --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: hsl(255 15% 12%) !important;
     --card-bg: hsl(255 12% 18%) !important;
@@ -290,7 +291,7 @@
   @media { /* Chrome 特定检测 */
     /* 为 Chrome 旧版本添加额外的颜色修复 */
     .chrome-legacy-fix {
-      --hue: 255;
+      --hue: 205;
       --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
       --page-bg: hsl(255 20% 95%) !important;
     }
@@ -301,13 +302,14 @@
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   /* IE10+ 特定样式 */
   :root {
-    --hue: 255;
+    --hue: 205;
     --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: #f5f5f7 !important;
     --card-bg: #ffffff !important;
   }
   
   :root.dark {
+    --hue: 205;
     --primary: hsl(calc(var(--hue) * 1) 60% 70%) !important;
     --page-bg: #1a1a2e !important;
     --card-bg: #16213e !important;
