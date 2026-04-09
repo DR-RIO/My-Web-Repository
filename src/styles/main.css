@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* 导入旧版浏览器兼容性样式 - 必须在其他样式之前导入 */
+@import "./legacy-browser-compat.css";
+
 /* 导入相册样式 */
 @import "./albums.css";
 /* 导入追番页面样式 */
