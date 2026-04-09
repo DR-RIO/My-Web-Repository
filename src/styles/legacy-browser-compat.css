@@ -163,9 +163,103 @@
     background: hsl(255 20% 35%) !important;
   }
 
+  /* 修复 Banner 组件中的 OKLCH 颜色 */
+  #banner-wrapper .banner-control {
+    color: var(--primary) !important;
+  }
+
   /* 修复 spoiler 效果中的 color-mix */
   :root:not(.dark) .custom-md spoiler {
     --_spoiler-mask: hsl(255 60% 65%);
+  }
+  :root:not(.dark) .custom-md spoiler {
+    --_spoiler-mask: hsl(255 60% 65%);
+  }
+
+  /* 修复 TOC 中的 color-mix */
+  .floating-toc-item:hover {
+    background: var(--toc-btn-hover) !important;
+  }
+  .floating-toc-item.active {
+    background: var(--toc-btn-active) !important;
+  }
+  .toc-item.active {
+    color: var(--primary) !important;
+  }
+  .toc-item::before {
+    background: var(--line-color) !important;
+  }
+  .toc-item.active::before {
+    background: var(--primary) !important;
+  }
+
+  /* 修复渐变按钮中的 OKLCH */
+  .rainbow-border::before {
+    background: var(--color-selection-bar) !important;
+  }
+  .btn-rainbow {
+    background: linear-gradient(135deg, var(--primary) 0%, hsl(285 70% 55%) 100%) !important;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3) !important;
+  }
+  .btn-rainbow:hover {
+    background: linear-gradient(135deg, hsl(255 60% 45%) 0%, hsl(285 60% 45%) 100%) !important;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4) !important;
+  }
+  .btn-rainbow:active {
+    background: linear-gradient(135deg, hsl(255 70% 60%) 0%, hsl(285 70% 60%) 100%) !important;
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4) !important;
+  }
+
+  /* 修复加密内容中的 OKLCH */
+  .encrypted-content {
+    color: var(--primary) !important;
+    background: var(--btn-regular-bg) !important;
+  }
+
+  /* 修复音乐播放器中的 color-mix */
+  .track-list-item:hover,
+  .track-list-item.active {
+    background: var(--btn-plain-bg-hover) !important;
+  }
+  .sidebar-track-info {
+    background: var(--card-bg) !important;
+  }
+  .sidebar-progress {
+    background: var(--line-color) !important;
+  }
+
+  /* 修复 Badge 和 Chip 组件中的 OKLCH */
+  .badge {
+    background-color: var(--btn-regular-bg) !important;
+  }
+  .chip {
+    background-color: var(--btn-regular-bg) !important;
+  }
+
+  /* 修复 ArchivePanel 中的 OKLCH */
+  .archive-year {
+    background: var(--btn-regular-bg) !important;
+  }
+  .archive-year:hover {
+    background: var(--primary) !important;
+  }
+
+  /* 修复 PageProgressBar 中的 color-mix */
+  #page-progress-bar {
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6) !important;
+  }
+
+  /* 修复 ButtonLink 中的 OKLCH */
+  .btn-link {
+    background: var(--btn-regular-bg) !important;
+  }
+  .dark .btn-link {
+    background: var(--primary) !important;
+  }
+
+  /* 修复水波纹效果中的颜色 */
+  #header-waves use {
+    fill: var(--page-bg) !important;
   }
 
   /* 确保基本颜色显示 */
@@ -190,8 +284,13 @@
     color: rgba(255, 255, 255, 0.75);
   }
 
-  /* 修复渐变按钮 */
-  .rainbow-border::before {
+  /* 修复 SharePoster 中的 OKLCH */
+  .share-poster {
+    border-color: var(--line-color) !important;
+  }
+
+  /* 修复 DisplaySettings 中的 OKLCH */
+  .color-picker {
     background: var(--color-selection-bar) !important;
   }
 }
