@@ -8,289 +8,290 @@
 @supports not (color: oklch(0% 0 0)) {
   :root {
     /* 基础色调变量 - 默认 hue 为 255 (蓝紫色) */
-    --primary: hsl(255 70% 55%) !important;
-    --page-bg: hsl(255 20% 95%) !important;
-    --card-bg: #ffffff !important;
-    --card-bg-transparent: rgba(255, 255, 255, 0.8) !important;
+    /* 注意：不使用 !important，以便主题色滑块能够正常工作 */
+    --primary: hsl(255 70% 55%);
+    --page-bg: hsl(255 20% 95%);
+    --card-bg: #ffffff;
+    --card-bg-transparent: rgba(255, 255, 255, 0.8);
 
-    --btn-content: hsl(255 60% 45%) !important;
-    --btn-regular-bg: hsl(255 30% 93%) !important;
-    --btn-regular-bg-hover: hsl(255 40% 87%) !important;
-    --btn-regular-bg-active: hsl(255 50% 80%) !important;
+    --btn-content: hsl(255 60% 45%);
+    --btn-regular-bg: hsl(255 30% 93%);
+    --btn-regular-bg-hover: hsl(255 40% 87%);
+    --btn-regular-bg-active: hsl(255 50% 80%);
 
-    --btn-plain-bg-hover: hsl(255 30% 93%) !important;
-    --btn-plain-bg-active: hsl(255 20% 97%) !important;
+    --btn-plain-bg-hover: hsl(255 30% 93%);
+    --btn-plain-bg-active: hsl(255 20% 97%);
 
-    --btn-card-bg-hover: hsl(255 15% 97%) !important;
-    --btn-card-bg-active: hsl(255 25% 90%) !important;
+    --btn-card-bg-hover: hsl(255 15% 97%);
+    --btn-card-bg-active: hsl(255 25% 90%);
 
-    --deep-text: hsl(255 20% 20%) !important;
-    --title-active: hsl(255 40% 45%) !important;
+    --deep-text: hsl(255 20% 20%);
+    --title-active: hsl(255 40% 45%);
 
-    --line-divider: rgba(0, 0, 0, 0.08) !important;
-    --line-color: rgba(0, 0, 0, 0.1) !important;
-    --meta-divider: rgba(0, 0, 0, 0.2) !important;
-    --content-meta: rgba(0, 0, 0, 0.7) !important;
+    --line-divider: rgba(0, 0, 0, 0.08);
+    --line-color: rgba(0, 0, 0, 0.1);
+    --meta-divider: rgba(0, 0, 0, 0.2);
+    --content-meta: rgba(0, 0, 0, 0.7);
 
-    --inline-code-bg: var(--btn-regular-bg) !important;
-    --inline-code-color: var(--btn-content) !important;
-    --selection-bg: hsl(255 35% 88%) !important;
-    --codeblock-selection: var(--selection-bg) !important;
-    --codeblock-bg: hsl(255 10% 96%) !important;
-    --codeblock-topbar-bg: hsl(255 15% 93%) !important;
+    --inline-code-bg: var(--btn-regular-bg);
+    --inline-code-color: var(--btn-content);
+    --selection-bg: hsl(255 35% 88%);
+    --codeblock-selection: var(--selection-bg);
+    --codeblock-bg: hsl(255 10% 96%);
+    --codeblock-topbar-bg: hsl(255 15% 93%);
 
-    --license-block-bg: rgba(0, 0, 0, 0.03) !important;
+    --license-block-bg: rgba(0, 0, 0, 0.03);
 
-    --link-underline: hsl(255 50% 92%) !important;
-    --link-hover: hsl(255 30% 95%) !important;
-    --link-active: hsl(255 35% 88%) !important;
+    --link-underline: hsl(255 50% 92%);
+    --link-hover: hsl(255 30% 95%);
+    --link-active: hsl(255 35% 88%);
 
-    --float-panel-bg: #ffffff !important;
+    --float-panel-bg: #ffffff;
 
-    --scrollbar-bg: rgba(0, 0, 0, 0.4) !important;
-    --scrollbar-bg-hover: rgba(0, 0, 0, 0.5) !important;
-    --scrollbar-bg-active: rgba(0, 0, 0, 0.6) !important;
+    --scrollbar-bg: rgba(0, 0, 0, 0.4);
+    --scrollbar-bg-hover: rgba(0, 0, 0, 0.5);
+    --scrollbar-bg-active: rgba(0, 0, 0, 0.6);
 
     --color-selection-bar: linear-gradient(to right, 
       hsl(0 70% 65%), hsl(30 70% 65%), hsl(60 70% 65%), 
       hsl(90 70% 65%), hsl(120 70% 65%), hsl(150 70% 65%), 
       hsl(180 70% 65%), hsl(210 70% 65%), hsl(240 70% 65%), 
-      hsl(270 70% 65%), hsl(300 70% 65%), hsl(330 70% 65%)) !important;
+      hsl(270 70% 65%), hsl(300 70% 65%), hsl(330 70% 65%));
 
-    --admonitions-color-tip: hsl(180 60% 50%) !important;
-    --admonitions-color-note: hsl(220 70% 55%) !important;
-    --admonitions-color-important: hsl(280 65% 55%) !important;
-    --admonitions-color-warning: hsl(35 80% 55%) !important;
-    --admonitions-color-caution: hsl(10 70% 45%) !important;
+    --admonitions-color-tip: hsl(180 60% 50%);
+    --admonitions-color-note: hsl(220 70% 55%);
+    --admonitions-color-important: hsl(280 65% 55%);
+    --admonitions-color-warning: hsl(35 80% 55%);
+    --admonitions-color-caution: hsl(10 70% 45%);
 
-    --toc-badge-bg: hsl(255 50% 92%) !important;
-    --toc-btn-hover: hsl(255 20% 95%) !important;
-    --toc-btn-active: hsl(255 25% 92%) !important;
-    --toc-item-active: hsl(255 60% 50%) !important;
+    --toc-badge-bg: hsl(255 50% 92%);
+    --toc-btn-hover: hsl(255 20% 95%);
+    --toc-btn-active: hsl(255 25% 92%);
+    --toc-item-active: hsl(255 60% 50%);
   }
 
   /* 暗色主题 */
   :root.dark {
-    --primary: hsl(255 70% 65%) !important;
-    --page-bg: hsl(255 15% 12%) !important;
-    --card-bg: hsl(255 12% 18%) !important;
-    --card-bg-transparent: rgba(23, 23, 23, 0.8) !important;
+    --primary: hsl(255 70% 65%);
+    --page-bg: hsl(255 15% 12%);
+    --card-bg: hsl(255 12% 18%);
+    --card-bg-transparent: rgba(23, 23, 23, 0.8);
 
-    --btn-content: hsl(255 60% 70%) !important;
-    --btn-regular-bg: hsl(255 20% 28%) !important;
-    --btn-regular-bg-hover: hsl(255 25% 33%) !important;
-    --btn-regular-bg-active: hsl(255 30% 38%) !important;
+    --btn-content: hsl(255 60% 70%);
+    --btn-regular-bg: hsl(255 20% 28%);
+    --btn-regular-bg-hover: hsl(255 25% 33%);
+    --btn-regular-bg-active: hsl(255 30% 38%);
 
-    --btn-plain-bg-hover: hsl(255 20% 25%) !important;
-    --btn-plain-bg-active: hsl(255 15% 22%) !important;
+    --btn-plain-bg-hover: hsl(255 20% 25%);
+    --btn-plain-bg-active: hsl(255 15% 22%);
 
-    --btn-card-bg-hover: hsl(255 15% 25%) !important;
-    --btn-card-bg-active: hsl(255 20% 30%) !important;
+    --btn-card-bg-hover: hsl(255 15% 25%);
+    --btn-card-bg-active: hsl(255 20% 30%);
 
-    --deep-text: hsl(255 20% 85%) !important;
-    --title-active: hsl(255 40% 60%) !important;
+    --deep-text: hsl(255 20% 85%);
+    --title-active: hsl(255 40% 60%);
 
-    --line-divider: rgba(255, 255, 255, 0.08) !important;
-    --line-color: rgba(255, 255, 255, 0.1) !important;
-    --meta-divider: rgba(255, 255, 255, 0.2) !important;
-    --content-meta: rgba(255, 255, 255, 0.6) !important;
+    --line-divider: rgba(255, 255, 255, 0.08);
+    --line-color: rgba(255, 255, 255, 0.1);
+    --meta-divider: rgba(255, 255, 255, 0.2);
+    --content-meta: rgba(255, 255, 255, 0.6);
 
-    --selection-bg: hsl(255 35% 35%) !important;
-    --codeblock-selection: var(--selection-bg) !important;
-    --codeblock-bg: hsl(255 12% 15%) !important;
-    --codeblock-topbar-bg: hsl(255 15% 12%) !important;
+    --selection-bg: hsl(255 35% 35%);
+    --codeblock-selection: var(--selection-bg);
+    --codeblock-bg: hsl(255 12% 15%);
+    --codeblock-topbar-bg: hsl(255 15% 12%);
 
-    --license-block-bg: var(--codeblock-bg) !important;
+    --license-block-bg: var(--codeblock-bg);
 
-    --link-underline: hsl(255 40% 35%) !important;
-    --link-hover: hsl(255 35% 35%) !important;
-    --link-active: hsl(255 30% 30%) !important;
+    --link-underline: hsl(255 40% 35%);
+    --link-hover: hsl(255 35% 35%);
+    --link-active: hsl(255 30% 30%);
 
-    --float-panel-bg: hsl(255 12% 15%) !important;
+    --float-panel-bg: hsl(255 12% 15%);
 
-    --scrollbar-bg: rgba(255, 255, 255, 0.4) !important;
-    --scrollbar-bg-hover: rgba(255, 255, 255, 0.5) !important;
-    --scrollbar-bg-active: rgba(255, 255, 255, 0.6) !important;
+    --scrollbar-bg: rgba(255, 255, 255, 0.4);
+    --scrollbar-bg-hover: rgba(255, 255, 255, 0.5);
+    --scrollbar-bg-active: rgba(255, 255, 255, 0.6);
 
     --color-selection-bar: linear-gradient(to right, 
       hsl(0 60% 60%), hsl(30 60% 60%), hsl(60 60% 60%), 
       hsl(90 60% 60%), hsl(120 60% 60%), hsl(150 60% 60%), 
       hsl(180 60% 60%), hsl(210 60% 60%), hsl(240 60% 60%), 
-      hsl(270 60% 60%), hsl(300 60% 60%), hsl(330 60% 60%)) !important;
+      hsl(270 60% 60%), hsl(300 60% 60%), hsl(330 60% 60%));
 
-    --admonitions-color-tip: hsl(180 60% 55%) !important;
-    --admonitions-color-note: hsl(220 70% 60%) !important;
-    --admonitions-color-important: hsl(280 65% 60%) !important;
-    --admonitions-color-warning: hsl(35 80% 60%) !important;
-    --admonitions-color-caution: hsl(10 65% 50%) !important;
+    --admonitions-color-tip: hsl(180 60% 55%);
+    --admonitions-color-note: hsl(220 70% 60%);
+    --admonitions-color-important: hsl(280 65% 60%);
+    --admonitions-color-warning: hsl(35 80% 60%);
+    --admonitions-color-caution: hsl(10 65% 50%);
 
-    --toc-badge-bg: hsl(255 20% 28%) !important;
-    --toc-btn-hover: hsl(255 12% 18%) !important;
-    --toc-btn-active: hsl(255 15% 20%) !important;
-    --toc-item-active: hsl(255 40% 55%) !important;
+    --toc-badge-bg: hsl(255 20% 28%);
+    --toc-btn-hover: hsl(255 12% 18%);
+    --toc-btn-active: hsl(255 15% 20%);
+    --toc-item-active: hsl(255 40% 55%);
   }
 
   /* 全屏壁纸模式下的半透明卡片背景 */
   body.wallpaper-transparent {
-    --card-bg-transparent: rgba(255, 255, 255, 0.8) !important;
+    --card-bg-transparent: rgba(255, 255, 255, 0.8);
   }
 
   :root.dark body.wallpaper-transparent {
-    --card-bg-transparent: rgba(23, 23, 23, 0.8) !important;
+    --card-bg-transparent: rgba(23, 23, 23, 0.8);
   }
 
   /* 修复所有直接使用 OKLCH 的元素 */
   
   /* 修复水波纹效果 */
   #header-waves use {
-    fill: var(--page-bg) !important;
+    fill: var(--page-bg);
   }
 
   /* 修复 Banner 控制按钮 */
   #banner-wrapper .banner-control {
-    color: var(--primary) !important;
+    color: var(--primary);
   }
 
   /* 修复按钮样式 */
   .btn-regular-dark {
-    background: hsl(255 10% 35%) !important;
+    background: hsl(255 10% 35%);
   }
   .btn-regular-dark:hover {
-    background: hsl(255 10% 40%) !important;
+    background: hsl(255 10% 40%);
   }
   .btn-regular-dark:active {
-    background: hsl(255 10% 45%) !important;
+    background: hsl(255 10% 45%);
   }
   .btn-regular-dark.success {
-    background: hsl(255 70% 65%) !important;
+    background: hsl(255 70% 65%);
   }
 
   :root.dark .btn-regular-dark {
-    background: hsl(255 15% 25%) !important;
+    background: hsl(255 15% 25%);
   }
   :root.dark .btn-regular-dark:hover {
-    background: hsl(255 20% 30%) !important;
+    background: hsl(255 20% 30%);
   }
   :root.dark .btn-regular-dark:active {
-    background: hsl(255 20% 35%) !important;
+    background: hsl(255 20% 35%);
   }
 
   /* 修复渐变按钮 */
   .rainbow-border::before {
-    background: var(--color-selection-bar) !important;
+    background: var(--color-selection-bar);
   }
   .btn-rainbow {
-    background: linear-gradient(135deg, var(--primary) 0%, hsl(285 70% 55%) 100%) !important;
-    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3) !important;
+    background: linear-gradient(135deg, var(--primary) 0%, hsl(285 70% 55%) 100%);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
   }
   .btn-rainbow:hover {
-    background: linear-gradient(135deg, hsl(255 60% 45%) 0%, hsl(285 60% 45%) 100%) !important;
-    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4) !important;
+    background: linear-gradient(135deg, hsl(255 60% 45%) 0%, hsl(285 60% 45%) 100%);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4);
   }
   .btn-rainbow:active {
-    background: linear-gradient(135deg, hsl(255 70% 60%) 0%, hsl(285 70% 60%) 100%) !important;
-    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4) !important;
+    background: linear-gradient(135deg, hsl(255 70% 60%) 0%, hsl(285 70% 60%) 100%);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
   }
 
   /* 修复 TOC 组件 */
   .floating-toc-item:hover {
-    background: var(--toc-btn-hover) !important;
+    background: var(--toc-btn-hover);
   }
   .floating-toc-item.active {
-    background: var(--toc-btn-active) !important;
+    background: var(--toc-btn-active);
   }
   .toc-item.active {
-    color: var(--primary) !important;
+    color: var(--primary);
   }
   .toc-item::before {
-    background: var(--line-color) !important;
+    background: var(--line-color);
   }
   .toc-item.active::before {
-    background: var(--primary) !important;
+    background: var(--primary);
   }
 
   /* 修复音乐播放器 */
   .track-list-item:hover,
   .track-list-item.active {
-    background: var(--btn-plain-bg-hover) !important;
+    background: var(--btn-plain-bg-hover);
   }
   .sidebar-track-info {
-    background: var(--card-bg) !important;
+    background: var(--card-bg);
   }
   .sidebar-progress {
-    background: var(--line-color) !important;
+    background: var(--line-color);
   }
 
   /* 修复 Badge 和 Chip */
   .badge {
-    background-color: var(--btn-regular-bg) !important;
+    background-color: var(--btn-regular-bg);
   }
   .chip {
-    background-color: var(--btn-regular-bg) !important;
+    background-color: var(--btn-regular-bg);
   }
 
   /* 修复 ArchivePanel */
   .archive-year {
-    background: var(--btn-regular-bg) !important;
+    background: var(--btn-regular-bg);
   }
   .archive-year:hover {
-    background: var(--primary) !important;
+    background: var(--primary);
   }
 
   /* 修复 PageProgressBar */
   #page-progress-bar {
-    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6) !important;
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
   }
 
   /* 修复 ButtonLink */
   .btn-link {
-    background: var(--btn-regular-bg) !important;
+    background: var(--btn-regular-bg);
   }
   .dark .btn-link {
-    background: var(--primary) !important;
+    background: var(--primary);
   }
 
   /* 修复加密内容 */
   .encrypted-content {
-    color: var(--primary) !important;
-    background: var(--btn-regular-bg) !important;
+    color: var(--primary);
+    background: var(--btn-regular-bg);
   }
 
   /* 修复 spoiler 效果 */
   :root:not(.dark) .custom-md spoiler {
-    --_spoiler-mask: hsl(255 60% 65%) !important;
+    --_spoiler-mask: hsl(255 60% 65%);
   }
 
   /* 修复 SharePoster */
   .share-poster {
-    border-color: var(--line-color) !important;
+    border-color: var(--line-color);
   }
 
   /* 修复 DisplaySettings */
   .color-picker {
-    background: var(--color-selection-bar) !important;
+    background: var(--color-selection-bar);
   }
 
   /* 确保基本颜色显示 */
   body {
-    background-color: var(--page-bg) !important;
-    color: var(--deep-text) !important;
+    background-color: var(--page-bg);
+    color: var(--deep-text);
   }
 
   .card-base {
-    background-color: var(--card-bg) !important;
+    background-color: var(--card-bg);
   }
 
   .btn-regular {
-    background-color: var(--btn-regular-bg) !important;
-    color: var(--btn-content) !important;
+    background-color: var(--btn-regular-bg);
+    color: var(--btn-content);
   }
 
   .btn-plain {
-    color: rgba(0, 0, 0, 0.75) !important;
+    color: rgba(0, 0, 0, 0.75);
   }
   :root.dark .btn-plain {
-    color: rgba(255, 255, 255, 0.75) !important;
+    color: rgba(255, 255, 255, 0.75);
   }
 }
 
@@ -300,7 +301,7 @@
   @media { /* Chrome 特定检测 */
     /* 为 Chrome 旧版本添加额外的颜色修复 */
     .chrome-legacy-fix {
-      --primary: hsl(255 70% 55%) !important;
+      --primary: hsl(255 70% 55%);
     }
   }
 }
@@ -309,15 +310,15 @@
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   /* IE10+ 特定样式 */
   :root {
-    --primary: #6366f1 !important;
-    --page-bg: #f5f5f7 !important;
-    --card-bg: #ffffff !important;
+    --primary: #6366f1;
+    --page-bg: #f5f5f7;
+    --card-bg: #ffffff;
   }
   
   :root.dark {
-    --primary: #818cf8 !important;
-    --page-bg: #1a1a2e !important;
-    --card-bg: #16213e !important;
+    --primary: #818cf8;
+    --page-bg: #1a1a2e;
+    --card-bg: #16213e;
   }
 }
 
@@ -326,4 +327,51 @@ body {
   background-color: var(--page-bg);
   color: var(--deep-text);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 主题色滑块支持 - 为旧浏览器提供基于 --hue 的颜色计算 */
+@supports not (color: oklch(0% 0 0)) {
+  /* 监听 --hue 变化并更新颜色 */
+  :root {
+    /* 使用 CSS 变量计算基于 hue 的颜色 */
+    --primary: hsl(calc(var(--hue, 255) * 1) 70% 55%);
+    --btn-content: hsl(calc(var(--hue, 255) * 1) 60% 45%);
+    --btn-regular-bg: hsl(calc(var(--hue, 255) * 1) 30% 93%);
+    --btn-regular-bg-hover: hsl(calc(var(--hue, 255) * 1) 40% 87%);
+    --btn-regular-bg-active: hsl(calc(var(--hue, 255) * 1) 50% 80%);
+    --btn-plain-bg-hover: hsl(calc(var(--hue, 255) * 1) 30% 93%);
+    --btn-plain-bg-active: hsl(calc(var(--hue, 255) * 1) 20% 97%);
+    --btn-card-bg-hover: hsl(calc(var(--hue, 255) * 1) 15% 97%);
+    --btn-card-bg-active: hsl(calc(var(--hue, 255) * 1) 25% 90%);
+    --title-active: hsl(calc(var(--hue, 255) * 1) 40% 45%);
+    --selection-bg: hsl(calc(var(--hue, 255) * 1) 35% 88%);
+    --link-underline: hsl(calc(var(--hue, 255) * 1) 50% 92%);
+    --link-hover: hsl(calc(var(--hue, 255) * 1) 30% 95%);
+    --link-active: hsl(calc(var(--hue, 255) * 1) 35% 88%);
+    --toc-badge-bg: hsl(calc(var(--hue, 255) * 1) 50% 92%);
+    --toc-btn-hover: hsl(calc(var(--hue, 255) * 1) 20% 95%);
+    --toc-btn-active: hsl(calc(var(--hue, 255) * 1) 25% 92%);
+    --toc-item-active: hsl(calc(var(--hue, 255) * 1) 60% 50%);
+  }
+
+  :root.dark {
+    --primary: hsl(calc(var(--hue, 255) * 1) 70% 65%);
+    --btn-content: hsl(calc(var(--hue, 255) * 1) 60% 70%);
+    --btn-regular-bg: hsl(calc(var(--hue, 255) * 1) 20% 28%);
+    --btn-regular-bg-hover: hsl(calc(var(--hue, 255) * 1) 25% 33%);
+    --btn-regular-bg-active: hsl(calc(var(--hue, 255) * 1) 30% 38%);
+    --btn-plain-bg-hover: hsl(calc(var(--hue, 255) * 1) 20% 25%);
+    --btn-plain-bg-active: hsl(calc(var(--hue, 255) * 1) 15% 22%);
+    --btn-card-bg-hover: hsl(calc(var(--hue, 255) * 1) 15% 25%);
+    --btn-card-bg-active: hsl(calc(var(--hue, 255) * 1) 20% 30%);
+    --title-active: hsl(calc(var(--hue, 255) * 1) 40% 60%);
+    --selection-bg: hsl(calc(var(--hue, 255) * 1) 35% 35%);
+    --link-underline: hsl(calc(var(--hue, 255) * 1) 40% 35%);
+    --link-hover: hsl(calc(var(--hue, 255) * 1) 35% 35%);
+    --link-active: hsl(calc(var(--hue, 255) * 1) 30% 30%);
+    --toc-badge-bg: hsl(calc(var(--hue, 255) * 1) 20% 28%);
+    --toc-btn-hover: hsl(calc(var(--hue, 255) * 1) 12% 18%);
+    --toc-btn-active: hsl(calc(var(--hue, 255) * 1) 15% 20%);
+    --toc-item-active: hsl(calc(var(--hue, 255) * 1) 40% 55%);
+  }
 }
