@@ -131,13 +131,13 @@ const cdnDomains = ["https://cdn.jsdelivr.net", "https://unpkg.com"];
 		pageScaling: siteConfig.pageScaling,
 	}}
 >
-	// ========== 1. 强制锁定为亮色模式 ==========
+	// ========== 1. 读取用户主题设置 ==========
 	let theme = localStorage.getItem("theme");
 
-	// 如果 theme 是 'system'、'dark' 或者不存在，都强制设为 'light'
-	if (!theme || theme === "system" || theme === DARK_MODE) {
-		theme = LIGHT_MODE;
-		localStorage.setItem("theme", LIGHT_MODE);
+	// 如果 theme 不存在或为 'system'，使用默认主题
+	if (!theme || theme === "system") {
+		theme = DEFAULT_THEME;
+		localStorage.setItem("theme", DEFAULT_THEME);
 	}
 
 	let isDark = false;
