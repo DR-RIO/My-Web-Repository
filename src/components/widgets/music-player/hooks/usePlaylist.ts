@@ -120,6 +120,7 @@ export async function fetchMetingPlaylist(
 	meting_server: string,
 	meting_type: string,
 	meting_id: string,
+	meting_auth: string = "",
 	onLoadStart: () => void,
 	onLoadEnd: () => void,
 	showError: (message: string) => void,
@@ -133,7 +134,7 @@ export async function fetchMetingPlaylist(
 		.replace(":server", meting_server)
 		.replace(":type", meting_type)
 		.replace(":id", meting_id)
-		.replace(":auth", "")
+		.replace(":auth", meting_auth)
 		.replace(":r", Date.now().toString());
 
 	try {

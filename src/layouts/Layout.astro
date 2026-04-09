@@ -5,6 +5,7 @@ import Pio from "@components/features/pio/Pio.svelte"; // 使用 Svelte 版本�
 import Live2DModel from "@/components/Live2DModel.svelte";
 import { PageProgressBar } from "@components/control/PageProgressBar";
 import { pioConfig, profileConfig, siteConfig } from "@/config";
+import { ensureMusicPlayerInitialized } from "@/stores/musicPlayerStore";
 
 const BANNER_HEIGHT = 35;
 const BANNER_HEIGHT_EXTEND = 30;
@@ -228,7 +229,7 @@ if (siteConfig.font) {
 		<slot />
 
 		<!-- Music Player - 核心始终加载（当enable=true），UI通过showFloatingPlayer控制 -->
-		<MusicPlayer client:idle />
+		<MusicPlayer client:only="svelte" />
 
 		<!-- Live2D 看板娘组件 - 支持 Cubism 4 模型 -->
 		{pioConfig.enable && <Live2DModel client:only="svelte" />}
@@ -313,9 +314,13 @@ if (siteConfig.font) {
 	// Swup 页面过渡管理器 - 统一入口
 	// 所有功能已重构为模块化架构，详见 src/scripts/ 目录
 	import { initSwupManager } from "../scripts/swup-manager";
+	import { ensureMusicPlayerInitialized } from "@/stores/musicPlayerStore";
 
 	// 初始化 Swup 管理器
 	initSwupManager();
+	
+	// 确保音乐播放器初始化
+	ensureMusicPlayerInitialized();
 </script>
 
 <!-- 代码块折叠功能 -->

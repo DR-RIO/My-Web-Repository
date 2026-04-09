@@ -103,20 +103,37 @@ class MusicPlayerStore {
 	}
 
 	async initialize(): Promise<void> {
-		if (typeof window === "undefined" || this.isInitialized) {
+		console.log('=== Initializing music player...');
+		if (typeof window === "undefined") {
+			console.log('=== Not in browser environment, skipping initialization');
 			return;
 		}
+		if (this.isInitialized) {
+			console.log('=== Music player already initialized');
+			// 即使已经初始化，也尝试重新加载播放列表
+			console.log('=== Reloading playlist...');
+			await this.loadPlaylist();
+			return;
+		}
+		console.log('=== Music player not initialized, starting initialization...');
 		this.isInitialized = true;
 
 		if (!musicPlayerConfig.enable) {
+			console.log('=== Music player disabled in config');
 			return;
 		}
 
+		console.log('=== Creating audio element...');
 		this.audio = new Audio();
+		console.log('=== Setting up audio listeners...');
 		this.setupAudioListeners();
+		console.log('=== Loading volume from storage...');
 		this.loadVolumeFromStorage();
+		console.log('=== Registering interaction handler...');
 		this.registerInteractionHandler();
+		console.log('=== Loading playlist...');
 		await this.loadPlaylist();
+		console.log('=== Music player initialization complete');
 	}
 
 	private setupAudioListeners(): void {
@@ -232,6 +249,10 @@ class MusicPlayerStore {
 		}
 	}
 
+	
+
+	
+
 	private registerInteractionHandler(): void {
 		const handler = () => {
 			if (this.state.autoplayFailed && this.audio) {
@@ -254,6 +275,7 @@ class MusicPlayerStore {
 	}
 
 	private async loadPlaylist(): Promise<void> {
+		console.log('Loading playlist...');
 		const mode = musicPlayerConfig.mode ?? "meting";
 		const meting_api =
 			musicPlayerConfig.meting_api ??
@@ -261,15 +283,20 @@ class MusicPlayerStore {
 		const meting_id = musicPlayerConfig.id ?? "14164869977";
 		const meting_server = musicPlayerConfig.server ?? "netease";
 		const meting_type = musicPlayerConfig.type ?? "playlist";
+		console.log('Playlist config:', { mode, meting_api, meting_id, meting_server, meting_type });
 
 		if (mode === "meting") {
+			const meting_auth = musicPlayerConfig.auth ?? "";
+			console.log('Fetching meting playlist...');
 			await this.fetchMetingPlaylist(
 				meting_api,
 				meting_server,
 				meting_type,
 				meting_id,
+				meting_auth,
 			);
 		} else {
+			console.log('Loading local playlist...');
 			this.loadLocalPlaylist();
 		}
 	}
@@ -279,6 +306,7 @@ class MusicPlayerStore {
 		server: string,
 		type: string,
 		id: string,
+		auth: string = "",
 	): Promise<void> {
 		if (!api || !id) {
 			return;
@@ -291,7 +319,7 @@ class MusicPlayerStore {
 			.replace(":server", server)
 			.replace(":type", type)
 			.replace(":id", id)
-			.replace(":auth", "")
+			.replace(":auth", auth)
 			.replace(":r", Date.now().toString());
 
 		try {
@@ -331,16 +359,17 @@ class MusicPlayerStore {
 		}
 
 		return {
-			id:
-				typeof song.id === "string"
-					? parseInt(song.id, 10)
-					: (song.id ?? 0),
-			title,
-			artist,
-			cover: song.pic ?? "",
-			url: song.url ?? "",
-			duration: dur,
-		};
+		id:
+			typeof song.id === "string"
+				? parseInt(song.id, 10)
+				: (song.id ?? 0),
+		title,
+		artist,
+		cover: song.pic ?? "",
+		url: song.url ?? "",
+		duration: dur,
+		lyric: song.lyric ?? song.lrc ?? "",
+	};
 	}
 
 	private loadLocalPlaylist(): void {
@@ -353,26 +382,36 @@ class MusicPlayerStore {
 		}
 	}
 
-	private loadSong(song: Song, autoPlay = false): void {
+	private async loadSong(song: Song, autoPlay = false): Promise<void> {
+		console.log('loadSong called with song:', song);
 		if (!song) {
+			console.log('Song is null or undefined');
 			return;
 		}
 		if (song.url !== this.state.currentSong.url) {
+			console.log('Loading new song:', song.title);
 			this.state.currentSong = { ...song };
 			if (song.url) {
 				this.state.isLoading = true;
 			} else {
 				this.state.isLoading = false;
 			}
+		} else {
+			console.log('Song is already loaded:', song.title);
 		}
 		this.state.willAutoPlay = autoPlay;
 		this.state.isPlaying = false;  // 重置播放状态
 		if (this.audio) {
+			console.log('Setting audio src to:', getAssetPath(song.url));
 			this.audio.src = getAssetPath(song.url);
 			this.audio.load();
+		} else {
+			console.log('Audio element is null');
 		}
 		this.broadcastState();
 	}
+
+	
 
 	private showError(message: string): void {
 		this.state.errorMessage = message;
@@ -591,3 +630,10 @@ class MusicPlayerStore {
 }
 
 export const musicPlayerStore = new MusicPlayerStore();
+
+// 导出一个方法来确保音乐播放器被初始化
+export async function ensureMusicPlayerInitialized(): Promise<void> {
+	console.log('Ensuring music player is initialized...');
+	await musicPlayerStore.initialize();
+	console.log('Music player initialization ensured');
+}

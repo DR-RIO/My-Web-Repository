@@ -361,6 +361,7 @@ export interface MusicPlayerConfig {
 	id: string; // 歌单ID
 	server: string; // 音乐源服务器
 	type: string; // 音乐类型
+	auth?: string; // 网易云音乐登录Cookie，用于获取VIP歌曲完整播放
 	floatingEntryMode?: "default" | "fab";
 }
 

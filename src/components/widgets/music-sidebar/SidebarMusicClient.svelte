@@ -22,6 +22,14 @@
 	}
 
 	onMount(() => {
+		// 初始化音乐播放器
+		console.log('SidebarMusicClient onMount called, initializing music player');
+		musicPlayerStore.initialize().then(() => {
+			console.log('Music player initialized successfully from SidebarMusicClient');
+		}).catch((error) => {
+			console.error('Failed to initialize music player from SidebarMusicClient:', error);
+		});
+		// 监听状态更新
 		window.addEventListener("music-sidebar:state", handleStateUpdate);
 	});
 
