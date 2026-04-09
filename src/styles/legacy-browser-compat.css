@@ -7,291 +7,276 @@
 /* 方案 1: 使用 @supports 检测 OKLCH 支持 */
 @supports not (color: oklch(0% 0 0)) {
   :root {
-    /* 基础色调变量 - 默认 hue 为 255 (蓝紫色) */
-    /* 注意：不使用 !important，以便主题色滑块能够正常工作 */
-    --primary: hsl(255 70% 55%);
-    --page-bg: hsl(255 20% 95%);
-    --card-bg: #ffffff;
-    --card-bg-transparent: rgba(255, 255, 255, 0.8);
-
-    --btn-content: hsl(255 60% 45%);
-    --btn-regular-bg: hsl(255 30% 93%);
-    --btn-regular-bg-hover: hsl(255 40% 87%);
-    --btn-regular-bg-active: hsl(255 50% 80%);
-
-    --btn-plain-bg-hover: hsl(255 30% 93%);
-    --btn-plain-bg-active: hsl(255 20% 97%);
-
-    --btn-card-bg-hover: hsl(255 15% 97%);
-    --btn-card-bg-active: hsl(255 25% 90%);
-
-    --deep-text: hsl(255 20% 20%);
-    --title-active: hsl(255 40% 45%);
-
-    --line-divider: rgba(0, 0, 0, 0.08);
-    --line-color: rgba(0, 0, 0, 0.1);
-    --meta-divider: rgba(0, 0, 0, 0.2);
-    --content-meta: rgba(0, 0, 0, 0.7);
-
-    --inline-code-bg: var(--btn-regular-bg);
-    --inline-code-color: var(--btn-content);
-    --selection-bg: hsl(255 35% 88%);
-    --codeblock-selection: var(--selection-bg);
-    --codeblock-bg: hsl(255 10% 96%);
-    --codeblock-topbar-bg: hsl(255 15% 93%);
-
-    --license-block-bg: rgba(0, 0, 0, 0.03);
-
-    --link-underline: hsl(255 50% 92%);
-    --link-hover: hsl(255 30% 95%);
-    --link-active: hsl(255 35% 88%);
-
-    --float-panel-bg: #ffffff;
-
-    --scrollbar-bg: rgba(0, 0, 0, 0.4);
-    --scrollbar-bg-hover: rgba(0, 0, 0, 0.5);
-    --scrollbar-bg-active: rgba(0, 0, 0, 0.6);
-
+    /* 基础颜色变量 - 使用 !important 确保旧浏览器能显示颜色 */
+    --primary: hsl(255 70% 55%) !important;
+    --page-bg: hsl(255 20% 95%) !important;
+    --card-bg: #ffffff !important;
+    --card-bg-transparent: rgba(255, 255, 255, 0.8) !important;
+    --deep-text: hsl(255 20% 20%) !important;
+    --line-color: rgba(0, 0, 0, 0.1) !important;
+    
+    /* 按钮相关颜色 */
+    --btn-content: hsl(255 60% 45%) !important;
+    --btn-regular-bg: hsl(255 30% 93%) !important;
+    --btn-regular-bg-hover: hsl(255 40% 87%) !important;
+    --btn-regular-bg-active: hsl(255 50% 80%) !important;
+    --btn-plain-bg-hover: hsl(255 30% 93%) !important;
+    --btn-plain-bg-active: hsl(255 20% 97%) !important;
+    --btn-card-bg-hover: hsl(255 15% 97%) !important;
+    --btn-card-bg-active: hsl(255 25% 90%) !important;
+    
+    /* 其他颜色 */
+    --title-active: hsl(255 40% 45%) !important;
+    --line-divider: rgba(0, 0, 0, 0.08) !important;
+    --meta-divider: rgba(0, 0, 0, 0.2) !important;
+    --content-meta: rgba(0, 0, 0, 0.7) !important;
+    --inline-code-bg: var(--btn-regular-bg) !important;
+    --inline-code-color: var(--btn-content) !important;
+    --selection-bg: hsl(255 35% 88%) !important;
+    --codeblock-selection: var(--selection-bg) !important;
+    --codeblock-bg: hsl(255 10% 96%) !important;
+    --codeblock-topbar-bg: hsl(255 15% 93%) !important;
+    --license-block-bg: rgba(0, 0, 0, 0.03) !important;
+    --link-underline: hsl(255 50% 92%) !important;
+    --link-hover: hsl(255 30% 95%) !important;
+    --link-active: hsl(255 35% 88%) !important;
+    --float-panel-bg: #ffffff !important;
+    --scrollbar-bg: rgba(0, 0, 0, 0.4) !important;
+    --scrollbar-bg-hover: rgba(0, 0, 0, 0.5) !important;
+    --scrollbar-bg-active: rgba(0, 0, 0, 0.6) !important;
+    
+    /* 特殊颜色 */
     --color-selection-bar: linear-gradient(to right, 
       hsl(0 70% 65%), hsl(30 70% 65%), hsl(60 70% 65%), 
       hsl(90 70% 65%), hsl(120 70% 65%), hsl(150 70% 65%), 
       hsl(180 70% 65%), hsl(210 70% 65%), hsl(240 70% 65%), 
-      hsl(270 70% 65%), hsl(300 70% 65%), hsl(330 70% 65%));
-
-    --admonitions-color-tip: hsl(180 60% 50%);
-    --admonitions-color-note: hsl(220 70% 55%);
-    --admonitions-color-important: hsl(280 65% 55%);
-    --admonitions-color-warning: hsl(35 80% 55%);
-    --admonitions-color-caution: hsl(10 70% 45%);
-
-    --toc-badge-bg: hsl(255 50% 92%);
-    --toc-btn-hover: hsl(255 20% 95%);
-    --toc-btn-active: hsl(255 25% 92%);
-    --toc-item-active: hsl(255 60% 50%);
+      hsl(270 70% 65%), hsl(300 70% 65%), hsl(330 70% 65%)) !important;
+    --admonitions-color-tip: hsl(180 60% 50%) !important;
+    --admonitions-color-note: hsl(220 70% 55%) !important;
+    --admonitions-color-important: hsl(280 65% 55%) !important;
+    --admonitions-color-warning: hsl(35 80% 55%) !important;
+    --admonitions-color-caution: hsl(10 70% 45%) !important;
+    --toc-badge-bg: hsl(255 50% 92%) !important;
+    --toc-btn-hover: hsl(255 20% 95%) !important;
+    --toc-btn-active: hsl(255 25% 92%) !important;
+    --toc-item-active: hsl(255 60% 50%) !important;
   }
 
   /* 暗色主题 */
   :root.dark {
-    --primary: hsl(255 70% 65%);
-    --page-bg: hsl(255 15% 12%);
-    --card-bg: hsl(255 12% 18%);
-    --card-bg-transparent: rgba(23, 23, 23, 0.8);
-
-    --btn-content: hsl(255 60% 70%);
-    --btn-regular-bg: hsl(255 20% 28%);
-    --btn-regular-bg-hover: hsl(255 25% 33%);
-    --btn-regular-bg-active: hsl(255 30% 38%);
-
-    --btn-plain-bg-hover: hsl(255 20% 25%);
-    --btn-plain-bg-active: hsl(255 15% 22%);
-
-    --btn-card-bg-hover: hsl(255 15% 25%);
-    --btn-card-bg-active: hsl(255 20% 30%);
-
-    --deep-text: hsl(255 20% 85%);
-    --title-active: hsl(255 40% 60%);
-
-    --line-divider: rgba(255, 255, 255, 0.08);
-    --line-color: rgba(255, 255, 255, 0.1);
-    --meta-divider: rgba(255, 255, 255, 0.2);
-    --content-meta: rgba(255, 255, 255, 0.6);
-
-    --selection-bg: hsl(255 35% 35%);
-    --codeblock-selection: var(--selection-bg);
-    --codeblock-bg: hsl(255 12% 15%);
-    --codeblock-topbar-bg: hsl(255 15% 12%);
-
-    --license-block-bg: var(--codeblock-bg);
-
-    --link-underline: hsl(255 40% 35%);
-    --link-hover: hsl(255 35% 35%);
-    --link-active: hsl(255 30% 30%);
-
-    --float-panel-bg: hsl(255 12% 15%);
-
-    --scrollbar-bg: rgba(255, 255, 255, 0.4);
-    --scrollbar-bg-hover: rgba(255, 255, 255, 0.5);
-    --scrollbar-bg-active: rgba(255, 255, 255, 0.6);
-
+    --primary: hsl(255 70% 65%) !important;
+    --page-bg: hsl(255 15% 12%) !important;
+    --card-bg: hsl(255 12% 18%) !important;
+    --card-bg-transparent: rgba(23, 23, 23, 0.8) !important;
+    --deep-text: hsl(255 20% 85%) !important;
+    --line-color: rgba(255, 255, 255, 0.1) !important;
+    
+    /* 按钮相关颜色 */
+    --btn-content: hsl(255 60% 70%) !important;
+    --btn-regular-bg: hsl(255 20% 28%) !important;
+    --btn-regular-bg-hover: hsl(255 25% 33%) !important;
+    --btn-regular-bg-active: hsl(255 30% 38%) !important;
+    --btn-plain-bg-hover: hsl(255 20% 25%) !important;
+    --btn-plain-bg-active: hsl(255 15% 22%) !important;
+    --btn-card-bg-hover: hsl(255 15% 25%) !important;
+    --btn-card-bg-active: hsl(255 20% 30%) !important;
+    
+    /* 其他颜色 */
+    --title-active: hsl(255 40% 60%) !important;
+    --line-divider: rgba(255, 255, 255, 0.08) !important;
+    --meta-divider: rgba(255, 255, 255, 0.2) !important;
+    --content-meta: rgba(255, 255, 255, 0.6) !important;
+    --selection-bg: hsl(255 35% 35%) !important;
+    --codeblock-selection: var(--selection-bg) !important;
+    --codeblock-bg: hsl(255 12% 15%) !important;
+    --codeblock-topbar-bg: hsl(255 15% 12%) !important;
+    --license-block-bg: var(--codeblock-bg) !important;
+    --link-underline: hsl(255 40% 35%) !important;
+    --link-hover: hsl(255 35% 35%) !important;
+    --link-active: hsl(255 30% 30%) !important;
+    --float-panel-bg: hsl(255 12% 15%) !important;
+    --scrollbar-bg: rgba(255, 255, 255, 0.4) !important;
+    --scrollbar-bg-hover: rgba(255, 255, 255, 0.5) !important;
+    --scrollbar-bg-active: rgba(255, 255, 255, 0.6) !important;
+    
+    /* 特殊颜色 */
     --color-selection-bar: linear-gradient(to right, 
       hsl(0 60% 60%), hsl(30 60% 60%), hsl(60 60% 60%), 
       hsl(90 60% 60%), hsl(120 60% 60%), hsl(150 60% 60%), 
       hsl(180 60% 60%), hsl(210 60% 60%), hsl(240 60% 60%), 
-      hsl(270 60% 60%), hsl(300 60% 60%), hsl(330 60% 60%));
-
-    --admonitions-color-tip: hsl(180 60% 55%);
-    --admonitions-color-note: hsl(220 70% 60%);
-    --admonitions-color-important: hsl(280 65% 60%);
-    --admonitions-color-warning: hsl(35 80% 60%);
-    --admonitions-color-caution: hsl(10 65% 50%);
-
-    --toc-badge-bg: hsl(255 20% 28%);
-    --toc-btn-hover: hsl(255 12% 18%);
-    --toc-btn-active: hsl(255 15% 20%);
-    --toc-item-active: hsl(255 40% 55%);
+      hsl(270 60% 60%), hsl(300 60% 60%), hsl(330 60% 60%)) !important;
+    --admonitions-color-tip: hsl(180 60% 55%) !important;
+    --admonitions-color-note: hsl(220 70% 60%) !important;
+    --admonitions-color-important: hsl(280 65% 60%) !important;
+    --admonitions-color-warning: hsl(35 80% 60%) !important;
+    --admonitions-color-caution: hsl(10 65% 50%) !important;
+    --toc-badge-bg: hsl(255 20% 28%) !important;
+    --toc-btn-hover: hsl(255 12% 18%) !important;
+    --toc-btn-active: hsl(255 15% 20%) !important;
+    --toc-item-active: hsl(255 40% 55%) !important;
   }
 
   /* 全屏壁纸模式下的半透明卡片背景 */
   body.wallpaper-transparent {
-    --card-bg-transparent: rgba(255, 255, 255, 0.8);
+    --card-bg-transparent: rgba(255, 255, 255, 0.8) !important;
   }
 
   :root.dark body.wallpaper-transparent {
-    --card-bg-transparent: rgba(23, 23, 23, 0.8);
+    --card-bg-transparent: rgba(23, 23, 23, 0.8) !important;
   }
 
   /* 修复所有直接使用 OKLCH 的元素 */
   
   /* 修复水波纹效果 */
   #header-waves use {
-    fill: var(--page-bg);
+    fill: var(--page-bg) !important;
   }
 
   /* 修复 Banner 控制按钮 */
   #banner-wrapper .banner-control {
-    color: var(--primary);
+    color: var(--primary) !important;
   }
 
   /* 修复按钮样式 */
   .btn-regular-dark {
-    background: hsl(255 10% 35%);
+    background: hsl(255 10% 35%) !important;
   }
   .btn-regular-dark:hover {
-    background: hsl(255 10% 40%);
+    background: hsl(255 10% 40%) !important;
   }
   .btn-regular-dark:active {
-    background: hsl(255 10% 45%);
+    background: hsl(255 10% 45%) !important;
   }
   .btn-regular-dark.success {
-    background: hsl(255 70% 65%);
+    background: hsl(255 70% 65%) !important;
   }
 
   :root.dark .btn-regular-dark {
-    background: hsl(255 15% 25%);
+    background: hsl(255 15% 25%) !important;
   }
   :root.dark .btn-regular-dark:hover {
-    background: hsl(255 20% 30%);
+    background: hsl(255 20% 30%) !important;
   }
   :root.dark .btn-regular-dark:active {
-    background: hsl(255 20% 35%);
+    background: hsl(255 20% 35%) !important;
   }
 
   /* 修复渐变按钮 */
   .rainbow-border::before {
-    background: var(--color-selection-bar);
+    background: var(--color-selection-bar) !important;
   }
   .btn-rainbow {
-    background: linear-gradient(135deg, var(--primary) 0%, hsl(285 70% 55%) 100%);
-    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+    background: linear-gradient(135deg, var(--primary) 0%, hsl(285 70% 55%) 100%) !important;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3) !important;
   }
   .btn-rainbow:hover {
-    background: linear-gradient(135deg, hsl(255 60% 45%) 0%, hsl(285 60% 45%) 100%);
-    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4);
+    background: linear-gradient(135deg, hsl(255 60% 45%) 0%, hsl(285 60% 45%) 100%) !important;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4) !important;
   }
   .btn-rainbow:active {
-    background: linear-gradient(135deg, hsl(255 70% 60%) 0%, hsl(285 70% 60%) 100%);
-    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
+    background: linear-gradient(135deg, hsl(255 70% 60%) 0%, hsl(285 70% 60%) 100%) !important;
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4) !important;
   }
 
   /* 修复 TOC 组件 */
   .floating-toc-item:hover {
-    background: var(--toc-btn-hover);
+    background: var(--toc-btn-hover) !important;
   }
   .floating-toc-item.active {
-    background: var(--toc-btn-active);
+    background: var(--toc-btn-active) !important;
   }
   .toc-item.active {
-    color: var(--primary);
+    color: var(--primary) !important;
   }
   .toc-item::before {
-    background: var(--line-color);
+    background: var(--line-color) !important;
   }
   .toc-item.active::before {
-    background: var(--primary);
+    background: var(--primary) !important;
   }
 
   /* 修复音乐播放器 */
   .track-list-item:hover,
   .track-list-item.active {
-    background: var(--btn-plain-bg-hover);
+    background: var(--btn-plain-bg-hover) !important;
   }
   .sidebar-track-info {
-    background: var(--card-bg);
+    background: var(--card-bg) !important;
   }
   .sidebar-progress {
-    background: var(--line-color);
+    background: var(--line-color) !important;
   }
 
   /* 修复 Badge 和 Chip */
   .badge {
-    background-color: var(--btn-regular-bg);
+    background-color: var(--btn-regular-bg) !important;
   }
   .chip {
-    background-color: var(--btn-regular-bg);
+    background-color: var(--btn-regular-bg) !important;
   }
 
   /* 修复 ArchivePanel */
   .archive-year {
-    background: var(--btn-regular-bg);
+    background: var(--btn-regular-bg) !important;
   }
   .archive-year:hover {
-    background: var(--primary);
+    background: var(--primary) !important;
   }
 
   /* 修复 PageProgressBar */
   #page-progress-bar {
-    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6) !important;
   }
 
   /* 修复 ButtonLink */
   .btn-link {
-    background: var(--btn-regular-bg);
+    background: var(--btn-regular-bg) !important;
   }
   .dark .btn-link {
-    background: var(--primary);
+    background: var(--primary) !important;
   }
 
   /* 修复加密内容 */
   .encrypted-content {
-    color: var(--primary);
-    background: var(--btn-regular-bg);
+    color: var(--primary) !important;
+    background: var(--btn-regular-bg) !important;
   }
 
   /* 修复 spoiler 效果 */
   :root:not(.dark) .custom-md spoiler {
-    --_spoiler-mask: hsl(255 60% 65%);
+    --_spoiler-mask: hsl(255 60% 65%) !important;
   }
 
   /* 修复 SharePoster */
   .share-poster {
-    border-color: var(--line-color);
+    border-color: var(--line-color) !important;
   }
 
   /* 修复 DisplaySettings */
   .color-picker {
-    background: var(--color-selection-bar);
+    background: var(--color-selection-bar) !important;
   }
 
   /* 确保基本颜色显示 */
   body {
-    background-color: var(--page-bg);
-    color: var(--deep-text);
+    background-color: var(--page-bg) !important;
+    color: var(--deep-text) !important;
   }
 
   .card-base {
-    background-color: var(--card-bg);
+    background-color: var(--card-bg) !important;
   }
 
   .btn-regular {
-    background-color: var(--btn-regular-bg);
-    color: var(--btn-content);
+    background-color: var(--btn-regular-bg) !important;
+    color: var(--btn-content) !important;
   }
 
   .btn-plain {
-    color: rgba(0, 0, 0, 0.75);
+    color: rgba(0, 0, 0, 0.75) !important;
   }
   :root.dark .btn-plain {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.75) !important;
   }
 }
 
@@ -301,7 +286,8 @@
   @media { /* Chrome 特定检测 */
     /* 为 Chrome 旧版本添加额外的颜色修复 */
     .chrome-legacy-fix {
-      --primary: hsl(255 70% 55%);
+      --primary: hsl(255 70% 55%) !important;
+      --page-bg: hsl(255 20% 95%) !important;
     }
   }
 }
@@ -310,15 +296,15 @@
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   /* IE10+ 特定样式 */
   :root {
-    --primary: #6366f1;
-    --page-bg: #f5f5f7;
-    --card-bg: #ffffff;
+    --primary: #6366f1 !important;
+    --page-bg: #f5f5f7 !important;
+    --card-bg: #ffffff !important;
   }
   
   :root.dark {
-    --primary: #818cf8;
-    --page-bg: #1a1a2e;
-    --card-bg: #16213e;
+    --primary: #818cf8 !important;
+    --page-bg: #1a1a2e !important;
+    --card-bg: #16213e !important;
   }
 }
 
@@ -330,48 +316,23 @@ body {
 }
 
 /* 主题色滑块支持 - 为旧浏览器提供基于 --hue 的颜色计算 */
+/* 注意：这里不使用 !important，以便主题色滑块能够正常工作 */
 @supports not (color: oklch(0% 0 0)) {
   /* 监听 --hue 变化并更新颜色 */
   :root {
-    /* 使用 CSS 变量计算基于 hue 的颜色 */
-    --primary: hsl(calc(var(--hue, 255) * 1) 70% 55%);
-    --btn-content: hsl(calc(var(--hue, 255) * 1) 60% 45%);
-    --btn-regular-bg: hsl(calc(var(--hue, 255) * 1) 30% 93%);
-    --btn-regular-bg-hover: hsl(calc(var(--hue, 255) * 1) 40% 87%);
-    --btn-regular-bg-active: hsl(calc(var(--hue, 255) * 1) 50% 80%);
-    --btn-plain-bg-hover: hsl(calc(var(--hue, 255) * 1) 30% 93%);
-    --btn-plain-bg-active: hsl(calc(var(--hue, 255) * 1) 20% 97%);
-    --btn-card-bg-hover: hsl(calc(var(--hue, 255) * 1) 15% 97%);
-    --btn-card-bg-active: hsl(calc(var(--hue, 255) * 1) 25% 90%);
-    --title-active: hsl(calc(var(--hue, 255) * 1) 40% 45%);
-    --selection-bg: hsl(calc(var(--hue, 255) * 1) 35% 88%);
-    --link-underline: hsl(calc(var(--hue, 255) * 1) 50% 92%);
-    --link-hover: hsl(calc(var(--hue, 255) * 1) 30% 95%);
-    --link-active: hsl(calc(var(--hue, 255) * 1) 35% 88%);
-    --toc-badge-bg: hsl(calc(var(--hue, 255) * 1) 50% 92%);
-    --toc-btn-hover: hsl(calc(var(--hue, 255) * 1) 20% 95%);
-    --toc-btn-active: hsl(calc(var(--hue, 255) * 1) 25% 92%);
-    --toc-item-active: hsl(calc(var(--hue, 255) * 1) 60% 50%);
+    /* 为主题色滑块提供基于 hue 的计算 */
+    --hue: 255;
+    
+    /* 这里不使用 !important，让 JavaScript 可以修改这些变量 */
+    --primary-hue: hsl(calc(var(--hue) * 1) 70% 55%);
+    --btn-content-hue: hsl(calc(var(--hue) * 1) 60% 45%);
+    --btn-regular-bg-hue: hsl(calc(var(--hue) * 1) 30% 93%);
   }
-
-  :root.dark {
-    --primary: hsl(calc(var(--hue, 255) * 1) 70% 65%);
-    --btn-content: hsl(calc(var(--hue, 255) * 1) 60% 70%);
-    --btn-regular-bg: hsl(calc(var(--hue, 255) * 1) 20% 28%);
-    --btn-regular-bg-hover: hsl(calc(var(--hue, 255) * 1) 25% 33%);
-    --btn-regular-bg-active: hsl(calc(var(--hue, 255) * 1) 30% 38%);
-    --btn-plain-bg-hover: hsl(calc(var(--hue, 255) * 1) 20% 25%);
-    --btn-plain-bg-active: hsl(calc(var(--hue, 255) * 1) 15% 22%);
-    --btn-card-bg-hover: hsl(calc(var(--hue, 255) * 1) 15% 25%);
-    --btn-card-bg-active: hsl(calc(var(--hue, 255) * 1) 20% 30%);
-    --title-active: hsl(calc(var(--hue, 255) * 1) 40% 60%);
-    --selection-bg: hsl(calc(var(--hue, 255) * 1) 35% 35%);
-    --link-underline: hsl(calc(var(--hue, 255) * 1) 40% 35%);
-    --link-hover: hsl(calc(var(--hue, 255) * 1) 35% 35%);
-    --link-active: hsl(calc(var(--hue, 255) * 1) 30% 30%);
-    --toc-badge-bg: hsl(calc(var(--hue, 255) * 1) 20% 28%);
-    --toc-btn-hover: hsl(calc(var(--hue, 255) * 1) 12% 18%);
-    --toc-btn-active: hsl(calc(var(--hue, 255) * 1) 15% 20%);
-    --toc-item-active: hsl(calc(var(--hue, 255) * 1) 40% 55%);
+  
+  /* 为主题色滑块添加特殊类，当用户调整滑块时使用这些变量 */
+  :root.theme-custom {
+    --primary: var(--primary-hue) !important;
+    --btn-content: var(--btn-content-hue) !important;
+    --btn-regular-bg: var(--btn-regular-bg-hue) !important;
   }
 }
