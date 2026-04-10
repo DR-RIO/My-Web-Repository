@@ -16,6 +16,17 @@
 		type SizeConfig,
 	} from "./utils/poster-renderer";
 
+	// Preload QRCode library
+	let QRCode: any = null;
+	onMount(async () => {
+		try {
+			const module = await import("qrcode");
+			QRCode = module.default;
+		} catch (error) {
+			console.error("Failed to preload QRCode library:", error);
+		}
+	});
+
 	export let title: string;
 	export let author: string;
 	export let description = "";
@@ -36,6 +47,7 @@
 	let showModal = false;
 	let posterImage: string | null = null;
 	let generating = false;
+	let error: string | null = null;
 	let themeColor = "#558e88";
 
 	function isDarkMode(): boolean {
@@ -92,7 +104,12 @@
 		const colors = getPosterColors();
 
 		try {
-			const QRCode = await import("qrcode");
+			error = null;
+			// Use preloaded QRCode library or import it if not yet loaded
+			if (!QRCode) {
+				const module = await import("qrcode");
+				QRCode = module.default;
+			}
 			const qrCodeUrl = await QRCode.toDataURL(url, {
 				margin: 1,
 				width: 100 * SCALE,
@@ -109,6 +126,10 @@
 			const ctx = canvas.getContext("2d");
 			if (!ctx) {throw new Error("Canvas context not available");}
 
+			// Set canvas dimensions first
+			canvas.width = WIDTH;
+			canvas.height = 1000; // Temporary height for calculation
+
 			const config: SizeConfig = {
 				scale: SCALE,
 				width: WIDTH,
@@ -124,7 +145,7 @@
 					config,
 				);
 
-			canvas.width = WIDTH;
+			// Update canvas height with calculated value
 			canvas.height = canvasHeight;
 
 			// Background
@@ -330,8 +351,9 @@
 			ctx.fillText(siteTitle, textX, footerY + 60 * SCALE);
 
 			posterImage = canvas.toDataURL("image/png");
-		} catch (error) {
-			console.error("Failed to generate poster:", error);
+		} catch (err) {
+			console.error("Failed to generate poster:", err);
+			error = "海报生成失败，请稍后重试";
 		} finally {
 			generating = false;
 		}
@@ -419,6 +441,27 @@
 						alt="Poster"
 						class="max-w-full h-auto shadow-lg rounded-lg"
 					/>
+				{:else if error}
+					<div class="flex flex-col items-center gap-3">
+						<Icon
+							icon="material-symbols:error-outline"
+							width="48"
+							height="48"
+							style="color: #ef4444;"
+						/>
+						<span
+							class="text-sm text-center"
+							style="color: var(--content-meta);"
+							>{error}</span
+						>
+						<button
+							class="mt-2 px-4 py-2 rounded-lg font-medium active:scale-[0.98] transition-all"
+							style="background-color: var(--btn-card-bg-hover); color: var(--btn-content);"
+							on:click={generatePoster}
+						>
+							重新生成
+						</button>
+					</div>
 				{:else}
 					<div class="flex flex-col items-center gap-3">
 						<div

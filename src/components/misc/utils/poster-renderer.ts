@@ -22,10 +22,20 @@ export interface SizeConfig {
 }
 
 /**
- * Load image from URL with fallback to proxy
+ * Image cache to avoid reloading images
+ */
+const imageCache = new Map<string, Promise<HTMLImageElement | null>>();
+
+/**
+ * Load image from URL with fallback to proxy and caching
  */
 export async function loadImage(src: string): Promise<HTMLImageElement | null> {
-	return new Promise((resolve) => {
+	// Check if image is already in cache
+	if (imageCache.has(src)) {
+		return imageCache.get(src)!;
+	}
+
+	const loadPromise = new Promise<HTMLImageElement | null>((resolve) => {
 		const img = new Image();
 		img.crossOrigin = "anonymous";
 
@@ -45,6 +55,10 @@ export async function loadImage(src: string): Promise<HTMLImageElement | null> {
 
 		img.src = src;
 	});
+
+	// Store in cache
+	imageCache.set(src, loadPromise);
+	return loadPromise;
 }
 
 /**
