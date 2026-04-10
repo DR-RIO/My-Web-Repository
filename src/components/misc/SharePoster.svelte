@@ -50,6 +50,14 @@
 	let error: string | null = null;
 	let themeColor = "#558e88";
 
+	// Poster cache to avoid regenerating for the same content
+	const posterCache = new Map<string, string>();
+
+	// Generate cache key based on poster content
+	function getCacheKey() {
+		return `${title}-${author}-${description}-${pubDate}-${coverImage || ''}-${url}-${siteTitle}-${avatar || ''}-${themeColor}-${isDarkMode()}`;
+	}
+
 	function isDarkMode(): boolean {
 		return document.documentElement.classList.contains("dark");
 	}
@@ -100,6 +108,14 @@
 		showModal = true;
 		if (posterImage) {return;}
 
+		// Check if poster is already in cache
+		const cacheKey = getCacheKey();
+		if (posterCache.has(cacheKey)) {
+			posterImage = posterCache.get(cacheKey)!;
+			generating = false;
+			return;
+		}
+
 		generating = true;
 		const colors = getPosterColors();
 
@@ -110,17 +126,21 @@
 				const module = await import("qrcode");
 				QRCode = module.default;
 			}
+			// Optimize QR code generation for faster performance
 			const qrCodeUrl = await QRCode.toDataURL(url, {
 				margin: 1,
-				width: 100 * SCALE,
+				width: 80 * SCALE, // Reduced size for faster generation
 				color: { dark: colors.qrDark, light: colors.qrLight },
+				errorCorrectionLevel: 'L' // Lower error correction for faster generation
 			});
 
+			console.log('Loading images:', { qrCodeUrl, coverImage, avatar });
 			const [qrImg, coverImg, avatarImg] = await Promise.all([
-				loadImage(qrCodeUrl),
-				coverImage ? loadImage(coverImage) : Promise.resolve(null),
-				avatar ? loadImage(avatar) : Promise.resolve(null),
+				loadImage(qrCodeUrl, false), // QR code is data URL, no proxy needed
+				coverImage ? loadImage(coverImage, true) : Promise.resolve(null), // Use proxy for cover image
+				avatar ? loadImage(avatar, true) : Promise.resolve(null), // Use proxy for avatar
 			]);
+			console.log('Image loading results:', { qrImg: !!qrImg, coverImg: !!coverImg, avatarImg: !!avatarImg });
 
 			const canvas = document.createElement("canvas");
 			const ctx = canvas.getContext("2d");
@@ -351,6 +371,8 @@
 			ctx.fillText(siteTitle, textX, footerY + 60 * SCALE);
 
 			posterImage = canvas.toDataURL("image/png");
+			// Store in cache
+			posterCache.set(cacheKey, posterImage);
 		} catch (err) {
 			console.error("Failed to generate poster:", err);
 			error = "海报生成失败，请稍后重试";

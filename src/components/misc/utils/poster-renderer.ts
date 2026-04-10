@@ -29,7 +29,7 @@ const imageCache = new Map<string, Promise<HTMLImageElement | null>>();
 /**
  * Load image from URL with fallback to proxy and caching
  */
-export async function loadImage(src: string): Promise<HTMLImageElement | null> {
+export async function loadImage(src: string, useProxy: boolean = true): Promise<HTMLImageElement | null> {
 	// Check if image is already in cache
 	if (imageCache.has(src)) {
 		return imageCache.get(src)!;
@@ -38,19 +38,36 @@ export async function loadImage(src: string): Promise<HTMLImageElement | null> {
 	const loadPromise = new Promise<HTMLImageElement | null>((resolve) => {
 		const img = new Image();
 		img.crossOrigin = "anonymous";
+		
+		// Set timeout for image loading (3 seconds)
+		const timeout = setTimeout(() => {
+			console.warn(`Image loading timed out: ${src}`);
+			if (useProxy && !src.includes("images.weserv.nl") && !src.includes("api.allorigins.win") && !src.startsWith("data:")) {
+				// Try domestic proxy first
+				tryDomesticProxy(src, resolve);
+			} else {
+				resolve(null);
+			}
+		}, 3000);
 
-		img.onload = () => resolve(img);
+		img.onload = () => {
+			clearTimeout(timeout);
+			resolve(img);
+		};
 		img.onerror = () => {
-			if (src.includes("images.weserv.nl") || src.startsWith("data:")) {
+			clearTimeout(timeout);
+			if (src.includes("images.weserv.nl") || src.includes("api.allorigins.win") || src.startsWith("data:")) {
 				resolve(null);
 				return;
 			}
 
-			const proxyImg = new Image();
-			proxyImg.crossOrigin = "anonymous";
-			proxyImg.onload = () => resolve(proxyImg);
-			proxyImg.onerror = () => resolve(null);
-			proxyImg.src = `https://images.weserv.nl/?url=${encodeURIComponent(src)}&output=png`;
+			// Use proxy if enabled
+			if (useProxy) {
+				// Try domestic proxy first
+				tryDomesticProxy(src, resolve);
+			} else {
+				resolve(null);
+			}
 		};
 
 		img.src = src;
@@ -59,6 +76,57 @@ export async function loadImage(src: string): Promise<HTMLImageElement | null> {
 	// Store in cache
 	imageCache.set(src, loadPromise);
 	return loadPromise;
+}
+
+/**
+ * Try to load image using domestic proxy services
+ */
+function tryDomesticProxy(src: string, resolve: (img: HTMLImageElement | null) => void) {
+	// List of domestic proxy services to try
+	const proxies = [
+		// 国内可用的代理服务
+		`https://api.allorigins.win/raw?url=${encodeURIComponent(src)}`,
+		// 备选代理服务
+		`https://images.weserv.nl/?url=${encodeURIComponent(src)}&output=png`
+	];
+
+	let currentProxyIndex = 0;
+
+	function tryNextProxy() {
+		if (currentProxyIndex >= proxies.length) {
+			resolve(null);
+			return;
+		}
+
+		const proxyUrl = proxies[currentProxyIndex];
+		currentProxyIndex++;
+
+		console.log(`Trying proxy: ${proxyUrl}`);
+
+		const proxyImg = new Image();
+		proxyImg.crossOrigin = "anonymous";
+		
+		// Set timeout for proxy image loading (3 seconds)
+		const proxyTimeout = setTimeout(() => {
+			console.warn(`Proxy image loading timed out: ${proxyUrl}`);
+			tryNextProxy();
+		}, 3000);
+		
+		proxyImg.onload = () => {
+			clearTimeout(proxyTimeout);
+			console.log(`Proxy image loaded successfully: ${proxyUrl}`);
+			resolve(proxyImg);
+		};
+		proxyImg.onerror = () => {
+			clearTimeout(proxyTimeout);
+			console.warn(`Proxy image loading failed: ${proxyUrl}`);
+			tryNextProxy();
+		};
+		proxyImg.src = proxyUrl;
+	}
+
+	// Start trying proxies
+	tryNextProxy();
 }
 
 /**
