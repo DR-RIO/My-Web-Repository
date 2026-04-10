@@ -726,9 +726,14 @@ html {
 }
 
 /* 确保过渡动画平滑 */
-.post-list-container {
-  transition: all 0.3s ease-in-out;
-}
+  .post-list-container {
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* 全屏壁纸模式下，让 body 背景透明，显示壁纸 */
+  body.wallpaper-transparent {
+    background-color: transparent !important;
+  }
 :root:not(.dark) .custom-md spoiler {
   --_spoiler-mask: color-mix(in oklch, var(--primary) 55%, white 45%);
 }

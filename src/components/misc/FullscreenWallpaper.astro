@@ -57,7 +57,7 @@ const carouselInterval = config.carousel?.interval || 5;
 
 // 样式配置
 const position = config.position || "center";
-const zIndex = config.zIndex || -1;
+const zIndex = config.zIndex || 0;
 const opacity = config.opacity || 0.8;
 const blurAmount = config.blur || 0;
 const positionClass = (() => {
@@ -92,15 +92,7 @@ const renderGroups = [
 	style={`z-index: ${zIndex}; opacity: ${opacity}; transform: translateZ(0); perspective: 1000px;`}
 	data-fullscreen-wallpaper
 >
-	<script is:inline>
-	// 立即执行脚本：防止闪烁
-	(function() {
-		const mode = localStorage.getItem('wallpaperMode') || 'banner';
-		if (mode !== 'fullscreen') {
-			document.currentScript.parentElement.style.display = 'none';
-		}
-	})();
-	</script>
+	<!-- 移除立即执行脚本，由 GridScripts 中的 applyWallpaperMode 函数控制显示/隐藏 -->
 
 	{isCarouselEnabled ? (
 		renderGroups.map(group => group.hasImages && (
@@ -288,5 +280,8 @@ const renderGroups = [
 		} else {
 			initFullscreenWallpaperCarousel();
 		}
+
+		// 将初始化函数暴露到全局作用域，以便在壁纸模式切换时调用
+		window.initFullscreenWallpaperCarousel = initFullscreenWallpaperCarousel;
 	</script>
 )}

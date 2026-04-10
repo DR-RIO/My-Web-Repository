@@ -129,6 +129,7 @@ export const siteConfig: SiteConfig = {
 				"https://s41.ax1x.com/2026/04/06/peNM4ud.png",
 				"https://s41.ax1x.com/2026/04/06/peNM5DA.png",
 				"https://s41.ax1x.com/2026/04/06/peNMzbn.png",
+				"https://s41.ax1x.com/2026/04/10/pewYU78.webp",
 			], // 桌面横幅图片
 			mobile: [
 				"https://s41.ax1x.com/2026/04/06/peNM6N6.jpg",
@@ -261,7 +262,7 @@ export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 		enable: true, // 启用轮播
 		interval: 4, // 轮播间隔时间（秒）
 	},
-	zIndex: -1, // 层级，确保壁纸在背景层
+	zIndex: 0, // 层级，确保壁纸在背景层
 	opacity: 0.8, // 壁纸透明度
 	blur: 1, // 背景模糊程度
 };
