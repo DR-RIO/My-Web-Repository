@@ -323,12 +323,16 @@ if (siteConfig.font) {
 	ensureMusicPlayerInitialized();
 </script>
 
-<!-- 代码块折叠功能 -->
+<!-- 代码块折叠功能 - 延迟加载 -->
 <script>
-	import "../scripts/code-collapse.js";
+	if (document.querySelector('.expressive-code')) {
+		import("../scripts/code-collapse.js");
+	}
 </script>
 
-<!-- 主题切换综合性能优化器（包含代码块优化、重型元素优化、性能诊断） -->
+<!-- 主题切换综合性能优化器（包含代码块优化、重型元素优化、性能诊断） - 延迟加载 -->
 <script>
-	import "../scripts/theme-optimizer.js";
+	setTimeout(() => {
+		import("../scripts/theme-optimizer.js");
+	}, 1000);
 </script>

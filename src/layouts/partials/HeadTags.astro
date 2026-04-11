@@ -119,6 +119,35 @@ const cdnDomains = ["https://cdn.jsdelivr.net", "https://unpkg.com"];
 	crossorigin
 />
 
+<!-- Live2D 模型预加载 -->
+<link
+	rel="preload"
+	href="/pio/models/MIHARI/Mihari_V1.model3.json"
+	as="fetch"
+	crossorigin
+/>
+
+<!-- 关键图片预加载 -->
+<link
+	rel="preload"
+	href="/pio/models/MIHARI/Mihari_Notxt.jpg"
+	as="image"
+/>
+
+<!-- 关键脚本预加载 -->
+<link
+	rel="preload"
+	href="/assets/js/pixi.min.js"
+	as="script"
+/>
+
+<!-- 关键 CSS 预加载 -->
+<link
+	rel="preload"
+	href="/assets/css/main.css"
+	as="style"
+/>
+
 <!-- Set the theme before the page is rendered to avoid a flash -->
 <script
 	is:inline

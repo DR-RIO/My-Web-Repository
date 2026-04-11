@@ -1,7 +1,10 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import * as PIXI from 'pixi.js';
   import { Live2DModel } from 'pixi-live2d-display-lipsyncpatch/cubism4';
+  
+  let isLoading = false;
+  let loadError = false;
 
   export let modelPath = '/pio/models/MIHARI/Mihari_V1.model3.json';
   export let canvasWidth = 200;
@@ -23,6 +26,21 @@
   let isAutoHidden = false;
   let autoHideTimer = null;
   let isRestoring = false;
+  let handleMouseMove = null;
+
+  // 节流函数，限制函数执行频率
+  function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+      const args = arguments;
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    }
+  }
 
   const buttonNormalBottom = positionY + canvasHeight + 20;
   const buttonMinimizedBottom = 20;
@@ -187,63 +205,125 @@
     toggleMinimize();
   }
 
+  function handleButtonMouseEnter() {
+    if (isMobile) return;
+    cancelAutoHide();
+  }
+
+  function handleButtonMouseLeave() {
+    if (isMobile) return;
+    if (isMinimized) {
+      startAutoHideTimer();
+    }
+  }
+
   function handleKeydown(event) {
     if (event.key === 'Enter' || event.key === ' ') {
       handleModelClick();
     }
   }
 
-  onMount(async () => {
+  onMount(() => {
+    console.log('Live2DModel 组件挂载');
     window.PIXI = PIXI;
     
-    userMinimized = loadSavedState();
-    isMinimized = userMinimized;
+    // 强制不最小化，以便测试
+    userMinimized = false;
+    isMinimized = false;
+    isAutoHidden = false;
     
     checkScreenSize();
     
-    if (isMinimized && !isMobile) {
-      startAutoHideTimer();
-    }
-
-    app = new PIXI.Application({
-      view: canvasElement,
-      width: canvasWidth,
-      height: canvasHeight,
-      backgroundAlpha: 0,
-      autoStart: true,
-      antialias: true,
-      resolution: window.devicePixelRatio,
-      autoDensity: true,
-    });
-
-    try {
-      model = await Live2DModel.from(modelPath);
+    // 页面加载完成后延迟加载 Live2D 模型
+    const loadLive2D = async () => {
+      if (isLoading) return;
       
-      model.anchor.set(0.5, 0.5);
-      model.x = canvasWidth / 2;
-      model.y = canvasHeight / 2;
-      model.scale.set(0.1, 0.1);
-      app.stage.addChild(model);
+      isLoading = true;
+      try {
+        console.log('创建 PIXI 应用');
+        app = new PIXI.Application({
+          view: canvasElement,
+          width: canvasWidth,
+          height: canvasHeight,
+          backgroundAlpha: 0,
+          autoStart: true,
+          antialias: true,
+          resolution: window.devicePixelRatio,
+          autoDensity: true,
+        });
+        console.log('PIXI 应用创建成功');
 
-      model.on('click', () => {
-        handleModelClick();
-      });
+        // 定义鼠标移动处理函数
+        const mouseMoveHandler = function(event) {
+          if (!model || isMinimized || isMobile) return;
+          
+          try {
+            const rect = canvasElement.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            
+            // 将鼠标坐标转换为模型坐标（-1 到 1 的范围）
+            const normalizedX = (mouseX / canvasWidth) * 2 - 1;
+            const normalizedY = (mouseY / canvasHeight) * 2 - 1;
+            
+            // 设置模型参数，控制眼珠跟随
+            model.setParamValue('ParamEyeBallX', normalizedX * 1.5); // 1.5 是灵敏度系数
+            model.setParamValue('ParamEyeBallY', -normalizedY * 1.5);
+            model.setParamValue('ParamEyeBallForm', 1); // 激活眼珠跟随
+          } catch (error) {
+            console.error('鼠标跟踪失败:', error);
+          }
+        };
 
-      window.addEventListener('resize', () => {
-        checkScreenSize();
-      });
+        // 使用节流函数限制鼠标移动事件的执行频率
+        handleMouseMove = throttle(mouseMoveHandler, 50); // 每50毫秒执行一次
 
-      console.log('模型加载成功');
+        console.log('开始加载模型:', modelPath);
+        model = await Live2DModel.from(modelPath);
+        
+        console.log('模型加载成功，开始设置');
+        model.anchor.set(0.5, 0.5);
+        model.x = canvasWidth / 2;
+        model.y = canvasHeight / 2;
+        model.scale.set(0.1, 0.1);
+        app.stage.addChild(model);
 
-    } catch (error) {
-      console.error('Live2D 模型加载失败:', error);
-    }
+        model.on('click', () => {
+          handleModelClick();
+        });
 
+        // 添加鼠标移动事件监听
+        window.addEventListener('mousemove', handleMouseMove);
+
+        window.addEventListener('resize', () => {
+          checkScreenSize();
+        });
+
+        console.log('模型设置完成');
+
+      } catch (error) {
+        console.error('Live2D 模型加载失败:', error);
+        loadError = true;
+      } finally {
+        isLoading = false;
+      }
+    };
+    
+    // 延迟 1 秒加载，让页面先渲染完成
+    const loadTimer = setTimeout(() => {
+      loadLive2D();
+    }, 1000);
+    
     return () => {
+      clearTimeout(loadTimer);
       if (app) app.destroy(true, { children: true });
       if (dialogTimer) clearTimeout(dialogTimer);
       if (clickTimeout) clearTimeout(clickTimeout);
       if (autoHideTimer) clearTimeout(autoHideTimer);
+      // 移除鼠标移动事件监听
+      if (handleMouseMove) {
+        window.removeEventListener('mousemove', handleMouseMove);
+      }
     };
   });
 </script>
@@ -298,6 +378,8 @@
   class:restoring={isRestoring}
   class:hide-on-mobile={isMobile}
   on:click={handleButtonClick}
+  on:mouseenter={handleButtonMouseEnter}
+  on:mouseleave={handleButtonMouseLeave}
   style="position: fixed; left: {positionX + 20}px; z-index: 1001;"
   style:bottom={isMinimized ? buttonMinimizedBottom + 'px' :(positionY + canvasHeight + 5) + 'px'}
 >

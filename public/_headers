@@ -7,3 +7,43 @@
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET
   Access-Control-Max-Age: 86400
+
+# 静态资源缓存配置
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  ETag: true
+
+# 图片资源缓存
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+  ETag: true
+
+# 字体资源缓存
+/assets/font/*
+  Cache-Control: public, max-age=31536000, immutable
+  ETag: true
+
+# JavaScript 和  CSS 缓存
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+  ETag: true
+
+/assets/css/*
+  Cache-Control: public, max-age=31536000, immutable
+  ETag: true
+
+# Live2D 模型缓存
+/pio/*
+  Cache-Control: public, max-age=31536000, immutable
+  ETag: true
+
+# API 响应缓存
+/api/*
+  Cache-Control: public, max-age=3600
+  ETag: true
+
+# HTML 文件缓存（较短时间）
+/*.html
+  Cache-Control: public, max-age=3600
+  ETag: true
+  Vary: Accept-Encoding
