@@ -51,7 +51,7 @@
   const messages = [
     { text: 'こんにちは！', translation: '你好呀！', emotion: '🌸' },
     { text: '今日も頑張ってね！', translation: '今天也要加油哦！', emotion: '💪' },
-    { text: '一緒に遊ぼう！', translation: '一起Play吧！', emotion: '🎮' },
+    { text: '一緒に遊ぼう！', translation: '和我Play吧！', emotion: '🎮' },
     { text: 'お腹すいたな〜', translation: '肚子饿了呢~', emotion: '🍜' },
     { text: '好きだよ〜', translation: '喜欢你哟~', emotion: '😘' }
   ];

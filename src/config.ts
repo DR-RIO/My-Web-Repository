@@ -475,7 +475,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "哈喽！这里是公告栏哦！", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "[前端工程小资历]: 正在调试和优化开源项目。现在为内测期间。深色模式组件渲染异常已经被我修复了, darkmode你还得练～", // 公告内容
+	content: "[前端工程小资历]: 正在调试和优化开源项目。现在为内测期间。桌面端使用windows10以上的系统和最新浏览器有优秀体验,移动端使用夸克浏览器访问体验最佳!", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
