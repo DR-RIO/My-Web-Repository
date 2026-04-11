@@ -816,18 +816,19 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 	}
 </style>
 
-<!-- 独立功能：点击 Banner 隐藏/显示主副标题（不修改核心代码） -->
+<!-- 独立功能：点击 Banner 隐藏/显示主副标题并切换导航栏透明模式（不修改核心代码） -->
 <script is:inline>
 	(function initBannerClickToggle() {
 		function init() {
 			// 绑定到轮播容器
 			const carousel = document.getElementById('banner-carousel');
 			const textOverlay = document.querySelector('.banner-text-overlay');
+			const navbar = document.getElementById('navbar');
 			
 			// 如果是单图模式，则绑定到 wrapper
 			const target = carousel || document.getElementById('banner-wrapper');
 			
-			if (!target || !textOverlay) return;
+			if (!target || !textOverlay || !navbar) return;
 			
 			let isTextHidden = false;
 			
@@ -845,10 +846,14 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					textOverlay.style.transition = 'opacity 0.4s ease';
 					textOverlay.style.opacity = '0';
 					isTextHidden = true;
+					// 切换导航栏为完全透明
+					navbar.dataset.transparentMode = 'full';
 				} else {
 					// 显示主副标题
 					textOverlay.style.opacity = '1';
 					isTextHidden = false;
+					// 切换导航栏为半透明加圆角
+					navbar.dataset.transparentMode = 'semi';
 				}
 			});
 		}
