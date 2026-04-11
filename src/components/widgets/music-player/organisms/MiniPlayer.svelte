@@ -2,18 +2,18 @@
 	import TrackDisplay from "../molecules/TrackDisplay.svelte";
 	import type { Song } from "../types";
 
-interface Props {
-	song: Song;
-	currentTime: number;
-	duration: number;
-	isPlaying: boolean;
-	isLoading: boolean;
-	isHidden: boolean;
-	onCoverClick: () => void;
-	onInfoClick: () => void;
-	onHideClick: () => void;
-	onExpandClick: () => void;
-}
+	interface Props {
+		song: Song;
+		currentTime: number;
+		duration: number;
+		isPlaying: boolean;
+		isLoading: boolean;
+		isHidden: boolean;
+		onCoverClick: () => void;
+		onInfoClick: () => void;
+		onHideClick: () => void;
+		onExpandClick: () => void;
+	}
 
 	const {
 		song,

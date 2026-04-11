@@ -9,37 +9,37 @@
 	import TrackDisplay from "../molecules/TrackDisplay.svelte";
 	import VolumeControl from "../molecules/VolumeControl.svelte";
 	import type { Song } from "../types";
-import type { RepeatMode } from "../types";
+	import type { RepeatMode } from "../types";
 
-interface Props {
-	song: Song;
-	currentTime: number;
-	duration: number;
-	isPlaying: boolean;
-	isLoading: boolean;
-	isShuffled: boolean;
-	isRepeating: RepeatMode;
-	showPlaylist: boolean;
-	canSkip: boolean;
-	volume: number;
-	isMuted: boolean;
-	isVolumeDragging: boolean;
-	isHidden: boolean;
-	volumeBarRef: Action<HTMLElement, undefined>;
-	onPlayClick: () => void;
-	onPrevClick: () => void;
-	onNextClick: () => void;
-	onShuffleClick: () => void;
-	onRepeatClick: () => void;
-	onProgressClick: (event: MouseEvent) => void;
-	onProgressKeyDown: (event: KeyboardEvent) => void;
-	onVolumeButtonClick: () => void;
-	onSliderPointerDown: (event: PointerEvent) => void;
-	onSliderKeyDown: (event: KeyboardEvent) => void;
-	onHideClick: () => void;
-	onPlaylistClick: () => void;
-	onCollapseClick: () => void;
-}
+	interface Props {
+		song: Song;
+		currentTime: number;
+		duration: number;
+		isPlaying: boolean;
+		isLoading: boolean;
+		isShuffled: boolean;
+		isRepeating: RepeatMode;
+		showPlaylist: boolean;
+		canSkip: boolean;
+		volume: number;
+		isMuted: boolean;
+		isVolumeDragging: boolean;
+		isHidden: boolean;
+		volumeBarRef: Action<HTMLElement, undefined>;
+		onPlayClick: () => void;
+		onPrevClick: () => void;
+		onNextClick: () => void;
+		onShuffleClick: () => void;
+		onRepeatClick: () => void;
+		onProgressClick: (event: MouseEvent) => void;
+		onProgressKeyDown: (event: KeyboardEvent) => void;
+		onVolumeButtonClick: () => void;
+		onSliderPointerDown: (event: PointerEvent) => void;
+		onSliderKeyDown: (event: KeyboardEvent) => void;
+		onHideClick: () => void;
+		onPlaylistClick: () => void;
+		onCollapseClick: () => void;
+	}
 
 	const {
 		song,

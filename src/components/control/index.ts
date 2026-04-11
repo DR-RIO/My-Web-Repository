@@ -8,10 +8,13 @@
  */
 
 export { default as BackToTop } from "./BackToTop.astro";
+export { default as BackToHome } from "./BackToHome.astro";
 export { default as ButtonLink } from "./ButtonLink.astro";
 export { default as ButtonTag } from "./ButtonTag.astro";
+export { default as FloatingControls } from "./FloatingControls.astro";
 export { default as FloatingTOC } from "./FloatingTOC.astro";
 export { default as LayoutSwitch } from "./LayoutSwitch.svelte";
+export { default as MusicFabButton } from "./MusicFabButton.svelte";
 export { default as PageProgressBar } from "./PageProgressBar/PageProgressBar.astro";
 export { default as Pagination } from "./Pagination.astro";
 export { default as ThemeSwitch } from "./ThemeSwitch.svelte";
