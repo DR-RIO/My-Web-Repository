@@ -20,7 +20,12 @@ const config = {
 	(function () {
 		const TWIKOO_CONTAINER_ID = "twikoo-container";
 		const SCROLL_PROTECTION_URL = "/scroll-protection.js";
-		const TWIKOO_SCRIPT_URL ="/assets/js/twikoo.all.min.js";
+		// 国内CDN列表，按速度和可靠性排序
+		const TWIKOO_CDN_URLS = [
+			"https://unpkg.com/twikoo@1.7.7/dist/twikoo.all.min.js", // unpkg
+			"https://cdn.bootcdn.net/ajax/libs/twikoo/1.7.7/twikoo.all.min.js", // BootCDN
+			"https://cdn.jsdelivr.net/npm/twikoo@1.7.7/dist/twikoo.all.min.js" // jsdelivr 作为备用
+		];
 		const ROOT_MARGIN = "200px";
 
 		let observer = null;
@@ -69,15 +74,41 @@ const config = {
 			}
 			await loadScrollProtection();
 			return new Promise((resolve, reject) => {
-				const script = document.createElement("script");
-				script.id = "twikoo-script-loaded";
-				script.src = TWIKOO_SCRIPT_URL;
-				script.onload = () => {
-					twikooLoaded = true;
-					resolve();
-				};
-				script.onerror = reject;
-				document.head.appendChild(script);
+				let currentCdnIndex = 0;
+
+				function tryNextCdn() {
+					if (currentCdnIndex >= TWIKOO_CDN_URLS.length) {
+						reject(new Error("All CDN URLs failed to load"));
+						return;
+					}
+
+					const cdnUrl = TWIKOO_CDN_URLS[currentCdnIndex];
+					currentCdnIndex++;
+
+					console.log(`Trying to load Twikoo from CDN: ${cdnUrl}`);
+
+					const script = document.createElement("script");
+					script.id = "twikoo-script-loaded";
+					script.src = cdnUrl;
+					script.onload = () => {
+						twikooLoaded = true;
+						console.log(`Twikoo loaded successfully from CDN: ${cdnUrl}`);
+						resolve();
+					};
+					script.onerror = () => {
+						console.warn(`Failed to load Twikoo from CDN: ${cdnUrl}`);
+						// Remove the failed script
+						if (script.parentNode) {
+							script.parentNode.removeChild(script);
+						}
+						// Try next CDN
+						tryNextCdn();
+					};
+					document.head.appendChild(script);
+				}
+
+				// Start trying CDNs
+				tryNextCdn();
 			});
 		}
 
