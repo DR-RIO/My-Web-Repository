@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
-	import { slide } from "svelte/transition";
 
 	import Key from "../../../../i18n/i18nKey";
 	import { i18n } from "../../../../i18n/translation";
@@ -28,9 +27,8 @@
 
 {#if show}
 	<div
-		class="playlist-panel card-base-transparent fixed bottom-70 right-4 w-80 max-h-96 overflow-hidden z-50"
-		transition:slide={{ duration: 300, axis: "y" }}
-	>
+			class="playlist-panel card-base-transparent fixed bottom-70 right-4 w-80 max-h-96 overflow-hidden z-50"
+		>
 		<div
 			class="playlist-header flex items-center justify-between p-4 border-b border-[var(--line-divider)]"
 		>

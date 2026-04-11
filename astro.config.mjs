@@ -184,27 +184,8 @@ export default defineConfig({
 			cssMinify: "esbuild",
 			// 生产环境移除 console 和 debugger
 			minify: "esbuild",
-			// 启用 CSS 提取
-			cssExtract: true,
-			// 启用 HTML 压缩
-			htmlMinify: true,
-			// 启用资源优化
-			assetsOptimize: true,
 			rollupOptions: {
 				output: {
-					// 代码分割策略
-					manualChunks: {
-						// 将第三方依赖打包成单独的 chunk
-						vendor: ['pixi.js', 'pixi-live2d-display-lipsyncpatch'],
-						// 将大型库单独打包
-						heavy: ['@fancyapps/ui', 'katex', 'marked'],
-						// 将工具库单独打包
-						utils: ['dayjs', 'axios', 'crypto-js'],
-					},
-					// 最大 chunk 大小，超过会发出警告
-					maxChunkSize: 200000,
-					// 最小 chunk 大小，低于会被合并
-					minChunkSize: 10000,
 					// 生成 sourcemap 以便调试
 					sourcemap: false,
 				},
@@ -237,8 +218,6 @@ export default defineConfig({
 		},
 		// 依赖项优化
 		optimizeDeps: {
-			// 强制预构建的依赖
-			include: ['pixi.js', 'pixi-live2d-display-lipsyncpatch', '@fancyapps/ui'],
 			// 排除不需要预构建的依赖
 			exclude: ['@iconify/svelte'],
 		},
