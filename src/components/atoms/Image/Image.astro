@@ -12,14 +12,13 @@ interface Props {
 	fetchpriority?: "high" | "low" | "auto";
 	width?: string | number;
 	height?: string | number;
-	fallbackSrc?: string;
 }
 
 import { Image as AstroImage } from "astro:assets";
 
 import { url } from "../../../utils/url-utils";
 
-const { id, src, alt, position = "center", basePath = "/", loading = "lazy", fetchpriority, width, height, fallbackSrc } = Astro.props;
+const { id, src, alt, position = "center", basePath = "/", loading = "lazy", fetchpriority, width, height } = Astro.props;
 const className = Astro.props.class;
 
 const isLocal = !(
@@ -54,62 +53,45 @@ if (isLocal) {
 const imageClass = "w-full h-full object-cover";
 const imageStyle = `object-position: ${position}`;
 
-// 对于所有外部图片，设置 referrerpolicy 避免跨域请求问题
-const referrerPolicy = !isLocal ? "no-referrer" : undefined;
+// 检查是否是 Bilibili 图片
+const isBilibiliImage = !isLocal && src.includes("hdslb.com");
+// 对于外部图片（特别是 Bilibili），需要设置 referrerpolicy 避免 403 错误
+const referrerPolicy = !isLocal && isBilibiliImage ? "no-referrer" : undefined;
 ---
-<div id={id} class:list={[className, 'overflow-hidden relative']}>
-    <div class="transition absolute inset-0 dark:bg-black/10 bg-opacity-50 pointer-events-none"></div>
-    {isLocal && img && <AstroImage src={img} alt={alt || ""} class={imageClass} style={imageStyle} loading={loading} fetchpriority={fetchpriority} width={width} height={height}/>}
-    {!isLocal && (
-        <img 
-            src={isPublic ? url(src) : src} 
-            alt={alt || ""} 
-            class={imageClass} 
-            style={imageStyle} 
-            loading={loading} 
-            referrerpolicy={referrerPolicy} 
-            fetchpriority={fetchpriority} 
-            width={width} 
-            height={height}
-            onerror={(e) => {
-                const target = e.target as HTMLImageElement;
-                if (fallbackSrc) {
-                    target.src = fallbackSrc;
-                } else {
-                    // 显示占位符
-                    target.style.backgroundColor = '#f0f0f0';
-                    target.style.display = 'flex';
-                    target.style.alignItems = 'center';
-                    target.style.justifyContent = 'center';
-                    target.style.color = '#999';
-                    target.innerHTML = '图片加载失败';
-                }
-            }}
-        />
-    )}
-</div>
 
-<script>
-    // 网络条件检测，根据网络类型调整图片加载策略
-    if (typeof navigator !== 'undefined' && navigator.connection) {
-        const connection = navigator.connection as any;
-        
-        // 当网络类型变化时，触发图片重新加载
-        connection.addEventListener('change', () => {
-            const images = document.querySelectorAll('img');
-            images.forEach(img => {
-                if (connection.effectiveType === '4g' || connection.effectiveType === '3g') {
-                    // 移动网络下重新加载图片
-                    const currentSrc = img.src;
-                    if (currentSrc) {
-                        // 重新设置 src 以触发重新加载
-                        img.src = '';
-                        setTimeout(() => {
-                            img.src = currentSrc;
-                        }, 100);
-                    }
-                }
-            });
-        });
-    }
-</script>
+<div id={id} class:list={[className, "overflow-hidden relative"]}>
+	<div
+		class="transition absolute inset-0 dark:bg-black/10 bg-opacity-50 pointer-events-none"
+	>
+	</div>
+	{
+		isLocal && img && (
+			<AstroImage
+				src={img}
+				alt={alt || ""}
+				class={imageClass}
+				style={imageStyle}
+				loading={loading}
+				fetchpriority={fetchpriority}
+				width={width}
+				height={height}
+			/>
+		)
+	}
+	{
+		!isLocal && (
+			<img
+				src={isPublic ? url(src) : src}
+				alt={alt || ""}
+				class={imageClass}
+				style={imageStyle}
+				loading={loading}
+				referrerpolicy={referrerPolicy}
+				crossorigin={isBilibiliImage ? "anonymous" : undefined}
+				fetchpriority={fetchpriority}
+				width={width}
+				height={height}
+			/>
+		)
+	}
+</div>

@@ -6,7 +6,6 @@
  */
 
 import TypewriterText from "@components/atoms/typewriter-text/TypewriterText.astro";
-import Image from "@components/atoms/Image/Image.astro";
 import { Icon } from "astro-icon/components";
 import { siteConfig } from "../../config";
 import { BANNER_HEIGHT_EXTEND } from "../../constants/constants";
@@ -90,11 +89,11 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			{/* 移动端：第一张图直接渲染，其余放入 template 延迟加载 */}
 			{mobileImages.length > 0 && (
 				<div class="banner-image-slot-mobile absolute inset-0 block md:hidden">
-					<Image
+					<img
 						alt="Mobile banner image 1"
 						class="object-cover h-full w-full"
 						src={mobileImages[0]}
-						position={siteConfig.banner.position}
+						style={`object-position: ${siteConfig.banner.position}`}
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -102,11 +101,11 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			)}
 			{mobileImages.slice(1).map((src, i) => (
 				<template class="banner-tpl-mobile">
-					<Image
+					<img
 						alt={`Mobile banner image ${i + 2}`}
 						class="object-cover h-full w-full"
 						src={src}
-						position={siteConfig.banner.position}
+						style={`object-position: ${siteConfig.banner.position}`}
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -116,12 +115,12 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			{/* 桌面端：第一张图直接渲染，其余放入 template 延迟加载 */}
 			{desktopImages.length > 0 && (
 				<div class="banner-image-slot-desktop absolute inset-0 hidden md:block">
-					<Image
+					<img
 						id="banner"
 						alt="Desktop banner image 1"
 						class="object-cover h-full w-full"
 						src={desktopImages[0]}
-						position={siteConfig.banner.position}
+						style={`object-position: ${siteConfig.banner.position}`}
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -129,11 +128,11 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			)}
 			{desktopImages.slice(1).map((src, i) => (
 				<template class="banner-tpl-desktop">
-					<Image
+					<img
 						alt={`Desktop banner image ${i + 2}`}
 						class="object-cover h-full w-full"
 						src={src}
-						position={siteConfig.banner.position}
+						style={`object-position: ${siteConfig.banner.position}`}
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -145,11 +144,11 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 		<div id="banner-single-container" class="relative h-full w-full">
 			{mobileImages.length > 0 && (
 				<div class="block md:hidden">
-					<Image
+					<img
 						alt="Mobile banner image of the blog"
 						class="object-cover h-full w-full"
 						src={mobileImages[0]}
-						position={siteConfig.banner.position}
+						style={`object-position: ${siteConfig.banner.position}`}
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -157,12 +156,12 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			)}
 			{desktopImages.length > 0 && (
 				<div class="hidden md:block">
-					<Image
+					<img
 						id="banner"
 						alt="Desktop banner image of the blog"
 						class="object-cover h-full w-full"
 						src={desktopImages[0]}
-						position={siteConfig.banner.position}
+						style={`object-position: ${siteConfig.banner.position}`}
 						loading="eager"
 						fetchpriority="high"
 					/>
