@@ -1,0 +1,29 @@
+---
+import path from "node:path";
+
+interface Props {
+	src: string;
+	alt?: string;
+	class?: string;
+}
+
+import { Image as AstroImage } from "astro:assets";
+
+const { src, alt, class: className } = Astro.props;
+
+const isLocal = !src.startsWith("http") && !src.startsWith("https");
+
+let img;
+if (isLocal) {
+	const files = import.meta.glob("../../../**", { import: "default" });
+	const normalizedPath = path.normalize(path.join("../../../", src)).replace(/\\/g, "/");
+	const file = files[normalizedPath];
+	if (file) {
+		img = await file();
+	}
+}
+---
+<div class:list={[className, 'overflow-hidden relative'}>
+    {isLocal && img && <AstroImage src={img} alt={alt || ""} class="w-full h-full object-cover" />}
+    {!isLocal && <img src={src} alt={alt || ""} class="w-full h-full object-cover" />}
+</div>
