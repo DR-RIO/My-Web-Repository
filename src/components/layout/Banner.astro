@@ -143,69 +143,31 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 	) : (
 		/* 单图模式 */
 		<div id="banner-single-container" class="relative h-full w-full">
-			<script
-				is:inline
-				define:vars={{
-					desktopImages: bannerImages.desktop,
-					mobileImages: bannerImages.mobile,
-					position: siteConfig.banner.position,
-				}}
-			>
-				(function () {
-					const getRandomImage = (images, storageKey) => {
-						if (Array.isArray(images)) {
-							if (images.length === 0) return null;
-							if (images.length === 1) return images[0];
-
-							const lastIndex = sessionStorage.getItem(storageKey);
-							let newIndex;
-
-							do {
-								newIndex = Math.floor(Math.random() * images.length);
-							} while (newIndex === parseInt(lastIndex || "-1"));
-
-							sessionStorage.setItem(storageKey, newIndex.toString());
-							return images[newIndex];
-						}
-						return images || null;
-					};
-
-					const container = document.getElementById("banner-single-container");
-
-					// 检查容器是否已有图片，避免在页面切换或缩放时重复创建
-					if (container.querySelector("img")) {
-						return;
-					}
-
-					const desktopSrc = getRandomImage(desktopImages, "banner_desktop_index");
-					const mobileSrc = getRandomImage(mobileImages, "banner_mobile_index");
-
-					if (mobileSrc) {
-						const mobileImg = document.createElement("img");
-						mobileImg.alt = "Mobile banner image of the blog";
-						mobileImg.className =
-							"block md:hidden object-cover h-full w-full transition duration-700 opacity-100";
-						mobileImg.src = mobileSrc;
-						mobileImg.loading = "eager";
-						mobileImg.fetchPriority = "high";
-						mobileImg.dataset.position = position;
-						container.appendChild(mobileImg);
-					}
-
-					if (desktopSrc) {
-						const desktopImg = document.createElement("img");
-						desktopImg.id = "banner";
-						desktopImg.alt = "Desktop banner image of the blog";
-						desktopImg.className =
-							"hidden md:block object-cover h-full w-full transition duration-700 opacity-100";
-						desktopImg.src = desktopSrc;
-						desktopImg.loading = "eager";
-						desktopImg.fetchPriority = "high";
-						desktopImg.dataset.position = position;
-						container.appendChild(desktopImg);
-					}
-				})();
-			</script>
+			{mobileImages.length > 0 && (
+				<div class="block md:hidden">
+					<Image
+						alt="Mobile banner image of the blog"
+						class="object-cover h-full w-full"
+						src={mobileImages[0]}
+						position={siteConfig.banner.position}
+						loading="eager"
+						fetchpriority="high"
+					/>
+				</div>
+			)}
+			{desktopImages.length > 0 && (
+				<div class="hidden md:block">
+					<Image
+						id="banner"
+						alt="Desktop banner image of the blog"
+						class="object-cover h-full w-full"
+						src={desktopImages[0]}
+						position={siteConfig.banner.position}
+						loading="eager"
+						fetchpriority="high"
+					/>
+				</div>
+			)}
 		</div>
 	)}
 
