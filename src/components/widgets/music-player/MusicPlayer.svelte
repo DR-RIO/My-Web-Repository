@@ -239,15 +239,14 @@ console.log('MusicPlayer component initialized:', {
 	{/if}
 
 	{#if useFabEntry}
-		{#if state.isExpanded}
-			<div class="music-player-fab-anchor fixed z-[55]">
-				<div
-					class="music-player-fab-shell"
-				>
-					<FabMusicPanel />
-				</div>
+		<div class="music-player-fab-anchor fixed z-[55]">
+			<div
+				class="music-player-fab-shell"
+				class:expanded={state.isExpanded}
+			>
+				<FabMusicPanel />
 			</div>
-		{/if}
+		</div>
 	{:else}
 		<div
 			class="music-player fixed bottom-4 right-4 z-50 transition-all duration-300 ease-in-out"
@@ -348,6 +347,14 @@ console.log('MusicPlayer component initialized:', {
 			transform-origin: bottom right;
 			pointer-events: auto;
 			will-change: transform, opacity;
+			opacity: 0;
+			transform: scale(0.8) translateY(20px);
+			transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.music-player-fab-shell.expanded {
+			opacity: 1;
+			transform: scale(1) translateY(0);
 		}
 
 		.orb-player-container {
