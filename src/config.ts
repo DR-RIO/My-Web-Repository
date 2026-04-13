@@ -369,7 +369,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "/public/favicon/tx.webp", // 头像相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
+	avatar: "/favicon/tx.webp", // 头像相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
 	name: "人IO",
 	bio: "高三生兼萌新前端码字手，努力学习ing",
 	typewriter: {
