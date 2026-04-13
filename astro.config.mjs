@@ -185,25 +185,27 @@ export default defineConfig({
 			// 生产环境移除 console 和 debugger
 			minify: "esbuild",
 			rollupOptions: {
-				output: {
-					// 生成 sourcemap 以便调试
-					sourcemap: false,
+					output: {
+						// 生成 sourcemap 以便调试
+						sourcemap: false,
+						// 代码分割配置
+
+					},
+					onwarn(warning, warn) {
+						if (
+							warning.message.includes(
+								"is dynamically imported by",
+							)
+							&&
+							warning.message.includes(
+								"but also statically imported by",
+							)
+						) {
+							return;
+						}
+						warn(warning);
+					},
 				},
-				onwarn(warning, warn) {
-					if (
-						warning.message.includes(
-							"is dynamically imported by",
-						)
-						&&
-						warning.message.includes(
-							"but also statically imported by",
-						)
-					) {
-						return;
-					}
-					warn(warning);
-				},
-			},
 		},
 		// 生产环境移除 console.log 和 debugger
 		esbuildOptions: {

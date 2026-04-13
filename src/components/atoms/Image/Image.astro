@@ -12,13 +12,16 @@ interface Props {
 	fetchpriority?: "high" | "low" | "auto";
 	width?: string | number;
 	height?: string | number;
+	widths?: number[];
+	sizes?: string;
+	decoding?: "async" | "sync" | "auto";
 }
 
 import { Image as AstroImage } from "astro:assets";
 
 import { url } from "../../../utils/url-utils";
 
-const { id, src, alt, position = "center", basePath = "/", loading = "lazy", fetchpriority, width, height } = Astro.props;
+const { id, src, alt, position = "center", basePath = "/", loading = "lazy", fetchpriority, width, height, widths, sizes, decoding = "async" } = Astro.props;
 const className = Astro.props.class;
 
 const isLocal = !(
@@ -67,31 +70,35 @@ const referrerPolicy = !isLocal && isBilibiliImage ? "no-referrer" : undefined;
 	{
 		isLocal && img && (
 			<AstroImage
-				src={img}
-				alt={alt || ""}
-				class={imageClass}
-				style={imageStyle}
-				loading={loading}
-				fetchpriority={fetchpriority}
-				width={width}
-				height={height}
-			/>
+					src={img}
+					alt={alt || ""}
+					class={imageClass}
+					style={imageStyle}
+					loading={loading}
+					fetchpriority={fetchpriority}
+					width={width}
+					height={height}
+					widths={widths}
+					sizes={sizes}
+					decoding={decoding}
+				/>
 		)
 	}
 	{
 		!isLocal && (
 			<img
-				src={isPublic ? url(src) : src}
-				alt={alt || ""}
-				class={imageClass}
-				style={imageStyle}
-				loading={loading}
-				referrerpolicy={referrerPolicy}
-				crossorigin={isBilibiliImage ? "anonymous" : undefined}
-				fetchpriority={fetchpriority}
-				width={width}
-				height={height}
-			/>
+					src={isPublic ? url(src) : src}
+					alt={alt || ""}
+					class={imageClass}
+					style={imageStyle}
+					loading={loading}
+					referrerpolicy={referrerPolicy}
+					crossorigin={isBilibiliImage ? "anonymous" : undefined}
+					fetchpriority={fetchpriority}
+					width={width}
+					height={height}
+					decoding={decoding}
+				/>
 		)
 	}
 </div>

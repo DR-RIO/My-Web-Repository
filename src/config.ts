@@ -125,16 +125,15 @@ export const siteConfig: SiteConfig = {
 		// 支持单张图片或图片数组，当数组长度 > 1 时自动启用轮播
 		src: {
 			desktop: [
-				"https://s41.ax1x.com/2026/04/06/peNM29O.jpg",
-				"https://s41.ax1x.com/2026/04/06/peNM4ud.png",
-				"https://s41.ax1x.com/2026/04/06/peNM5DA.png",
-				"https://s41.ax1x.com/2026/04/06/peNMzbn.png",
-				"https://s41.ax1x.com/2026/04/10/pewYU78.webp",
+				"/images/banner/desktop/amy.webp",
+				"/images/banner/desktop/linglan1.webp",
+				"/images/banner/desktop/linglan2.webp",
+				"/images/banner/desktop/mdx.webp",
 			], // 桌面横幅图片
 			mobile: [
-				"https://s41.ax1x.com/2026/04/06/peNM6N6.jpg",
-				"https://s41.ax1x.com/2026/04/06/peNMc4K.jpg",
-				"https://s41.ax1x.com/2026/04/06/peNMyAx.jpg",
+				"/images/banner/mobile/ll.webp",
+				"/images/banner/mobile/mmx.webp",
+				"/images/banner/mobile/mmx2.webp",
 			], // 移动横幅图片
 		}, // 使用本地横幅图片
 
@@ -246,15 +245,16 @@ export const siteConfig: SiteConfig = {
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
 		desktop: [
-			"https://s41.ax1x.com/2026/04/06/peNM29O.jpg",
-			"https://s41.ax1x.com/2026/04/06/peNM4ud.png",
-			"https://s41.ax1x.com/2026/04/06/peNM5DA.png",
-			"https://s41.ax1x.com/2026/04/06/peNMzbn.png",
+			"/images/banner/desktop/desktop1.webp",
+			"/images/banner/desktop/amy.webp",
+			"/images/banner/desktop/linglan1.webp",
+			"/images/banner/desktop/linglan2.webp",
+			"/images/banner/desktop/mdx.webp",
 		], // 桌面横幅图片
 		mobile: [
-			"https://s41.ax1x.com/2026/04/06/peNM6N6.jpg",
-			"https://s41.ax1x.com/2026/04/06/peNMc4K.jpg",
-			"https://s41.ax1x.com/2026/04/06/peNMyAx.jpg",
+			"/images/banner/mobile/ll.webp",
+			"/images/banner/mobile/mmx.webp",
+			"/images/banner/mobile/mmx2.webp",
 		], // 移动横幅图片
 	}, // 使用本地横幅图片
 	position: "center", // 壁纸位置，等同于 object-position
@@ -369,7 +369,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "https://s41.ax1x.com/2026/04/07/peNOQzQ.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
+	avatar: "/public/favicon/tx.webp", // 头像相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
 	name: "人IO",
 	bio: "高三生兼萌新前端码字手，努力学习ing",
 	typewriter: {

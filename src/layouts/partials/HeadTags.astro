@@ -46,7 +46,7 @@ const favicons: Favicon[] =
 	siteConfig.favicon.length > 0 ? siteConfig.favicon : defaultFavicons;
 
 // CDN 预连接域名（用于 Mermaid 等第三方资源）
-const cdnDomains = ["https://cdn.jsdelivr.net", "https://unpkg.com"];
+const cdnDomains = ["https://cdn.jsdelivr.net", "https://unpkg.com", "https://s41.ax1x.com"];
 ---
 
 <!-- SEO Meta Tags -->
@@ -141,12 +141,64 @@ const cdnDomains = ["https://cdn.jsdelivr.net", "https://unpkg.com"];
 	as="script"
 />
 
-<!-- 关键 CSS 预加载 -->
-<link
-	rel="preload"
-	href="/assets/css/main.css"
-	as="style"
-/>
+<!-- 关键 CSS 内联 -->
+<style is:inline>
+	/* 基础样式 */
+	html {
+		scroll-behavior: smooth;
+		scrollbar-gutter: stable;
+	}
+
+	/* 页面顶部渐变高光效果 */
+	.top-gradient-highlight {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 180px;
+		background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 30%, rgba(255, 255, 255, 0.15) 60%, rgba(255, 255, 255, 0.05) 80%, transparent 100%);
+		pointer-events: none;
+		z-index: 20;
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	/* 暗色主题下的渐变高光效果 */
+	:root.dark .top-gradient-highlight {
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 30%, rgba(0, 0, 0, 0.15) 60%, rgba(0, 0, 0, 0.05) 80%, transparent 100%);
+	}
+
+	/* 卡片基础样式 */
+	.card-base {
+		border-radius: var(--radius-large);
+		overflow: hidden;
+		background: var(--card-bg);
+		transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), fill 0.15s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	/* 浮动面板样式 */
+	.float-panel {
+		top: 5.25rem;
+		border-radius: var(--radius-large);
+		overflow: hidden;
+		background: var(--float-panel-bg);
+		transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), fill 0.15s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+	}
+
+	/* 响应式隐藏 */
+	@media (max-width: 768px) {
+		.dropdown-container {
+			display: none;
+		}
+	}
+
+	/* 全屏壁纸模式下，让 body 背景透明，显示壁纸 */
+	body.wallpaper-transparent {
+		background-color: transparent !important;
+	}
+</style>
+
+
 
 <!-- Set the theme before the page is rendered to avoid a flash -->
 <script
