@@ -380,27 +380,27 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Bilibili",
 			icon: "fa7-brands:bilibili",
-			url: "https://space.bilibili.com/701864046",
+			url: "https://space.bilibili.com/631922709",
 		},
 		{
 			name: "Gitee",
 			icon: "mdi:git",
-			url: "https://gitee.com/matsuzakayuki",
+			url: "https://gitee.com/DR-RIO",
 		},
 		{
 			name: "GitHub",
 			icon: "fa7-brands:github",
-			url: "https://github.com/matsuzaka-yuki",
+			url: "https://github.com/DR-RIO",
 		},
 		{
-			name: "Codeberg",
-			icon: "simple-icons:codeberg",
-			url: "https://codeberg.org",
+			name: "Cloudflare",
+			icon: "simple-icons:cloudflare",
+			url: "https://www.cloudflare.com/zh-cn/",
 		},
 		{
-			name: "Discord",
+			name: "Netease Cloud Music",
 			icon: "simple-icons:neteasecloudmusic",
-			url: "https://discord.gg/MqW6TcQtVM",
+			url: "https://music.163.com/#/user/home?id=9716989139",
 		},
 	],
 };
