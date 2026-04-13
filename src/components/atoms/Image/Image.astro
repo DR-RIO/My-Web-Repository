@@ -99,13 +99,17 @@ const referrerPolicy = !isLocal && isBilibiliImage ? "no-referrer" : undefined;
         
         // 当网络类型变化时，触发图片重新加载
         connection.addEventListener('change', () => {
-            const images = document.querySelectorAll('img[data-src]');
+            const images = document.querySelectorAll('img');
             images.forEach(img => {
                 if (connection.effectiveType === '4g' || connection.effectiveType === '3g') {
-                    // 移动网络下使用默认图片
-                    const originalSrc = img.getAttribute('data-src');
-                    if (originalSrc) {
-                        img.src = originalSrc;
+                    // 移动网络下重新加载图片
+                    const currentSrc = img.src;
+                    if (currentSrc) {
+                        // 重新设置 src 以触发重新加载
+                        img.src = '';
+                        setTimeout(() => {
+                            img.src = currentSrc;
+                        }, 100);
                     }
                 }
             });
