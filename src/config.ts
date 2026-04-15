@@ -25,7 +25,7 @@ const SITE_LANG = "zh_CN"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
 const SITE_TIMEZONE = 8; //设置你的网站时区 from -12 to 12 default in UTC+8
 export const siteConfig: SiteConfig = {
 	title: "人IO",
-	subtitle: "Magical Cabin",
+	subtitle: "Starlit Den",
 	siteURL: "https://www.isu183s.top/", // 请替换为你的站点URL，以斜杠结尾
 	siteStartDate: "2026-03-21", // 站点开始运行日期，用于站点统计组件计算运行天数
 
@@ -55,17 +55,17 @@ export const siteConfig: SiteConfig = {
 		// 显示模式："text-icon" 显示图标+文本，"logo" 仅显示Logo
 		mode: "logo",
 		// 顶栏标题文本
-		text: "RIOUI",
+		text: "Starlit Den",
 		// 顶栏标题图标路径，默认使用 public/assets/home/home.png
-		icon: "https://cdn.jsdelivr.net/gh/DR-RIO/Website-Picture-Repository@main/favicon.webp",
+		icon: "https://image.isu183s.top/main/favicon.png",
 		// 网站Logo图片路径
-		logo: "https://s41.ax1x.com/2026/04/07/peNLlHx.png",
+		logo: "https://image.isu183s.top/main/new-logo.png",
 	},
 
 	// 页面自动缩放配置
 	pageScaling: {
 		enable: true, // 是否开启自动缩放
-		targetWidth: 2000, // 目标宽度，低于此宽度时开始缩放
+		targetWidth: 8000, // 目标宽度，低于此宽度时开始缩放
 	},
 
 	bangumi: {
@@ -125,15 +125,16 @@ export const siteConfig: SiteConfig = {
 		// 支持单张图片或图片数组，当数组长度 > 1 时自动启用轮播
 		src: {
 			desktop: [
-				"/images/banner/desktop/amy.webp",
-				"/images/banner/desktop/linglan1.webp",
-				"/images/banner/desktop/linglan2.webp",
-				"/images/banner/desktop/mdx.webp",
+				"https://image.isu183s.top/desktop/desktop1.webp",
+				"https://image.isu183s.top/desktop/amy.webp",
+				"https://image.isu183s.top/desktop/linglan1.webp",
+				"https://image.isu183s.top/desktop/linglan2.webp",
+				"https://image.isu183s.top/desktop/mdx.webp",
 			], // 桌面横幅图片
 			mobile: [
-				"/images/banner/mobile/ll.webp",
-				"/images/banner/mobile/mmx.webp",
-				"/images/banner/mobile/mmx2.webp",
+				"https://image.isu183s.top/mobile/ll.webp",
+				"https://image.isu183s.top/mobile/mmx.webp",
+				"https://image.isu183s.top/mobile/mmx2.webp",
 			], // 移动横幅图片
 		}, // 使用本地横幅图片
 
@@ -245,16 +246,16 @@ export const siteConfig: SiteConfig = {
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
 		desktop: [
-			"/images/banner/desktop/desktop1.webp",
-			"/images/banner/desktop/amy.webp",
-			"/images/banner/desktop/linglan1.webp",
-			"/images/banner/desktop/linglan2.webp",
-			"/images/banner/desktop/mdx.webp",
+			"https://image.isu183s.top/desktop/desktop1.webp",
+			"https://image.isu183s.top/desktop/amy.webp",
+			"https://image.isu183s.top/desktop/linglan1.webp",
+			"https://image.isu183s.top/desktop/linglan2.webp",
+			"https://image.isu183s.top/desktop/mdx.webp",
 		], // 桌面横幅图片
 		mobile: [
-			"/images/banner/mobile/ll.webp",
-			"/images/banner/mobile/mmx.webp",
-			"/images/banner/mobile/mmx2.webp",
+			"https://image.isu183s.top/mobile/ll.webp",
+			"https://image.isu183s.top/mobile/mmx.webp",
+			"https://image.isu183s.top/mobile/mmx2.webp",
 		], // 移动横幅图片
 	}, // 使用本地横幅图片
 	position: "center", // 壁纸位置，等同于 object-position
