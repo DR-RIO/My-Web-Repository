@@ -44,7 +44,7 @@ const { headings = [] } = Astro.props;
 		--fab-group-right: 1.5rem;
 		--fab-group-bottom: 10rem;
 		--fab-group-base-bottom: 10rem;
-		--fab-group-gap: 0.5rem;
+		--fab-group-gap: 10px;
 		--fab-button-size: 3rem;
 		--fab-visible-count: 1;
 	}
@@ -92,8 +92,7 @@ const { headings = [] } = Astro.props;
 	}
 
 	:global(html.fab-visibility-locked #floating-toc-btn.fab-lock-visible),
-	:global(html.fab-visibility-locked #back-to-home-btn.fab-lock-visible),
-	:global(html.fab-visibility-locked #back-to-top-btn.fab-lock-visible) {
+	:global(html.fab-visibility-locked #back-to-home-btn.fab-lock-visible) {
 		min-width: var(--fab-button-size) !important;
 		min-height: var(--fab-button-size) !important;
 		transform: scale(1) !important;
@@ -115,16 +114,14 @@ const { headings = [] } = Astro.props;
 	),
 	:global(
 		html:not(.dark).fab-visibility-locked #back-to-home-btn.fab-lock-visible
-	),
-	:global(
-		html:not(.dark).fab-visibility-locked #back-to-top-btn.fab-lock-visible
 	) {
 		border-color: var(--line-color) !important;
 	}
 
 	:global(html.fab-visibility-locked #floating-toc-btn.fab-lock-visible.hide),
-	:global(html.fab-visibility-locked #back-to-home-btn.fab-lock-visible.hide),
-	:global(html.fab-visibility-locked #back-to-top-btn.fab-lock-visible.hide) {
+	:global(
+		html.fab-visibility-locked #back-to-home-btn.fab-lock-visible.hide
+	) {
 		transform: scale(1) !important;
 		opacity: 1 !important;
 		pointer-events: auto !important;
@@ -139,8 +136,7 @@ const { headings = [] } = Astro.props;
 	}
 
 	:global(html.fab-visibility-locked #floating-toc-btn.fab-lock-visible svg),
-	:global(html.fab-visibility-locked #back-to-home-btn.fab-lock-visible svg),
-	:global(html.fab-visibility-locked #back-to-top-btn.fab-lock-visible svg) {
+	:global(html.fab-visibility-locked #back-to-home-btn.fab-lock-visible svg) {
 		opacity: 1 !important;
 	}
 
@@ -153,6 +149,28 @@ const { headings = [] } = Astro.props;
 		margin-top: 0 !important;
 		pointer-events: none !important;
 		overflow: hidden !important;
+	}
+
+	/* 确保在音乐面板展开时，返回顶部按钮的容器保持稳定 */
+	:global(
+		html.fab-visibility-locked
+			.floating-control-item[data-control-key="top"]
+	) {
+		max-height: var(--fab-button-size) !important;
+		opacity: 1 !important;
+		transform: none !important;
+		pointer-events: auto !important;
+		overflow: visible !important;
+		margin-top: var(--fab-group-gap) !important;
+	}
+
+	/* 确保在音乐面板展开时，音乐播放器按钮与返回顶部按钮之间有足够的间距 */
+	:global(
+		html.fab-visibility-locked
+			.floating-control-item[data-control-key="music"]
+			~ .floating-control-item[data-control-key="top"]
+	) {
+		margin-top: 10px !important;
 	}
 
 	@media (max-width: 1024px) {
@@ -241,16 +259,21 @@ const { headings = [] } = Astro.props;
 		}
 
 		function updateFloatingControlVisibility() {
-			if (isMusicPanelExpanded) {
-				return;
-			}
-
 			const items = document.querySelectorAll(
 				".floating-control-item[data-control-key]",
 			);
 			const totalItems = items.length;
 			let hasVisibleItem = false;
 			let visibleCount = 0;
+
+			// 先处理返回顶部按钮，确保它的可见性优先更新
+			let backToTopVisible = false;
+			for (const item of items) {
+				const key = item.getAttribute("data-control-key");
+				if (key === "top") {
+					backToTopVisible = isButtonVisible("back-to-top-btn");
+				}
+			}
 
 			for (const item of items) {
 				const key = item.getAttribute("data-control-key");
@@ -261,11 +284,40 @@ const { headings = [] } = Astro.props;
 				} else if (key === "home") {
 					visible = isButtonVisible("back-to-home-btn");
 				} else if (key === "top") {
-					visible = isButtonVisible("back-to-top-btn");
+					visible = backToTopVisible;
 				}
 
-				item.classList.toggle("is-collapsed", !visible);
-				item.classList.toggle("is-stacked", visible && hasVisibleItem);
+				if (!isMusicPanelExpanded) {
+					item.classList.toggle("is-collapsed", !visible);
+					item.classList.toggle(
+						"is-stacked",
+						visible && hasVisibleItem,
+					);
+				} else {
+					// 当音乐面板展开时
+					if (key === "top") {
+						// 返回顶部按钮：正常响应可见性，但不改变堆叠状态（保持稳定）
+						item.classList.toggle("is-collapsed", !visible);
+						// 不设置 is-stacked，避免抽搐
+					} else {
+						// 其他按钮：保持锁定状态
+						const id =
+							key === "toc"
+								? "floating-toc-btn"
+								: key === "home"
+									? "back-to-home-btn"
+									: null;
+						if (id) {
+							const button = document.getElementById(id);
+							if (button) {
+								button.classList.toggle(
+									"fab-lock-visible",
+									visible,
+								);
+							}
+						}
+					}
+				}
 
 				if (visible) {
 					hasVisibleItem = true;
@@ -273,30 +325,34 @@ const { headings = [] } = Astro.props;
 				}
 			}
 
+			// 更新可见性计数（确保音乐播放器面板跟随按钮移动）
 			document.documentElement.style.setProperty(
 				"--fab-visible-count",
 				String(Math.max(visibleCount, 1)),
 			);
 
-			if (visibleCount >= totalItems) {
-				document.documentElement.style.removeProperty(
-					"--fab-group-bottom",
-				);
-			} else {
-				const baseBottom = parseFloat(
-					getComputedStyle(document.documentElement).getPropertyValue(
-						"--fab-group-base-bottom",
-					),
-				);
-				if (!isNaN(baseBottom) && totalItems > 0) {
-					const minBottom = 1.5;
-					const ratio = visibleCount / totalItems;
-					const newBottom =
-						minBottom + (baseBottom - minBottom) * ratio;
-					document.documentElement.style.setProperty(
+			// 只有在音乐面板没有展开时才更新位置，避免按钮向上移动
+			if (!isMusicPanelExpanded) {
+				if (visibleCount >= totalItems) {
+					document.documentElement.style.removeProperty(
 						"--fab-group-bottom",
-						newBottom + "rem",
 					);
+				} else {
+					const baseBottom = parseFloat(
+						getComputedStyle(
+							document.documentElement,
+						).getPropertyValue("--fab-group-base-bottom"),
+					);
+					if (!isNaN(baseBottom) && totalItems > 0) {
+						const minBottom = 1.5;
+						const ratio = visibleCount / totalItems;
+						const newBottom =
+							minBottom + (baseBottom - minBottom) * ratio;
+						document.documentElement.style.setProperty(
+							"--fab-group-bottom",
+							newBottom + "rem",
+						);
+					}
 				}
 			}
 		}
@@ -352,6 +408,11 @@ const { headings = [] } = Astro.props;
 					continue;
 				}
 
+				// 返回顶部按钮不应该被锁定，让它仍然能响应滚动
+				if (key === "top") {
+					continue;
+				}
+
 				const button = document.getElementById(id);
 				const isVisible = Boolean(
 					button && !button.classList.contains("hide"),
@@ -360,6 +421,11 @@ const { headings = [] } = Astro.props;
 			}
 
 			for (const id of controlButtonIds) {
+				// 返回顶部按钮不应该被锁定
+				if (id === "back-to-top-btn") {
+					continue;
+				}
+
 				const button = document.getElementById(id);
 				if (!button) {
 					continue;
@@ -381,6 +447,11 @@ const { headings = [] } = Astro.props;
 			}
 
 			for (const id of controlButtonIds) {
+				// 返回顶部按钮不应该有 fab-lock-visible 类，所以不需要移除
+				if (id === "back-to-top-btn") {
+					continue;
+				}
+
 				const button = document.getElementById(id);
 				button?.classList.remove("fab-lock-visible");
 			}

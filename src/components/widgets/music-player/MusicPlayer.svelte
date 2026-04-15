@@ -14,16 +14,16 @@
 	import type { RepeatMode, Song } from "./types";
 
 	let state: MusicPlayerState = musicPlayerStore.getState();
-const showFloatingPlayer = musicPlayerConfig.showFloatingPlayer;
-const floatingEntryMode = musicPlayerConfig.floatingEntryMode ?? "default";
-const useFabEntry = floatingEntryMode === "fab";
-const shouldRenderFloatingUi =
-	showFloatingPlayer && musicPlayerConfig.enable;
-console.log('MusicPlayer component initialized:', {
-	showFloatingPlayer,
-	musicPlayerConfigEnable: musicPlayerConfig.enable,
-	shouldRenderFloatingUi
-});
+	const showFloatingPlayer = musicPlayerConfig.showFloatingPlayer;
+	const floatingEntryMode = musicPlayerConfig.floatingEntryMode ?? "default";
+	const useFabEntry = floatingEntryMode === "fab";
+	const shouldRenderFloatingUi =
+		showFloatingPlayer && musicPlayerConfig.enable;
+	console.log("MusicPlayer component initialized:", {
+		showFloatingPlayer,
+		musicPlayerConfigEnable: musicPlayerConfig.enable,
+		shouldRenderFloatingUi,
+	});
 	let unsubscribe: (() => void) | undefined;
 
 	function togglePlay() {
@@ -190,19 +190,22 @@ console.log('MusicPlayer component initialized:', {
 	}
 
 	onMount(() => {
-		console.log('MusicPlayer onMount called');
+		console.log("MusicPlayer onMount called");
 		// 无论是否显示 UI，都初始化音乐播放器
-		console.log('Calling musicPlayerStore.initialize()');
+		console.log("Calling musicPlayerStore.initialize()");
 		// 立即初始化音乐播放器
-		musicPlayerStore.initialize().then(() => {
-			console.log('Music player initialized successfully');
-		}).catch((error) => {
-			console.error('Failed to initialize music player:', error);
-		});
+		musicPlayerStore
+			.initialize()
+			.then(() => {
+				console.log("Music player initialized successfully");
+			})
+			.catch((error) => {
+				console.error("Failed to initialize music player:", error);
+			});
 		// 订阅状态更新
 		unsubscribe = musicPlayerStore.subscribe((nextState) => {
 			state = nextState;
-			console.log('Music player state updated:', nextState);
+			console.log("Music player state updated:", nextState);
 		});
 	});
 
@@ -268,47 +271,47 @@ console.log('MusicPlayer component initialized:', {
 			</div>
 
 			<MiniPlayer
-		song={state.currentSong}
-		currentTime={state.currentTime}
-		duration={state.duration}
-		isPlaying={state.isPlaying}
-		isLoading={state.isLoading}
-		isHidden={state.isExpanded || state.isHidden}
-		onCoverClick={togglePlay}
-		onInfoClick={toggleExpanded}
-		onHideClick={toggleHidden}
-		onExpandClick={toggleExpanded}
-	/>
+				song={state.currentSong}
+				currentTime={state.currentTime}
+				duration={state.duration}
+				isPlaying={state.isPlaying}
+				isLoading={state.isLoading}
+				isHidden={state.isExpanded || state.isHidden}
+				onCoverClick={togglePlay}
+				onInfoClick={toggleExpanded}
+				onHideClick={toggleHidden}
+				onExpandClick={toggleExpanded}
+			/>
 
 			<PlayerBar
-			song={state.currentSong}
-			currentTime={state.currentTime}
-			duration={state.duration}
-			isPlaying={state.isPlaying}
-			isLoading={state.isLoading}
-			isShuffled={state.isShuffled}
-			isRepeating={state.isRepeating}
-			showPlaylist={state.showPlaylist}
-			canSkip={canSkip()}
-			volume={state.volume}
-			isMuted={state.isMuted}
-			isVolumeDragging={false}
-			isHidden={!state.isExpanded}
-			{volumeBarRef}
-			onPlayClick={togglePlay}
-			onPrevClick={prev}
-			onNextClick={() => next()}
-			onShuffleClick={toggleShuffle}
-			onRepeatClick={toggleRepeat}
-			onProgressClick={setProgress}
-			onProgressKeyDown={handleProgressKeyDown}
-			onVolumeButtonClick={handleVolumeButtonClick}
-			onSliderPointerDown={startVolumeDrag}
-			onSliderKeyDown={handleVolumeKeyDown}
-			onHideClick={toggleHidden}
-			onPlaylistClick={togglePlaylist}
-			onCollapseClick={toggleExpanded}
-		/>
+				song={state.currentSong}
+				currentTime={state.currentTime}
+				duration={state.duration}
+				isPlaying={state.isPlaying}
+				isLoading={state.isLoading}
+				isShuffled={state.isShuffled}
+				isRepeating={state.isRepeating}
+				showPlaylist={state.showPlaylist}
+				canSkip={canSkip()}
+				volume={state.volume}
+				isMuted={state.isMuted}
+				isVolumeDragging={false}
+				isHidden={!state.isExpanded}
+				{volumeBarRef}
+				onPlayClick={togglePlay}
+				onPrevClick={prev}
+				onNextClick={() => next()}
+				onShuffleClick={toggleShuffle}
+				onRepeatClick={toggleRepeat}
+				onProgressClick={setProgress}
+				onProgressKeyDown={handleProgressKeyDown}
+				onVolumeButtonClick={handleVolumeButtonClick}
+				onSliderPointerDown={startVolumeDrag}
+				onSliderKeyDown={handleVolumeKeyDown}
+				onHideClick={toggleHidden}
+				onPlaylistClick={togglePlaylist}
+				onCollapseClick={toggleExpanded}
+			/>
 
 			<Playlist
 				playlist={state.playlist}
@@ -333,7 +336,8 @@ console.log('MusicPlayer component initialized:', {
 					(
 						var(--fab-group-gap, 0.5rem) *
 							(var(--fab-visible-count, 1) - 1)
-					)
+					) +
+					20px
 			);
 			width: 0;
 			height: 0;
@@ -343,7 +347,7 @@ console.log('MusicPlayer component initialized:', {
 		.music-player-fab-shell {
 			position: absolute;
 			right: 0;
-			bottom: 0.75rem;
+			bottom: 0;
 			transform-origin: bottom right;
 			pointer-events: auto;
 			will-change: transform, opacity;
@@ -510,7 +514,7 @@ console.log('MusicPlayer component initialized:', {
 
 			.music-player-fab-shell {
 				right: 0 !important;
-				bottom: 0.75rem !important;
+				bottom: 0 !important;
 			}
 
 			.music-player {
@@ -569,7 +573,7 @@ console.log('MusicPlayer component initialized:', {
 
 			.music-player-fab-shell {
 				right: 0 !important;
-				bottom: 0.75rem !important;
+				bottom: 0 !important;
 			}
 
 			.music-player {
