@@ -279,8 +279,8 @@ class MusicPlayerStore {
 		const mode = musicPlayerConfig.mode ?? "meting";
 		const meting_api =
 			musicPlayerConfig.meting_api ??
-			"https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
-		const meting_id = musicPlayerConfig.id ?? "14164869977";
+			"https://music.3e0.cn/?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+		const meting_id = musicPlayerConfig.id ?? "17845098657";
 		const meting_server = musicPlayerConfig.server ?? "netease";
 		const meting_type = musicPlayerConfig.type ?? "playlist";
 		console.log('Playlist config:', { mode, meting_api, meting_id, meting_server, meting_type });

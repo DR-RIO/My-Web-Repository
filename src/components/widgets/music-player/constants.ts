@@ -40,8 +40,8 @@ export const LOCAL_PLAYLIST: Song[] = [
 ];
 
 export const DEFAULT_SONG: Song = {
-	title: "Sample Song",
-	artist: "Sample Artist",
+	title: "正在加载ing...",
+	artist: "是个非常简单的音乐播放器",
 	cover: "https://image.isu183s.top/main/favicon.png",
 	url: "",
 	duration: 0,
@@ -49,8 +49,8 @@ export const DEFAULT_SONG: Song = {
 };
 
 export const DEFAULT_METING_API =
-	"https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
-export const DEFAULT_METING_ID = "14164869977";
+	"https://music.3e0.cn/?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+export const DEFAULT_METING_ID = "17845098657";
 export const DEFAULT_METING_SERVER = "netease";
 export const DEFAULT_METING_TYPE = "playlist";
 
