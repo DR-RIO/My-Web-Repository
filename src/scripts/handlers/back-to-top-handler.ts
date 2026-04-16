@@ -86,20 +86,8 @@ export class BackToTopHandler {
 	 * 计算返回顶部按钮显示阈值
 	 */
 	private calculateShowThreshold(scrollTop: number): number {
-		const contentWrapper = document.getElementById(
-			SWUP_SELECTORS.contentWrapper.slice(1),
-		);
-		let threshold =
-			window.innerHeight * (BANNER_HEIGHT / 100) +
-			SCROLL_CONFIG.backToTopOffset;
-
-		if (contentWrapper) {
-			const rect = contentWrapper.getBoundingClientRect();
-			const absoluteTop = rect.top + scrollTop;
-			threshold = absoluteTop + window.innerHeight / 4;
-		}
-
-		return threshold;
+		// 使用固定的 100px 阈值，当用户向下滚动超过 100px 时显示按钮
+		return 100;
 	}
 
 	/**

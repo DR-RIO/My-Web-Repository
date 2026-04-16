@@ -7,8 +7,8 @@
  * For new development, prefer atoms/Button with appropriate variants.
  */
 
-export { default as BackToTop } from "./BackToTop.astro";
 export { default as BackToHome } from "./BackToHome.astro";
+export { default as BackToTop } from "./BackToTop.astro";
 export { default as ButtonLink } from "./ButtonLink.astro";
 export { default as ButtonTag } from "./ButtonTag.astro";
 export { default as FloatingControls } from "./FloatingControls.astro";

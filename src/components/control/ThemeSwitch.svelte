@@ -15,7 +15,7 @@ onMount(() => {
 });
 
 function switchScheme(newMode: LIGHT_DARK_MODE) {
-    if (isChanging) return;
+    if (isChanging) {return;}
     isChanging = true;
     mode = newMode;
     setTheme(newMode);
@@ -25,14 +25,14 @@ function switchScheme(newMode: LIGHT_DARK_MODE) {
 }
 
 function toggleScheme() {
-    if (isChanging) return;
+    if (isChanging) {return;}
     const newMode = mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
     switchScheme(newMode);
 }
 
 // Swup 钩子监听
 function setupSwupListeners() {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {return;}
 
     const handleContentReplace = () => {
         requestAnimationFrame(() => {

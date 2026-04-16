@@ -207,6 +207,46 @@
 			state = nextState;
 			console.log("Music player state updated:", nextState);
 		});
+
+		// 监听返回顶部按钮的可见性，动态调整音乐播放器弹窗的偏移量
+		const backToTopBtn = document.getElementById('back-to-top-btn');
+		if (backToTopBtn) {
+			// 创建 MutationObserver 监听返回顶部按钮的 class 变化
+			const observer = new MutationObserver(() => {
+				// 检查返回顶部按钮是否可见（没有 hide 类）
+				const isBackToTopVisible = !backToTopBtn.classList.contains('hide');
+				
+				// 获取音乐播放器容器
+				const fabAnchor = document.querySelector('.music-player-fab-anchor');
+				if (fabAnchor) {
+					// 上移时（返回顶部按钮出现）加 10px，返回顶部时加 20px
+					if (isBackToTopVisible) {
+						// 上移时：10px 间距
+						(fabAnchor as HTMLElement).style.setProperty('--music-player-offset', '10px');
+					} else {
+						// 返回顶部时：20px 间距
+						(fabAnchor as HTMLElement).style.setProperty('--music-player-offset', '20px');
+					}
+				}
+			});
+
+			observer.observe(backToTopBtn, {
+				attributes: true,
+				attributeFilter: ['class']
+			});
+
+			// 初始更新
+			const isBackToTopVisible = !backToTopBtn.classList.contains('hide');
+			const fabAnchor = document.querySelector('.music-player-fab-anchor');
+			if (fabAnchor) {
+				(fabAnchor as HTMLElement).style.setProperty('--music-player-offset', isBackToTopVisible ? '10px' : '20px');
+			}
+
+			// 清理函数
+			return () => {
+				observer.disconnect();
+			};
+		}
 	});
 
 	onDestroy(() => {
@@ -329,19 +369,20 @@
 			right: var(--fab-group-right, 1.5rem);
 			bottom: calc(
 				var(--fab-group-bottom, 10rem) +
-					(
-						var(--fab-button-size, 3rem) *
-							var(--fab-visible-count, 1)
-					) +
-					(
-						var(--fab-group-gap, 0.5rem) *
-							(var(--fab-visible-count, 1) - 1)
-					) +
-					20px
+				(
+					var(--fab-button-size, 3rem) *
+						var(--fab-visible-count, 1)
+				) +
+				(
+					var(--fab-group-gap, 0.5rem) *
+						(var(--fab-visible-count, 1) - 1)
+				) +
+				var(--music-player-offset, 20px)
 			);
 			width: 0;
 			height: 0;
 			pointer-events: none;
+			transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 		}
 
 		.music-player-fab-shell {
@@ -501,15 +542,17 @@
 				right: var(--fab-group-right, 0.75rem) !important;
 				bottom: calc(
 					var(--fab-group-bottom, 5rem) +
-						(
-							var(--fab-button-size, 2.75rem) *
-								var(--fab-visible-count, 1)
-						) +
-						(
-							var(--fab-group-gap, 0.5rem) *
-								(var(--fab-visible-count, 1) - 1)
-						)
+					(
+						var(--fab-button-size, 2.75rem) *
+							var(--fab-visible-count, 1)
+					) +
+					(
+						var(--fab-group-gap, 0.5rem) *
+							(var(--fab-visible-count, 1) - 1)
+					) +
+					var(--music-player-offset, 20px)
 				) !important;
+				transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 			}
 
 			.music-player-fab-shell {
@@ -567,8 +610,10 @@
 						(
 							var(--fab-group-gap, 0.5rem) *
 								(var(--fab-visible-count, 1) - 1)
-						)
+						) +
+						var(--music-player-offset, 20px)
 				) !important;
+				transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 			}
 
 			.music-player-fab-shell {

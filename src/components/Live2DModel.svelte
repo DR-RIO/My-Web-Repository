@@ -1,7 +1,7 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
   import * as PIXI from 'pixi.js';
   import { Live2DModel } from 'pixi-live2d-display-lipsyncpatch/cubism4';
+  import { onDestroy,onMount } from 'svelte';
   
   let isLoading = false;
   let loadError = false;
@@ -94,7 +94,7 @@
   }
 
   function restoreToMinimized() {
-    if (!isAutoHidden) return;
+    if (!isAutoHidden) {return;}
     
     isRestoring = true;
     isAutoHidden = false;
@@ -120,7 +120,7 @@
     if (wasMobile && !isMobile) {
       isAutoHidden = false;
       isRestoring = false;
-      if (autoHideTimer) clearTimeout(autoHideTimer);
+      if (autoHideTimer) {clearTimeout(autoHideTimer);}
       
       isMinimized = userMinimized;
       if (!userMinimized) {
@@ -146,7 +146,7 @@
   }
 
   function toggleMinimize() {
-    if (isMobile) return;
+    if (isMobile) {return;}
     
     // 半隐藏状态：直接展开
     if (isAutoHidden) {
@@ -171,14 +171,14 @@
   }
 
   function handleModelClick() {
-    if (isMobile) return;
+    if (isMobile) {return;}
     
     if (isAutoHidden) {
       restoreToMinimized();
       return;
     }
-    if (isMinimized) return;
-    if (clickTimeout) return;
+    if (isMinimized) {return;}
+    if (clickTimeout) {return;}
 
     if (dialogTimer) {
       clearTimeout(dialogTimer);
@@ -200,18 +200,18 @@
   }
 
   function handleButtonClick(e) {
-    if (isMobile) return;
+    if (isMobile) {return;}
     e.stopPropagation();
     toggleMinimize();
   }
 
   function handleButtonMouseEnter() {
-    if (isMobile) return;
+    if (isMobile) {return;}
     cancelAutoHide();
   }
 
   function handleButtonMouseLeave() {
-    if (isMobile) return;
+    if (isMobile) {return;}
     if (isMinimized) {
       startAutoHideTimer();
     }
@@ -236,7 +236,7 @@
     
     // 页面加载完成后延迟加载 Live2D 模型
     const loadLive2D = async () => {
-      if (isLoading) return;
+      if (isLoading) {return;}
       
       isLoading = true;
       try {
@@ -255,7 +255,7 @@
 
         // 定义鼠标移动处理函数
         const mouseMoveHandler = function(event) {
-          if (!model || isMinimized || isMobile) return;
+          if (!model || isMinimized || isMobile) {return;}
           
           try {
             const rect = canvasElement.getBoundingClientRect();
@@ -316,10 +316,10 @@
     
     return () => {
       clearTimeout(loadTimer);
-      if (app) app.destroy(true, { children: true });
-      if (dialogTimer) clearTimeout(dialogTimer);
-      if (clickTimeout) clearTimeout(clickTimeout);
-      if (autoHideTimer) clearTimeout(autoHideTimer);
+      if (app) {app.destroy(true, { children: true });}
+      if (dialogTimer) {clearTimeout(dialogTimer);}
+      if (clickTimeout) {clearTimeout(clickTimeout);}
+      if (autoHideTimer) {clearTimeout(autoHideTimer);}
       // 移除鼠标移动事件监听
       if (handleMouseMove) {
         window.removeEventListener('mousemove', handleMouseMove);
