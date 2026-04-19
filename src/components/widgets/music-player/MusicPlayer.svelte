@@ -607,15 +607,13 @@
 					(
 						var(--fab-group-gap, 0.5rem) *
 							(var(--fab-visible-count, 1) - 1)
-					) +
-					var(--music-player-offset, 20px)
+					)
 				) !important;
-				transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 			}
 
 			.music-player-fab-shell {
 				right: 0 !important;
-				bottom: 0 !important;
+				bottom: 0.75rem !important;
 			}
 
 			.music-player {
@@ -624,9 +622,6 @@
 				max-width: 280px !important;
 				bottom: 0.5rem !important;
 				right: 0.5rem !important;
-			}
-			:global(.mini-player) {
-				width: 280px !important;
 			}
 			:global(.expanded-player) {
 				width: 280px !important;
@@ -668,15 +663,13 @@
 						(
 							var(--fab-group-gap, 0.5rem) *
 								(var(--fab-visible-count, 1) - 1)
-						) +
-						var(--music-player-offset, 20px)
+						)
 				) !important;
-				transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 			}
 
 			.music-player-fab-shell {
 				right: 0 !important;
-				bottom: 0 !important;
+				bottom: 0.75rem !important;
 			}
 
 			.music-player {
