@@ -876,6 +876,23 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   }
 }
 
+/* 极小高度屏幕 (高度 ≤ 700px) - 只在非主页完全隐藏横幅 */
+@media (max-height: 700px) {
+  body:not(.lg\:is-home) #banner-wrapper {
+    display: none !important;
+  }
+
+  /* 同时调整主内容区域的位置 */
+  body.enable-banner:not(.lg\:is-home) .absolute.w-full.z-30 {
+    top: 5.5rem !important;
+  }
+
+  /* 隐藏水波纹 */
+  body:not(.lg\:is-home) #header-waves {
+    display: none !important;
+  }
+}
+
 /* 横屏模式特殊处理 */
 @media (orientation: landscape) and (max-height: 500px) {
   #banner-wrapper {

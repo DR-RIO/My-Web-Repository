@@ -273,7 +273,7 @@
 	{/if}
 
 	{#if useFabEntry}
-		<div class="music-player-fab-anchor fixed z-[55]">
+		<div class="music-player-fab-anchor fixed z-[9999]">
 			<div
 				class="music-player-fab-shell"
 				class:expanded={state.isExpanded}
@@ -283,7 +283,7 @@
 		</div>
 	{:else}
 		<div
-			class="music-player fixed bottom-4 right-4 z-50 transition-all duration-300 ease-in-out"
+			class="music-player fixed bottom-4 right-4 z-[9999] transition-all duration-300 ease-in-out"
 			class:expanded={state.isExpanded}
 			class:hidden-mode={state.isHidden}
 		>
@@ -444,18 +444,37 @@
 			max-width: 20rem;
 			min-width: 20rem;
 			user-select: none;
+			z-index: 9999;
+		}
+
+		.music-player-fab-anchor {
+			z-index: 9999;
+		}
+
+		.music-player-fab-shell {
+			z-index: 9999;
 		}
 
 		:global(.mini-player) {
 			position: absolute;
 			bottom: 0;
 			right: 0;
+			z-index: 9999;
 		}
 
 		:global(.expanded-player) {
 			position: absolute;
 			bottom: 0;
 			right: 0;
+			z-index: 9999;
+		}
+
+		:global(.player-bar) {
+			z-index: 9999;
+		}
+
+		:global(.playlist-panel) {
+			z-index: 9999;
 		}
 
 		:global(.orb-player) {
@@ -526,6 +545,54 @@
 		:global(.bottom-controls > div:hover) {
 			transform: scaleY(1.2);
 			transition: transform 0.2s ease;
+		}
+
+		@media (max-width: 1279px) {
+			.music-player-fab-anchor {
+				right: var(--fab-group-right, 1.25rem) !important;
+				bottom: calc(
+					var(--fab-group-bottom, 3.5rem) +
+					(
+						var(--fab-button-size, 3rem) *
+							var(--fab-visible-count, 1)
+					) +
+					(
+						var(--fab-group-gap, 0.5rem) *
+							(var(--fab-visible-count, 1) - 1)
+					) +
+					var(--music-player-offset, 20px)
+				) !important;
+				transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+			}
+
+			.music-player-fab-shell {
+				right: 0 !important;
+				bottom: 0 !important;
+			}
+		}
+
+		@media (max-width: 1024px) {
+			.music-player-fab-anchor {
+				right: var(--fab-group-right, 1rem) !important;
+				bottom: calc(
+					var(--fab-group-bottom, 4rem) +
+					(
+						var(--fab-button-size, 2.8rem) *
+							var(--fab-visible-count, 1)
+					) +
+					(
+						var(--fab-group-gap, 0.5rem) *
+							(var(--fab-visible-count, 1) - 1)
+					) +
+					var(--music-player-offset, 20px)
+				) !important;
+				transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+			}
+
+			.music-player-fab-shell {
+				right: 0 !important;
+				bottom: 0 !important;
+			}
 		}
 
 		@media (max-width: 768px) {
@@ -676,6 +743,52 @@
 			:global(.progress-section > div),
 			:global(.bottom-controls > div:nth-child(2)) {
 				height: 12px;
+			}
+		}
+
+		/* 针对小屏幕高度的适配 */
+		@media (max-height: 622px) {
+			.music-player {
+				transform: translateY(calc(100vh - 622px));
+				z-index: 9999 !important;
+			}
+			
+			.music-player-fab-anchor {
+				transform: translateY(calc(100vh - 622px));
+				z-index: 9999 !important;
+			}
+			
+			/* 确保播放器内容完全可见 */
+			:global(.player-bar) {
+				z-index: 9999 !important;
+			}
+			
+			:global(.mini-player) {
+				z-index: 9999 !important;
+			}
+		}
+
+		@media (max-height: 564px) {
+			.music-player {
+				transform: translateY(calc(100vh - 564px));
+				z-index: 9999 !important;
+			}
+			
+			.music-player-fab-anchor {
+				transform: translateY(calc(100vh - 564px));
+				z-index: 9999 !important;
+			}
+		}
+
+		@media (max-height: 500px) {
+			.music-player {
+				transform: translateY(calc(100vh - 500px));
+				z-index: 9999 !important;
+			}
+			
+			.music-player-fab-anchor {
+				transform: translateY(calc(100vh - 500px));
+				z-index: 9999 !important;
 			}
 		}
 

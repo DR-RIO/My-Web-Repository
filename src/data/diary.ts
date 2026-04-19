@@ -14,12 +14,25 @@ export interface DiaryItem {
 // 日记数据
 const diaryData: DiaryItem[] = [
 	{
+		id: 2,
+		content:
+		 	`“到底要多优秀，才能配得上她呢？”
+			
+	        　　谁说完美的恋情一定是两个人都很优秀的？ 也许只要有一个人足够优秀，另一个人就会觉得自己很幸运了吧。
+			 　　　　　　　　　　　　　　　　　“喜欢一个女孩子，就多给她一点偏爱吧。”
+			`,
+		date: "2026-04-20T00:00:00Z",
+		images: ["https://easyimage.isu183s.top/app/thumb.php?img=/i/2026/04/20/6u5mv.webp"],
+	},
+
+	{
 		id: 1,
 		content:
-			"第一篇日记: 喜欢开发，喜欢写代码，喜欢创造，获得正向反馈的同时也开阔了视野。",
-		date: "2026-04-09T10:30:00Z",
-		images: ["/images/diary/sakura.jpg", "/images/diary/1.jpg"],
+			"你知道吗？ 一句: 我一直等着你。 —— 对于我来说是多大的救赎吗？",
+		date: "2026-04-19T01:00:00Z",
+		images: ["https://easyimage.isu183s.top/i/2026/04/19/12ybk7v-0.jpg", "https://easyimage.isu183s.top/i/2026/04/19/12yao4y-0.jpg"],
 	},
+	
 
 ];
 

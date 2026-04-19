@@ -255,6 +255,7 @@ export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 			"https://image.isu183s.top/desktop/linglan2.webp",
 			"https://image.isu183s.top/desktop/mdx.webp",
 			"https://image.isu183s.top/desktop/big.jpg",
+			"https://image.isu183s.top/desktop/bg1.webp",
 		], // 桌面横幅图片
 		mobile: [
 			"https://image.isu183s.top/mobile/dbtamy.webp",
@@ -482,7 +483,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "哈喽！这里是公告栏哦！", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "[前端工程小资历]: 正在调试和优化开源项目，内测版本V1.2.0 --建议访问桌面端，网页样式和功能非常齐全。桌面端使用windows10以上的系统和最新浏览器有优秀体验,移动端使用夸克浏览器访问体验最佳!", // 公告内容
+	content: "[前端工程小资历]: 正在调试和优化开源项目，内测版本V1.2.0 --建议访问桌面端，桌面端网页样式和功能非常齐全(除了PC端的旧浏览器。可能连我的网页都打不开)。桌面端使用windows10以上的系统和最新浏览器有优秀体验,移动端使用夸克浏览器访问体验最佳!", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
@@ -497,7 +498,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	showFloatingPlayer: true, // 显示悬浮播放器 UI
 	floatingEntryMode: "fab", // 悬浮入口模式："default" 为独立悬浮播放器，"fab" 为集成到通用 FAB 组件
 	mode: "meting", // 音乐播放器模式，可选 "local" 或 "meting"
-	meting_api: "https://music.3e0.cn/?server=:server&type=:type&id=:id&r=:r", // Meting API 地址
+	meting_api: "https://music.3e0.cn/?server=:server&type=:type&id=:id&r=:", // Meting API 地址
 	id: "17845098657", // 歌单ID
 	server: "netease", // 音乐源服务器。有的meting的api源支持更多平台,一般来说,netease=网易云音乐, tencent=QQ音乐, kugou=酷狗音乐, xiami=虾米音乐, baidu=百度音乐
 	type: "playlist", // 播单类型

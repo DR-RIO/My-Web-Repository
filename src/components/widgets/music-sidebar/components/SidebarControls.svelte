@@ -65,15 +65,15 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.25rem;
+		gap: 0.5rem;
 		margin-top: 0.75rem;
 		padding-inline: 0.125rem;
 		flex-wrap: nowrap;
 	}
 
 	.icon-btn {
-		width: 2rem;
-		height: 2rem;
+		width: 2.5rem;
+		height: 2.5rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -81,7 +81,7 @@
 		transition:
 			color 150ms ease,
 			transform 150ms ease;
-		flex: 0 0 auto;
+		flex: 0 0 2.5rem;
 	}
 
 	.icon-btn:hover {
@@ -99,6 +99,7 @@
 		color: var(--primary);
 		transition: all 200ms ease;
 		flex-shrink: 0;
+		flex: 0 0 3rem;
 	}
 
 	.play-btn:hover {
@@ -134,32 +135,32 @@
 
 	@media (max-width: 520px) {
 		.controls-row {
-			gap: 0.15rem;
+			gap: 0.5rem;
 			padding-inline: 0;
 		}
 
 		.controls-row :global(.btn-plain) {
-			width: 2.25rem;
-			height: 2.25rem;
+			width: 3rem;
+			height: 3rem;
 			padding: 0;
 			border-radius: 0.6rem;
-			flex: 0 0 2.25rem;
+			flex: 0 0 3rem;
 		}
 
 		.controls-row :global(.btn-regular) {
-			width: 2.75rem;
-			height: 2.75rem;
-			flex: 0 0 2.75rem;
+			width: 3.5rem;
+			height: 3.5rem;
+			flex: 0 0 3.5rem;
 		}
 
 		.icon-btn {
-			width: 2.25rem;
-			height: 2.25rem;
-			flex: 0 0 2.25rem;
+			width: 3rem;
+			height: 3rem;
+			flex: 0 0 3rem;
 		}
 
 		.nav-btn :global(svg) {
-			font-size: 1.6rem;
+			font-size: 1.8rem;
 		}
 	}
 </style>

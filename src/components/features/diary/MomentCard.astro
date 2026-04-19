@@ -1,5 +1,5 @@
 ---
-import { formatRelativeTime } from '../../../utils/timeFormat';
+import { formatRelativeTime } from "../../../utils/timeFormat";
 
 interface Props {
 	moment: {
@@ -14,35 +14,62 @@ interface Props {
 }
 
 const { moment, index, minutesAgo, hoursAgo, daysAgo } = Astro.props;
-const relativeTime = formatRelativeTime(moment.date, minutesAgo, hoursAgo, daysAgo);
+const relativeTime = formatRelativeTime(
+	moment.date,
+	minutesAgo,
+	hoursAgo,
+	daysAgo,
+);
 ---
 
-<div class="moment-item card-base-daily p-4 md:p-6 lg:p-8 hover:shadow-lg transition-all" data-index={index}>
+<div
+	class="moment-item card-base-daily p-4 md:p-6 lg:p-8 hover:shadow-lg transition-all"
+	data-index={index}
+>
 	<div class="moment-content">
-		<p class="moment-text text-sm md:text-base lg:text-lg text-90 leading-relaxed mb-3 md:mb-4">{moment.content}</p>
+		<p
+			class="moment-text text-sm md:text-base lg:text-lg text-90 leading-relaxed mb-3 md:mb-4"
+		>
+			{moment.content}
+		</p>
 
-		{moment.images && moment.images.length > 0 && (
-			<div class="diary-images grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4">
-				{moment.images.map((image, imgIndex) => (
-					<div class="image-item relative rounded-md overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform">
-						<a href="javascript:void(0)" data-src={image} data-fancybox={`gallery-${index}-${imgIndex}`} class="block w-full h-full">
-							<img
-								src={image}
-								alt="diary moment image"
-								class="w-full h-full object-cover"
-								loading="lazy"
-							/>
-						</a>
-					</div>
-				))}
-			</div>
-		)}
+		{
+			moment.images && moment.images.length > 0 && (
+				<div class="diary-images grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4">
+					{moment.images.map((image, imgIndex) => (
+						<div class="image-item relative rounded-md overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform">
+							<a
+								href="javascript:void(0)"
+								data-src={image}
+								data-fancybox={`gallery-${index}-${imgIndex}`}
+								class="block w-full h-full"
+							>
+								<img
+									src={image}
+									alt="diary moment image"
+									class="w-full h-full object-cover"
+									loading="lazy"
+								/>
+							</a>
+						</div>
+					))}
+					{/* 当只有一张图片时，添加空元素来保持网格布局一致 */}
+					{moment.images.length === 1 && (
+						<div class="aspect-square" />
+					)}
+				</div>
+			)
+		}
 	</div>
 
-	<hr class="moment-divider border-t border-[var(--line-divider)] my-3 md:my-4" />
+	<hr
+		class="moment-divider border-t border-[var(--line-divider)] my-3 md:my-4"
+	/>
 
 	<div class="moment-footer flex justify-between items-center">
-		<div class="moment-time flex items-center gap-1.5 text-75 text-xs md:text-sm lg:text-base">
+		<div
+			class="moment-time flex items-center gap-1.5 text-75 text-xs md:text-sm lg:text-base"
+		>
 			<i class="time-icon text-xs md:text-sm">🕐</i>
 			<time datetime={moment.date}>{relativeTime}</time>
 		</div>
@@ -66,6 +93,27 @@ const relativeTime = formatRelativeTime(moment.date, minutesAgo, hoursAgo, daysA
 		transform: scale(1.05);
 	}
 
+	.moment-text {
+		white-space: pre-line;
+	}
+
+	@media (max-width: 768px) {
+		.card-base-daily {
+			padding: 2rem;
+		}
+
+		.diary-images {
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			max-width: 600px;
+			gap: 1rem;
+		}
+
+		.moment-text {
+			font-size: 1rem;
+			line-height: 1.2;
+		}
+	}
+
 	@media (min-width: 769px) and (max-width: 1280px) {
 		.card-base-daily {
 			padding: 1.5rem;
@@ -74,12 +122,12 @@ const relativeTime = formatRelativeTime(moment.date, minutesAgo, hoursAgo, daysA
 		.diary-images {
 			grid-template-columns: repeat(3, 1fr);
 			gap: 0.75rem;
-			max-width: 500px;
+			max-width: 650px;
 		}
 
 		.moment-text {
-			font-size: 1rem;
-			line-height: 1.7;
+			font-size: 0.88rem;
+			line-height: 1.2;
 		}
 
 		.moment-footer {
@@ -94,19 +142,47 @@ const relativeTime = formatRelativeTime(moment.date, minutesAgo, hoursAgo, daysA
 
 		.diary-images {
 			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-			max-width: 600px;
+			max-width: 580px;
 			gap: 1rem;
 		}
 
 		.moment-text {
-			font-size: 1.1rem;
-			line-height: 1.8;
+			font-size: 1.2rem;
+			line-height: 1.2;
+		}
+	}
+
+	@media (max-width: 1280px) {
+		.card-base-daily {
+			padding: 2rem;
+		}
+
+		.diary-images {
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			max-width: 500px;
+			gap: 1rem;
+		}
+
+		.moment-text {
+			font-size: 1rem;
+			line-height: 1.2;
 		}
 	}
 
 	@media (max-width: 480px) {
 		.card-base-daily {
 			border-radius: 8px;
+		}
+
+		.diary-images {
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			max-width: 500px;
+			gap: 1rem;
+		}
+
+		.moment-text {
+			font-size: 0.9rem;
+			line-height: 1.2;
 		}
 	}
 </style>
