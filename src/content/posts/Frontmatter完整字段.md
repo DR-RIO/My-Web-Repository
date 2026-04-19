@@ -6,7 +6,7 @@ tags: [Markdown, Frontmatter完整示例]                    # 文章的标签�
 category: 示例                                           # 文章的分类，用于组织内容
 draft: false                                             # 是否为草稿，true 表示草稿（不显示），false 表示已发布
 description: "Frontmatter 完整字段的详细示例和说明"       # 文章的简短描述，显示在列表页和搜索结果中
-image: "./cover.webp"   # 文章的封面图片路径
+image: "src/content/posts/guide/cover.webp"   # 文章的封面图片路径
                         # - 以 http/https 开头：使用网络图片
                         # - 以 / 开头：使用 public 目录中的图片
                         # - 无前缀：使用相对路径
