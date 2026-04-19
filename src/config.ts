@@ -130,11 +130,14 @@ export const siteConfig: SiteConfig = {
 				"https://image.isu183s.top/desktop/linglan1.webp",
 				"https://image.isu183s.top/desktop/linglan2.webp",
 				"https://image.isu183s.top/desktop/mdx.webp",
+				"https://image.isu183s.top/desktop/big.jpg",
 			], // 桌面横幅图片
 			mobile: [
+				"https://image.isu183s.top/mobile/dbtamy.webp",
 				"https://image.isu183s.top/mobile/ll.webp",
 				"https://image.isu183s.top/mobile/mmx.webp",
 				"https://image.isu183s.top/mobile/mmx2.webp",
+				"https://image.isu183s.top/mobile/mmxhh.webp",
 			], // 移动横幅图片
 		}, // 使用本地横幅图片
 
@@ -251,11 +254,14 @@ export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 			"https://image.isu183s.top/desktop/linglan1.webp",
 			"https://image.isu183s.top/desktop/linglan2.webp",
 			"https://image.isu183s.top/desktop/mdx.webp",
+			"https://image.isu183s.top/desktop/big.jpg",
 		], // 桌面横幅图片
 		mobile: [
+			"https://image.isu183s.top/mobile/dbtamy.webp",
 			"https://image.isu183s.top/mobile/ll.webp",
 			"https://image.isu183s.top/mobile/mmx.webp",
 			"https://image.isu183s.top/mobile/mmx2.webp",
+			"https://image.isu183s.top/mobile/mmxhh.webp",
 		], // 移动横幅图片
 	}, // 使用本地横幅图片
 	position: "center", // 壁纸位置，等同于 object-position

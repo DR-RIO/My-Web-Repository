@@ -1,22 +1,19 @@
 ---
-title: Frontmatter                                       # 文章的标题，将显示在页面顶部和列表中
-published: 2026-04-17                                    # 文章的发布日期，格式为 YYYY-MM-DD
-updated: 2026-04-17                                      # 文章的最后更新日期，格式为 YYYY-MM-DD
-tags: [Markdown, Frontmatter完整示例]                    # 文章的标签，用于分类和搜索
-category: 示例                                           # 文章的分类，用于组织内容
-draft: false                                             # 是否为草稿，true 表示草稿（不显示），false 表示已发布
-description: "Frontmatter 完整字段的详细示例和说明"       # 文章的简短描述，显示在列表页和搜索结果中
-image: "src/content/posts/guide/cover.webp"   # 文章的封面图片路径
-                        # - 以 http/https 开头：使用网络图片
-                        # - 以 / 开头：使用 public 目录中的图片
-                        # - 无前缀：使用相对路径
-pinned: true                                             # 是否将文章固定在列表顶部，true 表示置顶
-encrypted: false                                         # 是否加密文章，true 表示需要密码访问
-password: ""                                             # 加密文章的访问密码（仅在 encrypted: true 时有效）
-alias: ""                                                # 文章的自定义 URL 路径，访问地址为 /posts/文章别名/
-licenseName: ""                                          # 文章内容的许可证名称
-author: "人IO"                                           # 文章的作者
-sourceLink: ""                                           # 文章内容的来源或参考链接
+title: Frontmatter 
+published: 2026-04-17 
+updated: 2026-04-19 
+tags: [Markdown, Frontmatter完整示例] 
+category: 示例 
+draft: false 
+description: "Frontmatter 完整字段的详细示例和说明"       
+image: "./images/xly.webp"
+pinned: true                                            
+encrypted: false                                       
+password: ""                                            
+alias: ""                                               
+licenseName: ""                                        
+author: "人IO"                                          
+sourceLink: ""                                          
 ---
 
 # Frontmatter 完整字段示例

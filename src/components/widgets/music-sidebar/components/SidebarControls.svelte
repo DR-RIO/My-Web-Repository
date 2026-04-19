@@ -56,7 +56,7 @@
 		onclick={onTogglePlaylist}
 		aria-label="Playlist"
 	>
-		<Icon icon="material-symbols:queue-music-rounded" />
+		<Icon icon="material-symbols:queue-music-rounded" class="text-xl" />
 	</button>
 </div>
 
@@ -153,9 +153,9 @@
 		}
 
 		.icon-btn {
-			width: 1.9rem;
-			height: 1.9rem;
-			flex: 0 0 1.9rem;
+			width: 2.25rem;
+			height: 2.25rem;
+			flex: 0 0 2.25rem;
 		}
 
 		.nav-btn :global(svg) {

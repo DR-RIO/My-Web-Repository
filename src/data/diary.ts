@@ -11,15 +11,16 @@ export interface DiaryItem {
 	tags?: string[];
 }
 
-// 示例日记数据
+// 日记数据
 const diaryData: DiaryItem[] = [
 	{
 		id: 1,
 		content:
-			"测试日记内容: 记录今天的心情和发生的事情。感觉今天是个不错的一天，阳光明媚，心情也很好。",
+			"第一篇日记: 喜欢开发，喜欢写代码，喜欢创造，获得正向反馈的同时也开阔了视野。",
 		date: "2026-04-09T10:30:00Z",
 		images: ["/images/diary/sakura.jpg", "/images/diary/1.jpg"],
 	},
+
 ];
 
 // 获取日记统计数据
