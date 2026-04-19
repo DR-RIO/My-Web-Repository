@@ -16,8 +16,8 @@ const diaryData: DiaryItem[] = [
 	{
 		id: 1,
 		content:
-			"The falling speed of cherry blossoms is five centimeters per second!",
-		date: "2025-01-15T10:30:00Z",
+			"测试日记内容: 记录今天的心情和发生的事情。感觉今天是个不错的一天，阳光明媚，心情也很好。",
+		date: "2026-04-09T10:30:00Z",
 		images: ["/images/diary/sakura.jpg", "/images/diary/1.jpg"],
 	},
 ];
