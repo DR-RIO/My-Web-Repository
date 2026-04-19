@@ -49,7 +49,7 @@ export const DEFAULT_SONG: Song = {
 };
 
 export const DEFAULT_METING_API =
-	"https://music.3e0.cn/?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+	"https://music.isu183s.top/?server=:server&type=:type&id=:id&r=:r";
 export const DEFAULT_METING_ID = "17845098657";
 export const DEFAULT_METING_SERVER = "netease";
 export const DEFAULT_METING_TYPE = "playlist";

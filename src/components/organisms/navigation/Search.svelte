@@ -133,19 +133,14 @@ onMount(() => {
 	const initializeSearch = () => {
 		initialized = true;
 		pagefindLoaded =
-			typeof window !== "undefined" &&
-			!!window.pagefind &&
-			typeof window.pagefind.search === "function";
-		console.log("Pagefind status on init:", pagefindLoaded);
-	};
+		typeof window !== "undefined" &&
+		!!window.pagefind &&
+		typeof window.pagefind.search === "function";
+};
 	if (import.meta.env.DEV) {
-		console.log(
-			"Pagefind is not available in development mode. Using mock data.",
-		);
 		initializeSearch();
 	} else {
 		document.addEventListener("pagefindready", () => {
-			console.log("Pagefind ready event received.");
 			initializeSearch();
 		});
 		document.addEventListener("pagefindloaderror", () => {

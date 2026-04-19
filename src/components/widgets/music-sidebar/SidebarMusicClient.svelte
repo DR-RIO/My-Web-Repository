@@ -7,6 +7,7 @@
 	import type { Song } from "../music-player/types";
 	import SidebarControls from "./components/SidebarControls.svelte";
 	import SidebarCover from "./components/SidebarCover.svelte";
+	import SidebarLyrics from "./components/SidebarLyrics.svelte";
 	import SidebarPlaylist from "./components/SidebarPlaylist.svelte";
 	import SidebarProgress from "./components/SidebarProgress.svelte";
 	import SidebarTrackInfo from "./components/SidebarTrackInfo.svelte";
@@ -23,10 +24,7 @@
 
 	onMount(() => {
 		// 初始化音乐播放器
-		console.log('SidebarMusicClient onMount called, initializing music player');
-		musicPlayerStore.initialize().then(() => {
-			console.log('Music player initialized successfully from SidebarMusicClient');
-		}).catch((error) => {
+		musicPlayerStore.initialize().catch((error) => {
 			console.error('Failed to initialize music player from SidebarMusicClient:', error);
 		});
 		// 监听状态更新
@@ -96,6 +94,11 @@
 			onSetVolume={setVolume}
 		/>
 	</div>
+
+	<SidebarLyrics
+		currentSong={state.currentSong}
+		currentTime={state.currentTime}
+	/>
 
 	<SidebarProgress
 		currentTime={state.currentTime}

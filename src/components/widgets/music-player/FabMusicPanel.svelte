@@ -6,6 +6,7 @@
 
 	import SidebarControls from "../music-sidebar/components/SidebarControls.svelte";
 	import SidebarCover from "../music-sidebar/components/SidebarCover.svelte";
+	import SidebarLyrics from "../music-sidebar/components/SidebarLyrics.svelte";
 	import SidebarPlaylist from "../music-sidebar/components/SidebarPlaylist.svelte";
 	import SidebarProgress from "../music-sidebar/components/SidebarProgress.svelte";
 	import SidebarTrackInfo from "../music-sidebar/components/SidebarTrackInfo.svelte";
@@ -89,6 +90,11 @@
 			onSetVolume={setVolume}
 		/>
 	</div>
+
+	<SidebarLyrics
+		currentSong={state.currentSong}
+		currentTime={state.currentTime}
+	/>
 
 	<SidebarProgress
 		currentTime={state.currentTime}

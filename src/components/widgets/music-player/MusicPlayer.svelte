@@ -19,11 +19,6 @@
 	const useFabEntry = floatingEntryMode === "fab";
 	const shouldRenderFloatingUi =
 		showFloatingPlayer && musicPlayerConfig.enable;
-	console.log("MusicPlayer component initialized:", {
-		showFloatingPlayer,
-		musicPlayerConfigEnable: musicPlayerConfig.enable,
-		shouldRenderFloatingUi,
-	});
 	let unsubscribe: (() => void) | undefined;
 
 	function togglePlay() {
@@ -190,14 +185,11 @@
 	}
 
 	onMount(() => {
-		console.log("MusicPlayer onMount called");
 		// 无论是否显示 UI，都初始化音乐播放器
-		console.log("Calling musicPlayerStore.initialize()");
 		// 立即初始化音乐播放器
 		musicPlayerStore
 			.initialize()
 			.then(() => {
-				console.log("Music player initialized successfully");
 			})
 			.catch((error) => {
 				console.error("Failed to initialize music player:", error);
@@ -205,7 +197,6 @@
 		// 订阅状态更新
 		unsubscribe = musicPlayerStore.subscribe((nextState) => {
 			state = nextState;
-			console.log("Music player state updated:", nextState);
 		});
 
 		// 监听返回顶部按钮的可见性，动态调整音乐播放器弹窗的偏移量

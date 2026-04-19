@@ -414,6 +414,13 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
 
 		const isHidden = !panel.classList.contains("show");
 		if (isHidden) {
+			// 打开目录时，关闭音乐播放器
+			if (window.musicPlayerStore && window.musicPlayerStore.getState && window.musicPlayerStore.toggleExpanded) {
+				const state = window.musicPlayerStore.getState();
+				if (state && state.isExpanded) {
+					window.musicPlayerStore.toggleExpanded();
+				}
+			}
 			panel.classList.add("show");
 			btn?.classList.add("active");
 		} else {

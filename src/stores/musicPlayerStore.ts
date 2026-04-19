@@ -103,37 +103,25 @@ class MusicPlayerStore {
 	}
 
 	async initialize(): Promise<void> {
-		console.log('=== Initializing music player...');
 		if (typeof window === "undefined") {
-			console.log('=== Not in browser environment, skipping initialization');
 			return;
 		}
 		if (this.isInitialized) {
-			console.log('=== Music player already initialized');
 			// 即使已经初始化，也尝试重新加载播放列表
-			console.log('=== Reloading playlist...');
 			await this.loadPlaylist();
 			return;
 		}
-		console.log('=== Music player not initialized, starting initialization...');
 		this.isInitialized = true;
 
 		if (!musicPlayerConfig.enable) {
-			console.log('=== Music player disabled in config');
 			return;
 		}
 
-		console.log('=== Creating audio element...');
 		this.audio = new Audio();
-		console.log('=== Setting up audio listeners...');
 		this.setupAudioListeners();
-		console.log('=== Loading volume from storage...');
 		this.loadVolumeFromStorage();
-		console.log('=== Registering interaction handler...');
 		this.registerInteractionHandler();
-		console.log('=== Loading playlist...');
 		await this.loadPlaylist();
-		console.log('=== Music player initialization complete');
 	}
 
 	private setupAudioListeners(): void {
@@ -275,19 +263,16 @@ class MusicPlayerStore {
 	}
 
 	private async loadPlaylist(): Promise<void> {
-		console.log('Loading playlist...');
 		const mode = musicPlayerConfig.mode ?? "meting";
 		const meting_api =
 			musicPlayerConfig.meting_api ??
-			"https://music.3e0.cn/?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+			"https://music.isu183s.top/?server=:server&type=:type&id=:id&r=:r";
 		const meting_id = musicPlayerConfig.id ?? "17845098657";
 		const meting_server = musicPlayerConfig.server ?? "netease";
 		const meting_type = musicPlayerConfig.type ?? "playlist";
-		console.log('Playlist config:', { mode, meting_api, meting_id, meting_server, meting_type });
 
 		if (mode === "meting") {
 			const meting_auth = musicPlayerConfig.auth ?? "";
-			console.log('Fetching meting playlist...');
 			await this.fetchMetingPlaylist(
 				meting_api,
 				meting_server,
@@ -296,7 +281,6 @@ class MusicPlayerStore {
 				meting_auth,
 			);
 		} else {
-			console.log('Loading local playlist...');
 			this.loadLocalPlaylist();
 		}
 	}
@@ -383,30 +367,39 @@ class MusicPlayerStore {
 	}
 
 	private async loadSong(song: Song, autoPlay = false): Promise<void> {
-		console.log('loadSong called with song:', song);
 		if (!song) {
-			console.log('Song is null or undefined');
 			return;
 		}
 		if (song.url !== this.state.currentSong.url) {
-			console.log('Loading new song:', song.title);
-			this.state.currentSong = { ...song };
+			// 复制歌曲信息
+			const newSong = { ...song };
+			
+			// 如果歌词是URL，尝试获取歌词内容
+			if (newSong.lyric && (newSong.lyric.startsWith('http://') || newSong.lyric.startsWith('https://'))) {
+				try {
+					const response = await fetch(newSong.lyric);
+					if (response.ok) {
+						newSong.lyric = await response.text();
+					}
+				} catch (error) {
+					console.error('Failed to fetch lyrics:', error);
+					// 如果获取失败，保持原URL
+				}
+			}
+			
+			this.state.currentSong = newSong;
 			if (song.url) {
 				this.state.isLoading = true;
 			} else {
 				this.state.isLoading = false;
 			}
-		} else {
-			console.log('Song is already loaded:', song.title);
 		}
 		this.state.willAutoPlay = autoPlay;
 		this.state.isPlaying = false;  // 重置播放状态
 		if (this.audio) {
-			console.log('Setting audio src to:', getAssetPath(song.url));
 			this.audio.src = getAssetPath(song.url);
 			this.audio.load();
 		} else {
-			console.log('Audio element is null');
 		}
 		this.broadcastState();
 	}
@@ -631,9 +624,13 @@ class MusicPlayerStore {
 
 export const musicPlayerStore = new MusicPlayerStore();
 
+// 将音乐播放器存储暴露到全局，以便其他脚本可以访问
+if (typeof window !== "undefined") {
+	(window as any).musicPlayerStore = musicPlayerStore;
+}
+
 // 导出一个方法来确保音乐播放器被初始化
 export async function ensureMusicPlayerInitialized(): Promise<void> {
-	console.log('Ensuring music player is initialized...');
 	await musicPlayerStore.initialize();
-	console.log('Music player initialization ensured');
+	
 }

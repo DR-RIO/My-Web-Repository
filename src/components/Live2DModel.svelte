@@ -224,7 +224,6 @@
   }
 
   onMount(() => {
-    console.log('Live2DModel 组件挂载');
     window.PIXI = PIXI;
     
     // 强制不最小化，以便测试
@@ -240,7 +239,6 @@
       
       isLoading = true;
       try {
-        console.log('创建 PIXI 应用');
         app = new PIXI.Application({
           view: canvasElement,
           width: canvasWidth,
@@ -251,7 +249,6 @@
           resolution: window.devicePixelRatio,
           autoDensity: true,
         });
-        console.log('PIXI 应用创建成功');
 
         // 定义鼠标移动处理函数
         const mouseMoveHandler = function(event) {
@@ -271,17 +268,14 @@
             model.setParamValue('ParamEyeBallY', -normalizedY * 1.5);
             model.setParamValue('ParamEyeBallForm', 1); // 激活眼珠跟随
           } catch (error) {
-            console.error('鼠标跟踪失败:', error);
           }
         };
 
         // 使用节流函数限制鼠标移动事件的执行频率
         handleMouseMove = throttle(mouseMoveHandler, 50); // 每50毫秒执行一次
 
-        console.log('开始加载模型:', modelPath);
         model = await Live2DModel.from(modelPath);
         
-        console.log('模型加载成功，开始设置');
         model.anchor.set(0.5, 0.5);
         model.x = canvasWidth / 2;
         model.y = canvasHeight / 2;
@@ -309,10 +303,10 @@
       }
     };
     
-    // 延迟 1 秒加载，让页面先渲染完成
+    // 延迟 0.5 秒加载，让页面先渲染完成
     const loadTimer = setTimeout(() => {
       loadLive2D();
-    }, 1000);
+    }, 500);
     
     return () => {
       clearTimeout(loadTimer);

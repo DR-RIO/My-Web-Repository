@@ -4,11 +4,12 @@
 	import NextButton from "../../music-player/atoms/NextButton.svelte";
 	import PlayButton from "../../music-player/atoms/PlayButton.svelte";
 	import PrevButton from "../../music-player/atoms/PrevButton.svelte";
+	import type { RepeatMode } from "../../music-player/types";
 
 	interface Props {
 		isPlaying: boolean;
 		isShuffled: boolean;
-		repeatMode: number;
+		repeatMode: RepeatMode;
 		onToggleMode?: () => void;
 		onPrev: () => void;
 		onNext: () => void;
