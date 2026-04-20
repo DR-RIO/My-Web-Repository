@@ -482,12 +482,12 @@ export const shareConfig: ShareConfig = {
 };
 
 export const announcementConfig: AnnouncementConfig = {
-	title: "哈喽！这里是公告栏哦！", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "[前端工程小资历]: 正在调试和优化开源项目，内测版本V1.2.0 --建议访问桌面端，桌面端网页样式和功能非常齐全(除了PC端的旧浏览器。可能连我的网页都打不开)。桌面端使用windows10以上的系统和最新浏览器有优秀体验,移动端使用夸克浏览器访问体验最佳!", // 公告内容
+	title: "哈喽~ 我是公告栏！", // 公告标题，填空使用i18n字符串Key.announcement
+	content: "[人IO]: 正在调试和优化开源项目··· *内测版本V1.2.0  ---建议访问桌面端，桌面端网页样式和功能非常齐全(如果使用PC端的旧浏览器。可能连我的网页都打不开)。桌面端使用Windows10以上的系统和最新浏览器有优秀体验,移动端使用夸克浏览器访问体验最佳! 遇到奇奇怪怪的问题请直接刷新~", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
-		text: "让我看看！", // 链接文本
+		text: "开始品鉴~", // 链接文本
 		url: "/about/", // 链接 URL
 		external: false, // 内部链接
 	},

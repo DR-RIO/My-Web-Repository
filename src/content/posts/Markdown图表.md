@@ -1,5 +1,5 @@
 ---
-title: Markdown Mermaid图表
+title: Markdown Mermaid 图表
 published: 2026-03-21
 updated: 2026-04-07
 pinned: false
