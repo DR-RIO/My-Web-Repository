@@ -19,6 +19,57 @@
 			"tags": ["风景", "自然"],
 			"width": 800,
 			"height": 600
+		},
+		{
+			"id": "external-2",
+			"src": "https://image.isu183s.top/mobile/ll.webp",
+			"alt": "随机图片 2",
+			"title": "城市夜景",
+			"description": "这是一张来自外链的城市夜景图片",
+			"tags": ["城市", "夜景"],
+			"width": 800,
+			"height": 600
+		},
+		{
+			"id": "external-3",
+			"src": "https://image.isu183s.top/desktop/amy.webp",
+			"alt": "随机图片 3",
+			"title": "可爱的动物",
+			"description": "这是一张来自外链的可爱动物图片",
+			"tags": ["动物", "可爱"],
+			"width": 800,
+			"height": 600
+		},
+		{
+			"id": "external-4",
+			"src": "https://image.isu183s.top/desktop/bg1.webp",
+			"alt": "随机图片 4",
+			"title": "抽象艺术",
+			"description": "这是一张来自外链的抽象艺术图片",
+			"tags": ["抽象", "艺术"],
+			"width": 800,
+			"height": 600
+		},
+		{
+			"id": "external-5",
+			"src": "https://image.isu183s.top/desktop/linglan1.webp",
+			"alt": "随机图片 5",
+			"title": "科技感背景",
+			"description": "这是一张来自外链的科技感背景图片",
+			"tags": ["科技", "背景"],
+			"width": 800,
+			"height": 600
+		},
+		{
+			"id": "external-6",
+			"src": "https://image.isu183s.top/desktop/linglan2.webp",
+			"alt": "随机图片 6",
+			"title": "梦幻色彩",
+			"description": "这是一张来自外链的梦幻色彩图片",
+			"tags": ["梦幻", "色彩"],
+			"width": 800,
+			"height": 600
 		}
+		
 	]
 }

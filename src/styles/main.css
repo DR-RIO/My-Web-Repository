@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* 配置要扫描的源文件，排除 Live2D 组件 */
+@source "../**/*.{astro,html,js,jsx,md,mdx,ts,tsx,vue,mjs}";
+@source "../components/**/*.svelte";
+/*! 排除 Live2D 组件文件夹 */
+@source "!../components/Live2D/**";
+
 /* 导入旧版浏览器兼容性样式 - 必须在其他样式之前导入 */
 @import "./legacy-browser-compat.css";
 
