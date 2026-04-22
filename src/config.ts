@@ -458,7 +458,7 @@ export const commentConfig: CommentConfig = {
 	system: "twikoo", // 已选对 twikoo，不用改
 	twikoo: {
 		// 核心修改：换成你的 Netlify 域名
-		envId: "https://twikoo-server.netlify.app/.netlify/functions/twikoo", 
+		envId: "https://twikoo.isu183s.top/.netlify/functions/twikoo", 
 		lang: SITE_LANG, // 保持和网站语言一致，不用改
 	},
 	giscus: { // giscus 配置不用动，因为 system 选的是 twikoo
