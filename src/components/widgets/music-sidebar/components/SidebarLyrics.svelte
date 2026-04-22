@@ -10,165 +10,182 @@
 
 	interface ParsedLyric {
 		time: number;
-		text: string;
+		original: string;
+		translation: string;
 	}
 
-	function parseLyric(lyricString: string): ParsedLyric[] {
-		if (!lyricString) {
-			return [];
+	function splitLyric(text: string) {
+		const match = text.match(/^(.*?)[（(](.*?)[）)]$/);
+		if (match) {
+			return {
+				original: match[1].trim(),
+				translation: match[2].trim()
+			};
 		}
-
-		const lines = lyricString.split("\n");
-		const parsed: ParsedLyric[] = [];
-
-		const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/;
-
-		for (const line of lines) {
-			const match = line.match(timeRegex);
-			if (match) {
-				const minutes = parseInt(match[1], 10);
-				const seconds = parseInt(match[2], 10);
-				const milliseconds = match[3]
-					? parseInt(match[3].padEnd(3, "0").slice(0, 3), 10)
-					: 0;
-				const time = minutes * 60 + seconds + milliseconds / 1000;
-				// 提取时间戳后的歌词文本，移除时间戳并修剪空白
-				const text = line.replace(timeRegex, "").trim();
-
-				// 跳过空行和只有标签的行
-				if (text && !text.includes("作词") && !text.includes("作曲") && !text.includes("编曲")) {
-					parsed.push({ time, text });
-				}
-			}
-		}
-
-		parsed.sort((a, b) => a.time - b.time);
-		return parsed;
+		return { original: text, translation: "" };
 	}
 
-	function getCurrentLyricIndex(
-		lyrics: ParsedLyric[],
-		currentTime: number,
-	): number {
-		if (!lyrics || lyrics.length === 0) {
-			return -1;
-		}
+	function parseLyric(str: string): ParsedLyric[] {
+		if (!str) return [];
 
-		let index = -1;
-		for (let i = 0; i < lyrics.length; i++) {
-			if (lyrics[i].time <= currentTime) {
-				index = i;
-			} else {
-				break;
-			}
+		const reg = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/;
+
+		return str.split("\n")
+			.map(line => {
+				const m = line.match(reg);
+				if (!m) return null;
+
+				const t =
+					+ m[1] * 60 +
+					+ m[2] +
+					(m[3] ? +m[3].padEnd(3, "0") / 1000 : 0);
+
+				const text = line.replace(reg, "").trim();
+				if (!text) return null;
+
+				const { original, translation } = splitLyric(text);
+
+				return { time: t, original, translation };
+			})
+			.filter(Boolean)
+			.sort((a, b) => a!.time - b!.time) as ParsedLyric[];
+	}
+
+	function getIndex(list: ParsedLyric[], t: number) {
+		let i = -1;
+		for (let j = 0; j < list.length; j++) {
+			if (list[j].time <= t) i = j;
+			else break;
 		}
-		return index;
+		return i;
 	}
 
 	const lyrics = $derived(parseLyric(currentSong.lyric ?? ""));
-	const currentLyricIndex = $derived(getCurrentLyricIndex(lyrics, currentTime));
-	const currentLyricText = $derived(
-		currentLyricIndex >= 0 ? lyrics[currentLyricIndex]?.text ?? "" : "",
-	);
-	const nextLyricText = $derived(
-		currentLyricIndex + 1 < lyrics.length
-			? lyrics[currentLyricIndex + 1]?.text ?? ""
-			: "",
-	);
+	const index = $derived(getIndex(lyrics, currentTime));
 
-	const transitionDuration = $derived(() => {
-		if (currentLyricIndex < 0 || lyrics.length === 0) {
-			return "0ms";
-		}
+	const prev = $derived(index > 0 ? lyrics[index - 1] : null);
+	const current = $derived(index >= 0 ? lyrics[index] : null);
+	const next = $derived(index + 1 < lyrics.length ? lyrics[index + 1] : null);
+
+	// ⭐ 统一进度（原文+翻译共用）
+	const progress = $derived(() => {
+		if (index < 0) return 0;
+
+		const currentTimeVal = lyrics[index].time;
 		const nextTime =
-			currentLyricIndex + 1 < lyrics.length
-				? lyrics[currentLyricIndex + 1].time
-				: lyrics[currentLyricIndex].time + 5;
-		const currentTimeVal =
-			currentLyricIndex >= 0 ? lyrics[currentLyricIndex].time : 0;
-		const diff = nextTime - currentTimeVal;
-		return `${Math.min(Math.max(diff * 1000, 300), 800)}ms`;
+			index + 1 < lyrics.length
+				? lyrics[index + 1].time
+				: currentTimeVal + 5;
+
+		const p = (currentTime - currentTimeVal) / (nextTime - currentTimeVal);
+
+		return Math.min(Math.max(p, 0), 1);
 	});
 </script>
 
-{#if lyrics.length > 0}
-	<div class="sidebar-lyrics-wrapper">
-		<div class="sidebar-lyrics-container">
-			{#if currentLyricText}
+{#if lyrics.length}
+<div class="lyrics">
+	{#key current?.time}
+		<div class="group">
+			<div class="line prev">{prev?.original}</div>
+
+			<div class="current">
+				<!-- ⭐ 原文 -->
 				<div
-					class="lyric-current"
-					style={`transition: all ${transitionDuration()} ease-out;`}
+					class="origin"
+					style={`--p:${progress() * 100}%`}
 				>
-					{currentLyricText}
+					{current?.original}
 				</div>
-			{/if}
-			{#if nextLyricText}
-				<div class="lyric-next">
-					{nextLyricText}
-				</div>
-			{/if}
-			{#if !currentLyricText && !nextLyricText}
-				<div class="lyric-empty">
-					等待歌词...
-				</div>
-			{/if}
+
+				<!-- ⭐ 翻译（同步高亮） -->
+				{#if current?.translation}
+					<div
+						class="trans"
+						style={`--p:${progress() * 100}%`}
+					>
+						{current.translation}
+					</div>
+				{/if}
+			</div>
+
+			<div class="line next">{next?.original}</div>
 		</div>
-	</div>
+	{/key}
+</div>
 {/if}
 
 <style>
-	.sidebar-lyrics-wrapper {
-		margin-bottom: 0.1rem;
-		padding: 0.25rem 0;
-		overflow: hidden;
-	}
+.lyrics {
+	min-height: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
-	.sidebar-lyrics-container {
-		display: flex;
-		flex-direction: column;
-		min-height: 2.5rem;
-		justify-content: center;
-	}
+/* 动画组 */
+.group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
 
-	.lyric-current {
-		font-size: 0.85rem;
-		font-weight: 600;
-		color: var(--primary);
-		text-align: left;
-		line-height: 1.3;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		transition: opacity 0.3s ease;
-	}
+	animation: slideUp 0.4s ease;
+}
 
-	.lyric-next {
-		font-size: 0.72rem;
-		color: var(--content-meta);
-		text-align: left;
-		line-height: 1.2;
-		opacity: 0.7;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		margin-top: 0.15rem;
-	}
+.line {
+	font-size: 10px;
+	opacity: 0.25;
 
-	.lyric-empty {
-		font-size: 0.7rem;
-		color: var(--content-meta);
-		text-align: left;
-		opacity: 0.5;
-		font-style: italic;
-	}
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 
-	@media (max-width: 520px) {
-		.lyric-current {
-			font-size: 1rem;
-		}
+/* 当前 */
+.current {
+	text-align: center;
+}
 
-		.lyric-next {
-			font-size: 0.75rem;
-		}
+/* ⭐ 原文渐变 */
+.origin {
+	font-size: 13px;
+	font-weight: 600;
+
+	background: linear-gradient(
+		to right,
+		var(--primary) var(--p),
+		#999 var(--p)
+	);
+
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+/* ⭐ 翻译渐变（颜色更淡一点） */
+.trans {
+	font-size: 11px;
+	font-weight: 600;
+
+	background: linear-gradient(
+		to right,
+		var(--primary) var(--p),
+		#aaa var(--p)
+	);
+
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+/* 动画 */
+@keyframes slideUp {
+	from {
+		transform: translateY(20px);
+		opacity: 0;
 	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
 </style>

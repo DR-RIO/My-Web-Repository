@@ -80,7 +80,7 @@
         if (isMinimized && !isMobile && !isRestoring) {
           isAutoHidden = true;
         }
-      }, 3000);
+      },800);
     }
   }
 
