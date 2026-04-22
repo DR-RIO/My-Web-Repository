@@ -447,11 +447,22 @@
 		class="fixed inset-0 z-[9999] flex items-center justify-center p-4 transition-opacity"
 		style="background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);"
 		on:click={closeModal}
+		on:keydown={(e) => {
+			if (e.key === 'Escape') {
+				closeModal();
+			}
+		}}
+		role="dialog"
+		aria-modal="true"
+		tabindex="-1"
+		aria-label="Share modal"
 	>
 		<div
 			class="rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto flex flex-col shadow-2xl transform transition-all"
 			style="background-color: var(--float-panel-bg);"
 			on:click|stopPropagation
+			role="document"
+			tabindex="0"
 		>
 			<div
 				class="p-6 flex justify-center min-h-[200px] items-center"

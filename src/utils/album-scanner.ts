@@ -68,14 +68,26 @@ async function processAlbumFolder(
 		cover = info.cover;
 		photos = processExternalPhotos(info.photos || [], folderName);
 	} else {
-		// 本地模式：检查本地文件
-		const coverPath = path.join(folderPath, "cover.jpg");
-		if (!fs.existsSync(coverPath)) {
-			console.warn(`相册 ${folderName} 缺少 cover.jpg 文件`);
+		// 本地模式：检查本地文件，支持多种封面格式
+		const coverFormats = ["cover.jpg", "cover.jpeg", "cover.png", "cover.webp", "cover.avif"];
+		let foundCover: string | null = null;
+		
+		for (const format of coverFormats) {
+			const coverPath = path.join(folderPath, format);
+			if (fs.existsSync(coverPath)) {
+				foundCover = format;
+				break;
+			}
+		}
+		
+		if (!foundCover) {
+			console.warn(`相册 ${folderName} 缺少封面文件，支持的格式: ${coverFormats.join(", ")}`);
 			return null;
 		}
-
-		cover = `/images/albums/${folderName}/cover.jpg`;
+		
+		cover = `/images/albums/${folderName}/${foundCover}`;
+		console.log(`✅ 相册 ${folderName} 使用封面: ${foundCover}`);
+		
 		photos = scanPhotos(folderPath, folderName);
 	}
 
@@ -86,7 +98,7 @@ async function processAlbumFolder(
 	}
 
 	// 构建相册对象
-	return {
+	const album: AlbumGroup = {
 		id: folderName,
 		title: info.title || folderName,
 		description: info.description || "",
@@ -98,29 +110,40 @@ async function processAlbumFolder(
 		columns: info.columns || 3,
 		photos,
 	};
+	
+	console.log(`📸 相册 ${folderName} 加载成功:`, {
+		title: album.title,
+		cover: album.cover,
+		photoCount: album.photos.length
+	});
+	
+	return album;
 }
 
 function scanPhotos(folderPath: string, albumId: string): Photo[] {
 	const photos: Photo[] = [];
 	const files = fs.readdirSync(folderPath);
 
-	// 过滤出图片文件
+	// 过滤出图片文件（排除封面文件）
 	const imageFiles = files.filter((file) => {
 		const ext = path.extname(file).toLowerCase();
-		return (
-			[
-				".jpg",
-				".jpeg",
-				".png",
-				".gif",
-				".webp",
-				".svg",
-				".avif",
-				".bmp",
-				".tiff",
-				".tif",
-			].includes(ext) && file !== "cover.jpg"
-		);
+		const isImage = [
+			".jpg",
+			".jpeg",
+			".png",
+			".gif",
+			".webp",
+			".svg",
+			".avif",
+			".bmp",
+			".tiff",
+			".tif",
+		].includes(ext);
+		
+		// 排除所有可能的封面文件
+		const isCover = file.startsWith("cover.");
+		
+		return isImage && !isCover;
 	});
 
 	// 处理每张照片
@@ -170,9 +193,6 @@ function processExternalPhotos(
 			location: photo.location,
 			width: photo.width,
 			height: photo.height,
-			// camera: photo.camera,
-			// lens: photo.lens,
-			// settings: photo.settings,
 		});
 	});
 
@@ -181,16 +201,17 @@ function processExternalPhotos(
 
 function parseFileName(fileName: string): { baseName: string; tags: string[] } {
 	// 匹配文件名中的标签，格式为：文件名_标签1_标签2.扩展名
-	const parts = path.basename(fileName, path.extname(fileName)).split("_");
+	const ext = path.extname(fileName);
+	const nameWithoutExt = path.basename(fileName, ext);
+	const parts = nameWithoutExt.split("_");
 
 	if (parts.length > 1) {
-		// 第一部分作为基本名称，其余部分作为标签
+		// 最后两部分作为标签，其余部分作为基本名称
 		const baseName = parts.slice(0, -2).join("_");
 		const tags = parts.slice(-2);
 		return { baseName, tags };
 	}
 
 	// 如果没有标签，返回不带扩展名的文件名
-	const baseName = path.basename(fileName, path.extname(fileName));
-	return { baseName, tags: [] };
+	return { baseName: nameWithoutExt, tags: [] };
 }

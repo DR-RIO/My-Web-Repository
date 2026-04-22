@@ -40,6 +40,13 @@
 	onclick={handleBackdropClick}
 	role="dialog"
 	aria-label="Date selection panel"
+	tabindex="-1"
+	aria-modal="true"
+	onkeydown={(e) => {
+		if (e.key === 'Escape') {
+			onClose();
+		}
+	}}
 >
 	{#if currentView === "month"}
 		<MonthPicker

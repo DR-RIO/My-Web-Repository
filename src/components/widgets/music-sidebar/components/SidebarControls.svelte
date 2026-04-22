@@ -88,32 +88,8 @@
 		color: var(--primary);
 	}
 
-	.play-btn {
-		width: 3rem;
-		height: 3rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 9999px;
-		background: var(--btn-regular-bg);
-		color: var(--primary);
-		transition: all 200ms ease;
-		flex-shrink: 0;
-		flex: 0 0 3rem;
-	}
-
-	.play-btn:hover {
-		background: var(--btn-regular-bg-hover);
-		transform: scale(1.03);
-	}
-
-	.play-btn:active,
 	.icon-btn:active {
 		transform: scale(0.96);
-	}
-
-	.play-icon {
-		font-size: 2rem;
 	}
 
 	.mode-btn,
@@ -123,10 +99,6 @@
 
 	.active-mode {
 		color: var(--primary);
-	}
-
-	.nav-btn :global(svg) {
-		font-size: 2rem;
 	}
 
 	.controls-row :global(button) {
@@ -157,10 +129,6 @@
 			width: 3rem;
 			height: 3rem;
 			flex: 0 0 3rem;
-		}
-
-		.nav-btn :global(svg) {
-			font-size: 1.8rem;
 		}
 	}
 </style>
