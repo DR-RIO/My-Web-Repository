@@ -22,10 +22,10 @@ export const friendsData: FriendItem[] = [
 	},
 	{
 		id: 2,
-		title: "Mizuki Docs",
-		imgurl: "http://q.qlogo.cn/headimg_dl?dst_uin=3231515355&spec=640&img_type=jpg",
-		desc: "Mizuki User Manual",
-		siteurl: "https://docs.mizuki.mysqil.com",
+		title: "Cloudflare Pages",
+		imgurl: "https://easyimage.isu183s.top/i/2026/04/25/015929.png",
+		desc: "全球分布式 JAMstack 平台",
+		siteurl: "https://docs.cloudflare.com/pages",
 		tags: ["Docs"],
 	},
 	{

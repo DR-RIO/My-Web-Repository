@@ -6,6 +6,7 @@ interface Props {
 		content: string;
 		date: string;
 		images?: string[];
+		pinned?: boolean;
 	};
 	index: number;
 	minutesAgo: string;
@@ -14,12 +15,16 @@ interface Props {
 }
 
 const { moment, index, minutesAgo, hoursAgo, daysAgo } = Astro.props;
+
 const relativeTime = formatRelativeTime(
 	moment.date,
 	minutesAgo,
 	hoursAgo,
 	daysAgo,
 );
+
+// ✅ 过滤空图片
+const validImages = moment.images?.filter(Boolean) || [];
 ---
 
 <div
@@ -34,9 +39,9 @@ const relativeTime = formatRelativeTime(
 		</p>
 
 		{
-			moment.images && moment.images.length > 0 && (
+			validImages.length > 0 && (
 				<div class="diary-images grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4">
-					{moment.images.map((image, imgIndex) => (
+					{validImages.map((image, imgIndex) => (
 						<div class="image-item relative rounded-md overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform">
 							<a
 								href="javascript:void(0)"
@@ -53,10 +58,8 @@ const relativeTime = formatRelativeTime(
 							</a>
 						</div>
 					))}
-					{/* 当只有一张图片时，添加空元素来保持网格布局一致 */}
-					{moment.images.length === 1 && (
-						<div class="aspect-square" />
-					)}
+
+					{validImages.length === 1 && <div class="aspect-square" />}
 				</div>
 			)
 		}
@@ -66,6 +69,7 @@ const relativeTime = formatRelativeTime(
 		class="moment-divider border-t border-[var(--line-divider)] my-3 md:my-4"
 	/>
 
+	<!-- ✅ footer：时间 + 置顶标识 -->
 	<div class="moment-footer flex justify-between items-center">
 		<div
 			class="moment-time flex items-center gap-1.5 text-75 text-xs md:text-sm lg:text-base"
@@ -73,6 +77,8 @@ const relativeTime = formatRelativeTime(
 			<i class="time-icon text-xs md:text-sm">🕐</i>
 			<time datetime={moment.date}>{relativeTime}</time>
 		</div>
+
+		{moment.pinned && <div class="pin-inline">📌 置顶</div>}
 	</div>
 </div>
 
@@ -83,6 +89,26 @@ const relativeTime = formatRelativeTime(
 		background: var(--card-bg);
 		border: 1px solid var(--line-divider);
 		transition: all 0.3s ease;
+	}
+
+	/* ⭐ 置顶标识（右侧） */
+	.pin-inline {
+		font-size: 12px;
+		color: #f59e0b;
+		font-weight: 600;
+
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		background: rgba(245, 158, 11, 0.1);
+		padding: 2px 8px;
+		border-radius: 999px;
+	}
+
+	/* ⭐ 可选：让置顶卡片微高亮 */
+	.card-base-daily:has(.pin-inline) {
+		border-color: #f59e0b;
 	}
 
 	.image-item img {
@@ -96,6 +122,8 @@ const relativeTime = formatRelativeTime(
 	.moment-text {
 		white-space: pre-line;
 	}
+
+	/* ===== 响应式 ===== */
 
 	@media (max-width: 768px) {
 		.card-base-daily {

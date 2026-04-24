@@ -15,11 +15,32 @@ export interface DiaryItem {
 
 // 日记数据
 const diaryData: DiaryItem[] = [
+	// {
+	// 	id: ,
+	// 	content:"",
+	// 	date: "2026-04-23T04:24:00Z",
+	// 	images: [
+	// 		"",
+	// 		""
+	// 	]
+	// },
+
+	{
+		id: 4,
+		content:"Today:　　　　　　　　　　　　　　　　　　　　　*OS:王牌一代目自然是可爱！",
+		date: "2026-04-23T04:24:00Z",
+		images: [
+			"https://easyimage.isu183s.top/i/2026/04/25/003620.png",
+			"https://easyimage.isu183s.top/i/2026/04/25/003659.png",
+			"https://easyimage.isu183s.top/i/2026/04/25/034411.png",
+			"https://easyimage.isu183s.top/i/2026/04/25/003456.png"
+		]
+	},
 
 	{
 		id: 3,
 		content:
-			"我把我的时间精力都投入到这个项目里了，你说写代码不无聊吗？ 我说比你在玩游戏时收不到及时的正向反馈还要爽。",
+			"你说写代码不无聊吗？ 我会反驳说 “比你在玩游戏时收不到及时的正向反馈还要爽。” ",
 		date: "2026-04-23T04:24:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/23/6vcfkt.png",
@@ -49,7 +70,7 @@ const diaryData: DiaryItem[] = [
 			"https://easyimage.isu183s.top/i/2026/04/19/12ybk7v-0.jpg",
 			"https://easyimage.isu183s.top/i/2026/04/19/12yao4y-0.jpg"
 		],
-		pinned: true,
+		pinned: true, // ⭐ 这条置顶
 	},
 
 ];
