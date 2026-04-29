@@ -27,7 +27,7 @@ const diaryData: DiaryItem[] = [
 
 	{
 		id: 4,
-		content:"Today:　　　　　　　　　　　　　　　　　　　　　*OS:王牌一代目自然是可爱！",
+		content:"Today:　　　　　　　　　　　　*OS:王牌一代目自然是可爱！",
 		date: "2026-04-23T04:24:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/25/003620.png",
