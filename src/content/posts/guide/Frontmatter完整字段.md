@@ -1,11 +1,11 @@
 ---
 title: Frontmatter 
+description: "Frontmatter 完整字段的详细示例和说明" 
 published: 2026-04-17 
 updated: 2026-04-19 
 tags: [Markdown, Frontmatter完整示例] 
 category: 示例 
 draft: false 
-description: "Frontmatter 完整字段的详细示例和说明"       
 image: "./images/xly.webp"
 pinned: true                                            
 encrypted: false                                       

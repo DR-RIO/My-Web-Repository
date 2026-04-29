@@ -1,7 +1,7 @@
 ---
 title: Markdown 教程
 published: 2026-03-21
-pinned: true
+pinned: false
 description: Markdown 博客文章的简单示例。
 tags: [Markdown, 博客]
 category: 示例
