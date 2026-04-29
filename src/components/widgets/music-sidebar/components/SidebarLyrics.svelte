@@ -135,11 +135,15 @@
 
 .line {
 	font-size: 10px;
-	opacity: 0.25;
+	color: #666;
 
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.dark .line {
+	color: #888;
 }
 
 /* 当前 */
