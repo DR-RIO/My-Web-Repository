@@ -92,21 +92,18 @@
 				<!-- 原文 -->
 				{#if current?.original}
 					{@const chars = [...current.original]}
+					{@const p = progress()}
 					<div class="origin">
 						{#each chars as char, i}
 							{@const charStart = i / chars.length}
 							{@const charEnd = (i + 1) / chars.length}
-							{@const p = progress()}
 							
 							{#if p >= charEnd}
-								<!-- 完全高亮 -->
 								<span class="hig">{char}</span>
 							{:else if p > charStart}
-								<!-- 正在高亮中，渐变 -->
-								{@const percent = ((p - charStart) / (charEnd - charStart)) * 120}
+								{@const percent = ((p - charStart) / (charEnd - charStart)) * 100}
 								<span style="--partial:{percent}%">{char}</span>
 							{:else}
-								<!-- 未高亮 -->
 								<span>{char}</span>
 							{/if}
 						{/each}
@@ -116,11 +113,11 @@
 				<!-- 翻译 -->
 				{#if current?.translation}
 					{@const chars = [...current.translation]}
+					{@const p = progress()}
 					<div class="trans">
 						{#each chars as char, i}
 							{@const charStart = i / chars.length}
 							{@const charEnd = (i + 1) / chars.length}
-							{@const p = progress()}
 							
 							{#if p >= charEnd}
 								<span class="hig">{char}</span>
@@ -200,7 +197,7 @@
 }
 
 .trans span {
-	color: #aaa;
+	color: #999;
 }
 
 .trans span.hig {
@@ -211,7 +208,7 @@
 	background: linear-gradient(
 		to right,
 		var(--primary) var(--partial),
-		#aaa var(--partial)
+		#999 var(--partial)
 	);
 	-webkit-background-clip: text;
 	background-clip: text;
