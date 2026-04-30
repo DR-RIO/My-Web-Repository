@@ -67,7 +67,6 @@
 	const current = $derived(index >= 0 ? lyrics[index] : null);
 	const next = $derived(index + 1 < lyrics.length ? lyrics[index + 1] : null);
 
-	// ⭐ 统一进度（原文+翻译共用）
 	const progress = $derived(() => {
 		if (index < 0) return 0;
 
@@ -90,21 +89,48 @@
 			<div class="line prev">{prev?.original}</div>
 
 			<div class="current">
-				<!-- ⭐ 原文 -->
-				<div
-					class="origin"
-					style={`--p:${progress() * 100}%`}
-				>
-					{current?.original}
-				</div>
+				<!-- 原文 -->
+				{#if current?.original}
+					{@const chars = [...current.original]}
+					<div class="origin">
+						{#each chars as char, i}
+							{@const charStart = i / chars.length}
+							{@const charEnd = (i + 1) / chars.length}
+							{@const p = progress()}
+							
+							{#if p >= charEnd}
+								<!-- 完全高亮 -->
+								<span class="hig">{char}</span>
+							{:else if p > charStart}
+								<!-- 正在高亮中，渐变 -->
+								{@const percent = ((p - charStart) / (charEnd - charStart)) * 120}
+								<span style="--partial:{percent}%">{char}</span>
+							{:else}
+								<!-- 未高亮 -->
+								<span>{char}</span>
+							{/if}
+						{/each}
+					</div>
+				{/if}
 
-				<!-- ⭐ 翻译（同步高亮） -->
+				<!-- 翻译 -->
 				{#if current?.translation}
-					<div
-						class="trans"
-						style={`--p:${progress() * 100}%`}
-					>
-						{current.translation}
+					{@const chars = [...current.translation]}
+					<div class="trans">
+						{#each chars as char, i}
+							{@const charStart = i / chars.length}
+							{@const charEnd = (i + 1) / chars.length}
+							{@const p = progress()}
+							
+							{#if p >= charEnd}
+								<span class="hig">{char}</span>
+							{:else if p > charStart}
+								{@const percent = ((p - charStart) / (charEnd - charStart)) * 100}
+								<span style="--partial:{percent}%">{char}</span>
+							{:else}
+								<span>{char}</span>
+							{/if}
+						{/each}
 					</div>
 				{/if}
 			</div>
@@ -123,65 +149,75 @@
 	justify-content: center;
 }
 
-/* 动画组 */
 .group {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 6px;
-
 	animation: slideUp 0.4s ease;
 }
 
 .line {
-	font-size: 10px;
-	color: #666;
-
+	font-size: 9px;
+	color: #999;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.dark .line {
-	color: #888;
-}
-
-/* 当前 */
 .current {
 	text-align: center;
 }
 
-/* ⭐ 原文渐变 */
 .origin {
-	font-size: 13px;
+	font-size: 12px;
 	font-weight: 600;
+}
 
+.origin span {
+	color: #999;
+}
+
+.origin span.hig {
+	color: var(--primary);
+}
+
+.origin span[style*="--partial"] {
 	background: linear-gradient(
 		to right,
-		var(--primary) var(--p),
-		#999 var(--p)
+		var(--primary) var(--partial),
+		#999 var(--partial)
 	);
-
 	-webkit-background-clip: text;
+	background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
-/* ⭐ 翻译渐变（颜色更淡一点） */
 .trans {
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: 600;
+	margin-top: 4px;
+}
 
+.trans span {
+	color: #aaa;
+}
+
+.trans span.hig {
+	color: var(--primary);
+}
+
+.trans span[style*="--partial"] {
 	background: linear-gradient(
 		to right,
-		var(--primary) var(--p),
-		#aaa var(--p)
+		var(--primary) var(--partial),
+		#aaa var(--partial)
 	);
-
 	-webkit-background-clip: text;
+	background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
-/* 动画 */
 @keyframes slideUp {
 	from {
 		transform: translateY(20px);
