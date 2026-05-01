@@ -35,25 +35,29 @@
 		isMuted ? 0 : Math.max(0, Math.min(100, volume * 100)),
 	);
 
+	// 计算圆点的实际位置百分比（限制范围避免超出边界）
+	const thumbPosition = $derived(
+		Math.min(95, Math.max(5, volumePercent))
+	);
+
 	let isVolumeDragging = false;
 
 	function handleVolumePointer(event: PointerEvent) {
 		const el = event.currentTarget as HTMLElement | null;
-		if (!el) {
-			return;
-		}
+		if (!el) return;
+
 		isVolumeDragging = true;
+
 		const rect = el.getBoundingClientRect();
 		const percent = (event.clientX - rect.left) / rect.width;
 		const nextVolume = Math.max(0, Math.min(1, percent));
+
 		onSetVolume(nextVolume);
 		el.setPointerCapture(event.pointerId);
 	}
 
 	function handleVolumeMove(event: PointerEvent) {
-		if (!isVolumeDragging) {
-			return;
-		}
+		if (!isVolumeDragging) return;
 		handleVolumePointer(event);
 	}
 
@@ -79,9 +83,11 @@
 	<div class="title-row">
 		<span class="title-text truncate">{currentSong.title}</span>
 	</div>
+
 	<div class="artist-row">
 		<span class="artist-text truncate">{currentSong.artist}</span>
 	</div>
+
 	<div class="meta-row">
 		<div class="time-label" aria-live="polite">
 			<span>{currentTimeLabel}</span>
@@ -122,140 +128,188 @@
 					class="volume-fill"
 					style={`width: ${volumePercent}%`}
 				></div>
+
+				<div
+					class="volume-thumb"
+					style={`left: ${thumbPosition}%`}
+				></div>
 			</div>
 		</div>
 	</div>
 </div>
 
 <style>
-	.title-row {
-		margin-bottom: 0.06rem;
-	}
+.title-row {
+	margin-bottom: 0.06rem;
+}
 
-	.title-text {
-		font-weight: 600;
-		color: var(--content-main);
-		line-height: 1.1;
-	}
+.title-text {
+	font-weight: 600;
+	color: var(--content-main);
+	line-height: 1.1;
+}
 
-	:global(.dark) .title-text {
-		color: rgb(245 245 245);
-	}
+:global(.dark) .title-text {
+	color: rgb(245 245 245);
+}
 
-	.artist-text {
-		font-size: 0.75rem;
-		color: var(--content-meta);
-		display: block;
-	}
+.artist-text {
+	font-size: 0.75rem;
+	color: var(--content-meta);
+	display: block;
+}
 
+.artist-row {
+	margin-bottom: 0.36rem;
+}
+
+/* =========================
+   底部控制栏布局调整 - 真正往左移动
+========================= */
+
+.meta-row {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	min-width: 0;
+	/* 关键：不使用 space-between，让内容靠左排列 */
+	justify-content: flex-start;
+}
+
+.time-label {
+	display: flex;
+	align-items: center;
+	gap: 0.2rem;
+	font-size: 10px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	color: var(--content-meta);
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.divider {
+	opacity: 0.6;
+}
+
+.volume-wrap {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-width: 0;
+	/* 关键：移除 margin-left: auto，改为固定边距 */
+	margin-left: 0;
+	/* 如果你想往左移动更多，可以用负值 */
+	/* margin-left: -0.5rem; */
+}
+
+.volume-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: 0.375rem;
+	color: var(--content-meta);
+	transition: color 150ms ease;
+}
+
+.volume-btn:hover {
+	color: var(--primary);
+}
+
+/* =========================
+   音量条
+========================= */
+
+.volume-slider {
+	position: relative;
+	width: 4rem;
+	height: 0.25rem;
+	border-radius: 9999px;
+	background: color-mix(
+		in srgb,
+		var(--btn-regular-bg) 80%,
+		var(--content-meta) 20%
+	);
+	overflow: visible;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: height 150ms ease;
+}
+
+.volume-slider:hover,
+.volume-slider:focus-visible {
+	height: 0.375rem;
+}
+
+.volume-fill {
+	height: 100%;
+	background: var(--primary);
+	border-radius: inherit;
+	transition: width 100ms linear;
+}
+
+/* =========================
+   圆点样式
+========================= */
+
+.volume-thumb {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	
+	background: #fff;
+	border: 2px solid var(--primary);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	
+	opacity: 0;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	
+	pointer-events: none;
+}
+
+/* 悬停或聚焦时显示圆点 */
+.volume-slider:hover .volume-thumb,
+.volume-slider:focus-visible .volume-thumb {
+	opacity: 1;
+	transform: translate(-50%, -50%) scale(1.15);
+}
+
+/* 聚焦样式 */
+.volume-slider:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+/* 响应式 */
+@media (max-width: 520px) {
 	.artist-row {
-		margin-bottom: 0.36rem;
+		margin-bottom: 0.28rem;
 	}
 
 	.meta-row {
-		display: flex;
-		align-items: center;
-		gap: 0.55rem;
-		min-width: 0;
-		justify-content: space-between;
+		gap: 0.4rem;
 	}
 
 	.time-label {
-		display: flex;
-		align-items: center;
-		gap: 0.2rem;
-		font-size: 10px;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		color: var(--content-meta);
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-
-	.divider {
-		opacity: 0.6;
+		font-size: 9px;
 	}
 
 	.volume-wrap {
-		display: flex;
-		align-items: center;
-		gap: 0.35rem;
-		min-width: 0;
-		justify-content: flex-end;
-		margin-left: auto;
+		gap: 0.25rem;
 	}
 
 	.volume-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 1.5rem;
-		height: 1.5rem;
-		border-radius: 0.375rem;
-		color: var(--content-meta);
-		transition: color 150ms ease;
-	}
-
-	.volume-btn:hover {
-		color: var(--primary);
+		width: 1.25rem;
+		height: 1.25rem;
 	}
 
 	.volume-slider {
-		position: relative;
-		width: 4rem;
-		height: 0.25rem;
-		border-radius: 9999px;
-		background: color-mix(
-			in srgb,
-			var(--btn-regular-bg) 80%,
-			var(--content-meta) 20%
-		);
-		overflow: hidden;
-		cursor: pointer;
-		flex-shrink: 0;
-		transition: height 150ms ease;
+		width: 3.2rem;
 	}
-
-	.volume-slider:hover,
-	.volume-slider:focus-visible {
-		height: 0.375rem;
-	}
-
-	.volume-fill {
-		height: 100%;
-		background: var(--primary);
-		border-radius: inherit;
-		transition: width 100ms linear;
-	}
-
-	.volume-slider:focus-visible {
-		outline: 2px solid var(--primary);
-		outline-offset: 2px;
-	}
-
-	@media (max-width: 520px) {
-		.artist-row {
-			margin-bottom: 0.28rem;
-		}
-
-		.meta-row {
-			gap: 0.4rem;
-		}
-
-		.time-label {
-			font-size: 9px;
-		}
-
-		.volume-wrap {
-			gap: 0.25rem;
-		}
-
-		.volume-btn {
-			width: 1.25rem;
-			height: 1.25rem;
-		}
-
-		.volume-slider {
-			width: 3.2rem;
-		}
-	}
+}
 </style>

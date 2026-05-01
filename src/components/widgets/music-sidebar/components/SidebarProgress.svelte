@@ -7,6 +7,16 @@
 
 	const { currentTime, duration, onSeek }: Props = $props();
 
+	let isDragging = $state(false);
+	let localTime = $state(currentTime);
+	let barEl: HTMLElement;
+
+	$effect(() => {
+		if (!isDragging) {
+			localTime = currentTime;
+		}
+	});
+
 	function formatTime(t: number) {
 		const m = Math.floor(t / 60);
 		const s = Math.floor(t % 60);
@@ -15,33 +25,51 @@
 
 	const progressPercent = $derived(
 		duration > 0
-			? Math.max(0, Math.min(100, (currentTime / duration) * 100))
+			? Math.max(0, Math.min(100, (localTime / duration) * 100))
 			: 0
 	);
 
-	function seekByEvent(clientX: number, el: HTMLElement) {
-		const rect = el.getBoundingClientRect();
+	function seekByClientX(clientX: number) {
+		const rect = barEl.getBoundingClientRect();
 		const percent = (clientX - rect.left) / rect.width;
 		const clamped = Math.max(0, Math.min(1, percent));
-		onSeek(clamped * duration);
+		const time = clamped * duration;
+
+		localTime = time;
+		onSeek(time);
 	}
 
 	function handleClick(event: MouseEvent) {
-		const el = event.currentTarget as HTMLElement;
-		seekByEvent(event.clientX, el);
+		seekByClientX(event.clientX);
 	}
 
-	// ✅ 键盘支持（Enter / Space）
+	function handlePointerDown(event: PointerEvent) {
+		isDragging = true;
+
+		seekByClientX(event.clientX);
+
+		window.addEventListener("pointermove", handlePointerMove);
+		window.addEventListener("pointerup", handlePointerUp);
+	}
+
+	function handlePointerMove(event: PointerEvent) {
+		if (!isDragging) return;
+		seekByClientX(event.clientX);
+	}
+
+	function handlePointerUp() {
+		isDragging = false;
+
+		window.removeEventListener("pointermove", handlePointerMove);
+		window.removeEventListener("pointerup", handlePointerUp);
+	}
+
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === "Enter" || event.key === " ") {
 			event.preventDefault();
-			const el = event.currentTarget as HTMLElement;
-
-			// 用中点模拟点击（也可以改成根据箭头键微调）
-			const rect = el.getBoundingClientRect();
+			const rect = barEl.getBoundingClientRect();
 			const middleX = rect.left + rect.width / 2;
-
-			seekByEvent(middleX, el);
+			seekByClientX(middleX);
 		}
 	}
 
@@ -54,19 +82,21 @@
 <div class="wrapper">
 	<!-- 气泡 -->
 	<div class="time-bubble" style={bubbleStyle}>
-		{formatTime(currentTime)} / {formatTime(duration)}
+		{formatTime(localTime)} / {formatTime(duration)}
 	</div>
 
-	<!-- ✅ 修复后的进度条 -->
+	<!-- 进度条 -->
 	<div
 		class="bar"
+		bind:this={barEl}
 		onclick={handleClick}
+		onpointerdown={handlePointerDown}
 		onkeydown={handleKeydown}
 		role="slider"
 		tabindex="0"
 		aria-valuemin="0"
 		aria-valuemax={duration}
-		aria-valuenow={currentTime}
+		aria-valuenow={localTime}
 	>
 		<div class="fill" style={`width: ${progressPercent}%`}></div>
 		<div class="thumb" style={`left: ${progressPercent}%`}></div>
