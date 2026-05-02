@@ -35,7 +35,6 @@
 		isMuted ? 0 : Math.max(0, Math.min(100, volume * 100)),
 	);
 
-	// 计算圆点的实际位置百分比（限制范围避免超出边界）
 	const thumbPosition = $derived(
 		Math.min(95, Math.max(5, volumePercent))
 	);
@@ -46,19 +45,31 @@
 		const el = event.currentTarget as HTMLElement | null;
 		if (!el) return;
 
+		event.preventDefault();
+		
 		isVolumeDragging = true;
 
 		const rect = el.getBoundingClientRect();
-		const percent = (event.clientX - rect.left) / rect.width;
-		const nextVolume = Math.max(0, Math.min(1, percent));
-
-		onSetVolume(nextVolume);
+		let percent = (event.clientX - rect.left) / rect.width;
+		percent = Math.max(0, Math.min(1, percent));
+		
+		onSetVolume(percent);
 		el.setPointerCapture(event.pointerId);
 	}
 
 	function handleVolumeMove(event: PointerEvent) {
 		if (!isVolumeDragging) return;
-		handleVolumePointer(event);
+		
+		event.preventDefault();
+		
+		const el = event.currentTarget as HTMLElement | null;
+		if (!el) return;
+		
+		const rect = el.getBoundingClientRect();
+		let percent = (event.clientX - rect.left) / rect.width;
+		percent = Math.max(0, Math.min(1, percent));
+		
+		onSetVolume(percent);
 	}
 
 	function handleVolumeEnd() {
@@ -124,11 +135,11 @@
 				aria-valuemax="100"
 				aria-valuenow={volumePercent}
 			>
+				<div class="volume-track"></div>
 				<div
 					class="volume-fill"
 					style={`width: ${volumePercent}%`}
 				></div>
-
 				<div
 					class="volume-thumb"
 					style={`left: ${thumbPosition}%`}
@@ -163,16 +174,11 @@
 	margin-bottom: 0.36rem;
 }
 
-/* =========================
-   底部控制栏布局调整 - 真正往左移动
-========================= */
-
 .meta-row {
 	display: flex;
 	align-items: center;
 	gap: 0.55rem;
 	min-width: 0;
-	/* 关键：不使用 space-between，让内容靠左排列 */
 	justify-content: flex-start;
 }
 
@@ -196,12 +202,14 @@
 	align-items: center;
 	gap: 0.35rem;
 	min-width: 0;
-	/* 关键：移除 margin-left: auto，改为固定边距 */
+	justify-content: flex-end;
 	margin-left: auto;
-	transform: translateX(-5px);
-	/* 如果你想往左移动更多，可以用负值 */
-	/* margin-left: -0.2rem; */
+	transform: translateX(-2px);
 }
+
+/* =========================
+   音量按钮 - 修复样式
+========================= */
 
 .volume-btn {
 	display: flex;
@@ -212,6 +220,20 @@
 	border-radius: 0.375rem;
 	color: var(--content-meta);
 	transition: color 150ms ease;
+	flex-shrink: 0;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+/* 增加点击区域但不影响视觉 */
+.volume-btn::before {
+	content: '';
+	position: absolute;
+	top: -8px;
+	left: -8px;
+	right: -8px;
+	bottom: -8px;
 }
 
 .volume-btn:hover {
@@ -219,7 +241,7 @@
 }
 
 /* =========================
-   音量条
+   音量条 - 优化移动端触摸
 ========================= */
 
 .volume-slider {
@@ -227,31 +249,56 @@
 	width: 4rem;
 	height: 0.25rem;
 	border-radius: 9999px;
-	background: color-mix(
-		in srgb,
-		var(--btn-regular-bg) 80%,
-		var(--content-meta) 20%
-	);
-	overflow: visible;
 	cursor: pointer;
 	flex-shrink: 0;
 	transition: height 150ms ease;
 }
 
-.volume-slider:hover,
-.volume-slider:focus-visible {
-	height: 0.375rem;
+/* 增加触摸区域 */
+.volume-slider::before {
+	content: '';
+	position: absolute;
+	top: -12px;
+	left: 0;
+	right: 0;
+	height: calc(100% + 24px);
+	background: transparent;
+	pointer-events: auto;
+}
+
+/* 桌面端悬停效果 */
+@media (hover: hover) {
+	.volume-slider:hover,
+	.volume-slider:focus-visible {
+		height: 0.375rem;
+	}
+}
+
+.volume-track {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-radius: 9999px;
+	background: color-mix(
+		in srgb,
+		var(--btn-regular-bg) 80%,
+		var(--content-meta) 20%
+	);
 }
 
 .volume-fill {
+	position: relative;
 	height: 100%;
 	background: var(--primary);
 	border-radius: inherit;
 	transition: width 100ms linear;
+	z-index: 1;
 }
 
 /* =========================
-   圆点样式
+   圆点样式 - 移动端优化
 ========================= */
 
 .volume-thumb {
@@ -271,19 +318,42 @@
 	transition: opacity 0.2s ease, transform 0.2s ease;
 	
 	pointer-events: none;
+	z-index: 2;
 }
 
-/* 悬停或聚焦时显示圆点 */
-.volume-slider:hover .volume-thumb,
-.volume-slider:focus-visible .volume-thumb {
-	opacity: 1;
-	transform: translate(-50%, -50%) scale(1.15);
+/* 桌面端悬停显示圆点 */
+@media (hover: hover) {
+	.volume-slider:hover .volume-thumb,
+	.volume-slider:focus-visible .volume-thumb {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1.15);
+	}
 }
 
-/* 聚焦样式 */
+/* 移动端：始终显示圆点 */
+@media (hover: none) and (pointer: coarse) {
+	.volume-thumb {
+		width: 12px;
+		height: 12px;
+		opacity: 1;
+	}
+}
+
 .volume-slider:focus-visible {
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
+}
+
+/* 移动端专门优化 */
+@media (max-width: 768px) {
+	.volume-slider {
+		height: 0.375rem;
+	}
+	
+	.volume-thumb {
+		width: 10px;
+		height: 10px;
+	}
 }
 
 /* 响应式 */
@@ -311,6 +381,12 @@
 
 	.volume-slider {
 		width: 3.2rem;
+		height: 0.375rem;
+	}
+	
+	.volume-thumb {
+		width: 10px;
+		height: 10px;
 	}
 }
 </style>
