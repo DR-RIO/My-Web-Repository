@@ -457,12 +457,12 @@
 		tabindex="-1"
 		aria-label="Share modal"
 	>
+		<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_tabindex a11y_no_noninteractive_element_interactions -->
 		<div
 			class="rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto flex flex-col shadow-2xl transform transition-all"
 			style="background-color: var(--float-panel-bg);"
 			on:click|stopPropagation
 			role="document"
-			tabindex="0"
 		>
 			<div
 				class="p-6 flex justify-center min-h-[200px] items-center"
