@@ -197,9 +197,10 @@
 	gap: 0.35rem;
 	min-width: 0;
 	/* 关键：移除 margin-left: auto，改为固定边距 */
-	margin-left: 0;
+	margin-left: auto;
+	transform: translateX(-5px);
 	/* 如果你想往左移动更多，可以用负值 */
-	/* margin-left: -0.5rem; */
+	/* margin-left: -0.2rem; */
 }
 
 .volume-btn {
