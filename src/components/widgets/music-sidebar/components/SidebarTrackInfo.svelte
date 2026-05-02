@@ -372,6 +372,7 @@
 
 	.volume-wrap {
 		gap: 0.25rem;
+		margin-right: 2px;
 	}
 
 	.volume-btn {

@@ -6,8 +6,6 @@ export interface Project {
 	category: string;
 	techStack: string[];
 	status: "completed" | "in-progress" | "planned";
-	demoUrl?: string;
-	sourceUrl?: string;
 	liveDemo?: string;
 	sourceCode?: string;
 	visitUrl?: string;
@@ -15,6 +13,7 @@ export interface Project {
 	endDate?: string;
 	featured?: boolean;
 	tags?: string[];
+	showImage?: boolean;
 }
 
 export interface ProjectCardProps {

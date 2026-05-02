@@ -25,20 +25,19 @@ export interface Project {
 export const projectsData: Project[] = [
 	{
 		id: "None for now",
-		title: "暂无",
-		description:
-			"暂时还没有做过项目哦",
-		image: "",
-		category: "other",
-		techStack: [],
-		status: "planned",
-		liveDemo: "https://blog.example.com",
-		sourceCode: "", // 更改为GitHub链接
+		title: "基于Astro的个人博客系统",
+		description: "一个使用Astro框架构建的个人博客系统，支持Markdown文章发布、标签分类、搜索功能和响应式设计。项目旨在提供一个轻量级、高性能且易于定制的博客平台，适合个人开发者和小型团队使用。",
+		image: "https://easyimage.isu183s.top/i/2026/05/03/022939.webp",
+		category: "web",
+		techStack: ["Astro"],
+		status: "in-progress",
+		liveDemo: "https://www.isu183s.top/",
+		sourceCode: "https://github.com/DR-RIO/My-Web-Repository", // 更改为GitHub链接
 		visitUrl: "", // 添加前往项目链接
 		startDate: "2026-03-21",
 		endDate: "至今",
-		featured: false,
-		tags: [],
+		featured: true,
+		tags: ["网站开发", "博客系统", "Astro"],
 	},
 ];
 

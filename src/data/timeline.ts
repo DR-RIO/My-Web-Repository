@@ -1,32 +1,8 @@
-// Timeline data configuration file
-// Used to manage data for the timeline page
+import type { TimelineItem } from "../components/features/timeline/types";
 
-export interface TimelineItem {
-	id: string;                    // 时间线项目唯一标识符
-	title: string;                 // 标题/名称
-	description: string;           // 详细描述
-	type: "education" | "work" | "project" | "achievement";
-	// 类型：  "教育经历"   |  "工作经历" |  "项目经历" |  "成就荣誉"
-	startDate: string;             // 开始日期，格式：YYYY-MM-DD
-	endDate?: string;              // 结束日期（可选，为空表示至今）
-	location?: string;             // 地点/位置（可选）
-	organization?: string;         // 组织/机构名称（可选）
-	position?: string;             // 职位/角色（可选）
-	skills?: string[];             // 相关技能列表（可选）
-	achievements?: string[];       // 主要成就/成果列表（可选）
-	links?: {
-		name: string;               // 链接显示名称
-		url: string;                // 链接地址
-		type: "website" | "certificate" | "project" | "other";
-		// 类型："网站" | "证书" | "项目" | "其他"
-	}[];                           // 相关链接列表（可选）
-	icon?: string;                 // Iconify 图标名称（可选）
-	color?: string;                // 主题色，十六进制颜色码（可选）
-	featured?: boolean;            // 是否精选展示（可选）
-}
+export { type TimelineItem };
 
 export const timelineData: TimelineItem[] = [
-	// 示例：
 	{
 		id: "current-study",
 		title: "计算机网络技术在读",
@@ -48,7 +24,6 @@ export const timelineData: TimelineItem[] = [
 	
 ];
 
-// 获取时间线统计数据
 export const getTimelineStats = () => {
 	const total = timelineData.length;
 	const byType = {
@@ -63,7 +38,6 @@ export const getTimelineStats = () => {
 	return { total, byType };
 };
 
-// 根据类型筛选时间线条目
 export const getTimelineByType = (type?: string) => {
 	if (!type || type === "all") {
 		return timelineData.sort(
@@ -81,7 +55,6 @@ export const getTimelineByType = (type?: string) => {
 		);
 };
 
-// 获取精选时间线项目
 export const getFeaturedTimeline = () => {
 	return timelineData
 		.filter((item) => item.featured)
@@ -92,12 +65,10 @@ export const getFeaturedTimeline = () => {
 		);
 };
 
-// 获取当前进行中的项目
 export const getCurrentItems = () => {
 	return timelineData.filter((item) => !item.endDate);
 };
 
-// 计算总工作年限
 export const getTotalWorkExperience = () => {
 	const workItems = timelineData.filter((item) => item.type === "work");
 	let totalMonths = 0;

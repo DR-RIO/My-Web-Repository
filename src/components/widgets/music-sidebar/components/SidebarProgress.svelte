@@ -8,7 +8,7 @@
 	const { currentTime, duration, onSeek }: Props = $props();
 
 	let isDragging = $state(false);
-	let localTime = $state(currentTime);
+	let localTime = $state(0);
 	let barEl: HTMLElement;
 
 	$effect(() => {
