@@ -40,7 +40,7 @@ const diaryData: DiaryItem[] = [
 	{
 		id: 3,
 		content:
-			"你说写代码不无聊吗？ 我会反驳说 “比你在玩游戏时收不到及时的正向反馈还要爽。” ",
+			"写代码不无聊吗？” 　　“比你在玩游戏时收不到及时的正向反馈还要舒服。” ",
 		date: "2026-04-23T04:24:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/23/6vcfkt.png",
@@ -53,7 +53,7 @@ const diaryData: DiaryItem[] = [
 		content: `“到底要多优秀，才能配得上她呢？”
 			
 				　　谁说完美的恋情一定是两个人都很优秀的？ 也许只要有一个人足够优秀，另一个人就会觉得自己很幸运了吧。	
-				　　　　　　　　　　　　　　　　　“喜欢一个女孩子，就多给她一点偏爱吧。`,
+				　　　　　　　　　　　　　　　　“喜欢一个女孩子，就多给她一点偏爱吧。"`,
 		date: "2026-04-20T00:00:00Z",
 		images: [
 			"https://easyimage.isu183s.top/app/thumb.php?img=/i/2026/04/20/6u5mv.webp"
