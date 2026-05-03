@@ -20,6 +20,12 @@ export interface TimelineItem {
 	icon?: string;
 	color?: string;
 	featured?: boolean;
+
+	// 👇 图片字段
+	image?: string;
+	images?: string[];
+	imageAlt?: string;
+	imageHeight?: string;
 }
 
 export interface TimelineCardProps {
