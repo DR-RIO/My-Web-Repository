@@ -1,15 +1,15 @@
 ---
-title: Frontmatter 
-description: "Frontmatter 完整字段的详细示例和说明" 
+title: Markdown文件开头示例
+description: "F9r 完整字段的详细示例和说明" 
 published: 2026-04-17 
 updated: 2026-04-19 
-tags: [Markdown, Frontmatter完整示例] 
+tags: [Markdown, 示例] 
 category: 示例 
 draft: false 
 image: "./images/xly.webp"
 pinned: true                                            
-encrypted: false                                       
-password: ""                                            
+encrypted: true                                       
+password: "10445"                                            
 alias: ""                                               
 licenseName: ""                                        
 author: "人IO"                                          
@@ -24,6 +24,7 @@ sourceLink: ""
         ---
         # 基本字段 - 这些是最常用的必填字段
         title: 文章标题        # 文章的标题，将显示在页面顶部和列表中
+        description: "文章描述"   # 文章的简短描述，显示在列表页和搜索结果中
         published: 2026-04-17  # 文章的发布日期，格式为 YYYY-MM-DD
         tags: [标签1, 标签2]    # 文章的标签，用于分类和搜索
         category: 分类         # 文章的分类，用于组织内容
@@ -31,7 +32,6 @@ sourceLink: ""
 
         # 高级字段 - 这些是可选字段，根据需要使用
         updated: 2026-04-17    # 文章的最后更新日期，格式为 YYYY-MM-DD
-        description: 文章描述   # 文章的简短描述，显示在列表页和搜索结果中
         image: "./cover.webp"   # 文章的封面图片路径
                                 # - 以 http/https 开头：使用网络图片
                                 # - 以 / 开头：使用 public 目录中的图片
@@ -45,6 +45,28 @@ sourceLink: ""
         sourceLink: "来源链接"   # 文章内容的来源或参考链接
         ---
 ```
+
+## 完整复制版
+
+```yaml
+---
+title:  # 文章的标题，将显示在页面顶部和列表中
+description: ""  # 文章的简短描述，显示在列表页和搜索结果中
+published: yyyy-mm-dd # 文章的发布日期，格式为 YYYY-MM-DD
+updated: yyyy-mm-dd # 文章的最后更新日期，格式为 YYYY-MM-DD
+tags: [] # 文章的标签，用于分类和搜索
+category:  # 文章的分类，用于组织内容
+draft: false # 是否为草稿，true 表示草稿（不显示），false 表示已发布
+image: "" # 文章的封面图片路径
+pinned: true # 是否将文章固定在列表顶部，true 表示置顶                                           
+encrypted: false  # 是否加密文章，true 表示需要密码访问                                     
+password: "" # 加密文章的访问密码（仅在 encrypted: true 时有效）                                           
+alias: "" # 文章的自定义 URL 路径，访问地址为 /posts/文章别名/                                              
+licenseName: "" # 文章内容的许可证名称                                       
+author: "人IO" # 文章的作者                                         
+sourceLink: "" # 文章内容的来源或参考链接
+---
+```        
 
 一般带有图片的 `.md` 文档基本上要添加个目录来放图片和放文档。多数时候我会选择使用 图床 或者 R2数据桶
 
