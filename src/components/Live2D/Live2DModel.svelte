@@ -6,11 +6,11 @@
   let isLoading = false;
   let loadError = false;
 
-  export let modelPath = '/pio/models/MIHARI/Mihari_V1.model3.json';
-  export let canvasWidth = 200;
+  export let modelPath = '/pio/models/UGOfficial/ugofficial.model3.json';
+  export let canvasWidth = 300;
   export let canvasHeight = 360;
-  export let positionX = 5;
-  export let positionY = 0;
+  export let positionX = 10;
+  export let positionY = -50;
 
   let canvasElement;
   let model;
@@ -18,15 +18,22 @@
   let isMinimized = false;
   let isMobile = false;
   let userMinimized = false;
-  let showDialog = false;
-  let dialogMessage = { text: '', translation: '', emotion: '' };
-  let dialogTimer = null;
   let clickTimeout = null;
   
   let isAutoHidden = false;
   let autoHideTimer = null;
   let isRestoring = false;
   let handleMouseMove = null;
+  let currentExpressionIndex = -1; // 初始为-1，表示默认表情状态
+
+  // 表情配置（按照你想要的顺序，使用索引）
+  const expressions = [
+    { index: 0, name: '桌面' },       // 1desk
+    { index: 1, name: '麦克风' },     // 2mic
+    { index: 3, name: '惊讶' },       // 4OAO
+    { index: 4, name: '委屈' },       // 5QAQ
+    { index: 5, name: '异议' },       // 6i gi a ri
+  ];
 
   // 节流函数，限制函数执行频率
   function throttle(func, limit) {
@@ -45,16 +52,8 @@
   const buttonNormalBottom = positionY + canvasHeight + 20;
   const buttonMinimizedBottom = 20;
 
-  const avatarNormal = '/pio/models/MIHARI/Mihari_Notxt.jpg';
-  const avatarMinimized = '/pio/models/MIHARI/Mihari_Notxt.jpg';
-
-  const messages = [
-    { text: 'こんにちは！', translation: '你好呀！', emotion: '🌸' },
-    { text: '今日も頑張ってね！', translation: '今天也要加油哦！', emotion: '💪' },
-    { text: '一緒に遊ぼう！', translation: '和我Play吧！', emotion: '🎮' },
-    { text: 'お腹すいたな〜', translation: '肚子饿了呢~', emotion: '🍜' },
-    { text: '好きだよ〜', translation: '喜欢你哟~', emotion: '😘' }
-  ];
+  const avatarNormal = '/pio/models/UGOfficial/icon.png';
+  const avatarMinimized = '/pio/models/UGOfficial/icon.png';
 
   function loadSavedState() {
     const saved = localStorage.getItem('live2d_minimized');
@@ -128,20 +127,21 @@
       } else {
         startAutoHideTimer();
       }
+      
+      // 从移动端切换回桌面端时，强制重新渲染模型
+      if (app) {
+        setTimeout(() => {
+          app.render();
+          console.log('🔄 移动端切换回桌面端，模型已重新渲染');
+        }, 100);
+      }
+      
       return;
     }
     
     if (!userMinimized) {
       isMinimized = false;
       cancelAutoHide();
-    }
-  }
-
-  function closeDialog() {
-    showDialog = false;
-    if (dialogTimer) {
-      clearTimeout(dialogTimer);
-      dialogTimer = null;
     }
   }
 
@@ -165,8 +165,83 @@
     cancelAutoHide();
     
     if (isMinimized) {
-      closeDialog();
       startAutoHideTimer();
+    }
+  }
+
+  function setExpression(index) {
+    if (!model) return;
+    
+    try {
+      if (index < 0) {
+        // 复位表情 - 使用 queueManager 播放 defaultExpression
+        currentExpressionIndex = -1;
+        if (model.internalModel?.motionManager?.expressionManager) {
+          const exprManager = model.internalModel.motionManager.expressionManager;
+          if (exprManager.defaultExpression && exprManager.queueManager) {
+            exprManager.queueManager.startMotion(exprManager.defaultExpression, false);
+            console.log('🎭 表情已复位到默认 (使用 queueManager 播放 defaultExpression)');
+          } else {
+            // 备用方案
+            if (model.expression) {
+              model.expression();
+            }
+            console.log('🎭 表情已复位到默认 (备用方案)');
+          }
+        } else {
+          // 最后的备用方案
+          if (model.expression) {
+            model.expression();
+          }
+          console.log('🎭 表情已复位到默认 (最终备用方案)');
+        }
+      } else {
+        // 设置指定表情 - 尝试多种方法！
+        currentExpressionIndex = index;
+        if (model.internalModel?.motionManager?.expressionManager) {
+          const exprManager = model.internalModel.motionManager.expressionManager;
+          const expressionIndex = expressions[index]?.index;
+          if (expressionIndex !== undefined && exprManager.definitions && exprManager.definitions[expressionIndex]) {
+            console.log('🎭 表情定义:', exprManager.definitions[expressionIndex]);
+            console.log('🎭 表情管理器对象:', Object.keys(exprManager));
+            
+            // 方法1：先尝试用 model.expression()
+            if (model.expression) {
+              model.expression(expressionIndex);
+              console.log('🎭 方法1：表情已设置');
+            }
+            
+            // 方法2：尝试直接设置 currentExpression
+            setTimeout(() => {
+              if (exprManager.expressions && exprManager.expressions[expressionIndex]) {
+                exprManager.currentExpression = exprManager.expressions[expressionIndex];
+                console.log('🎭 方法2：currentExpression 已设置');
+                
+                // 方法3：尝试用 queueManager 播放
+                if (exprManager.queueManager) {
+                  exprManager.queueManager.startMotion(exprManager.expressions[expressionIndex], false);
+                  console.log('🎭 方法3：表情已播放');
+                }
+              } else {
+                console.log('🎭 expressions 数组里没有这个表情，只有:', exprManager.expressions?.length);
+              }
+            }, 100);
+          }
+        } else {
+          // 最后的备用方案
+          if (model.expression) {
+            const expressionIndex = expressions[index]?.index;
+            if (expressionIndex !== undefined) {
+              model.expression(expressionIndex);
+            }
+          }
+          console.log('🎭 表情已设置 (最终备用方案)');
+        }
+        const expressionInfo = expressions[index];
+        console.log(`🎭 当前表情: [${index + 1}] ${expressionInfo?.name || '未知'} (索引: ${expressionInfo?.index})`);
+      }
+    } catch (error) {
+      console.error('表情切换失败:', error);
     }
   }
 
@@ -180,19 +255,17 @@
     if (isMinimized) {return;}
     if (clickTimeout) {return;}
 
-    if (dialogTimer) {
-      clearTimeout(dialogTimer);
-      dialogTimer = null;
+    // 循环切换表情: 默认 -> 第9个 -> 麦克风 -> 惊讶 -> 委屈 -> 异议 -> 拳头 -> 默认
+    if (currentExpressionIndex === -1) {
+      // 当前是默认表情，切换到第1个表情
+      setExpression(0);
+    } else if (currentExpressionIndex === expressions.length - 1) {
+      // 当前是最后一个表情（拳头），复位到默认
+      setExpression(-1);
+    } else {
+      // 切换到下一个表情
+      setExpression(currentExpressionIndex + 1);
     }
-
-    const randomIndex = Math.floor(Math.random() * messages.length);
-    dialogMessage = messages[randomIndex];
-    showDialog = true;
-
-    dialogTimer = setTimeout(() => {
-      showDialog = false;
-      dialogTimer = null;
-    }, 4000);
 
     clickTimeout = setTimeout(() => {
       clickTimeout = null;
@@ -218,8 +291,12 @@
   }
 
   function handleKeydown(event) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      handleModelClick();
+    if (isMobile || isMinimized) {return;}
+    
+    // 空格键复位
+    if (event.key === ' ') {
+      event.preventDefault();
+      setExpression(-1);
     }
   }
 
@@ -279,8 +356,33 @@
         model.anchor.set(0.5, 0.5);
         model.x = canvasWidth / 2;
         model.y = canvasHeight / 2;
-        model.scale.set(0.1, 0.1);
+        model.scale.set(0.25, 0.25);
         app.stage.addChild(model);
+        
+        console.log('🎨 模型加载完成!');
+        console.log('Available model methods:', Object.keys(model));
+        console.log('Internal model:', model.internalModel);
+        if (model.internalModel?.motionManager?.expressionManager) {
+          console.log('Expression manager:', model.internalModel.motionManager.expressionManager);
+          console.log('📋 模型所有表情:', model.internalModel.motionManager.expressionManager.definitions);
+          
+          const definitions = model.internalModel.motionManager.expressionManager.definitions;
+          if (definitions && definitions.length > 0) {
+            console.log('📄 表情文件列表:');
+            definitions.forEach((exp, index) => {
+              console.log(`  [${index}] ${exp.Name} → ${exp.File}`);
+            });
+            console.log('� 第一个表情（通常是默认）:', definitions[0]);
+          }
+        }
+        console.log('🎭 当前状态: 未应用任何表情（原始默认表情）');
+        console.log('🔄 表情循环顺序: 默认 → 桌面 → 麦克风 → 惊讶 → 委屈 → 异议 → 默认');
+
+        // 播放循环待机动作
+        if (model.motion) {
+          model.motion('', 0, { loop: true });
+          console.log('🎬 待机动作已开始播放');
+        }
 
         model.on('click', () => {
           handleModelClick();
@@ -288,6 +390,9 @@
 
         // 添加鼠标移动事件监听
         window.addEventListener('mousemove', handleMouseMove);
+        
+        // 添加键盘事件监听
+        window.addEventListener('keydown', handleKeydown);
 
         window.addEventListener('resize', () => {
           checkScreenSize();
@@ -311,13 +416,13 @@
     return () => {
       clearTimeout(loadTimer);
       if (app) {app.destroy(true, { children: true });}
-      if (dialogTimer) {clearTimeout(dialogTimer);}
       if (clickTimeout) {clearTimeout(clickTimeout);}
       if (autoHideTimer) {clearTimeout(autoHideTimer);}
-      // 移除鼠标移动事件监听
+      // 移除事件监听
       if (handleMouseMove) {
         window.removeEventListener('mousemove', handleMouseMove);
       }
+      window.removeEventListener('keydown', handleKeydown);
     };
   });
 </script>
@@ -331,36 +436,11 @@
   class:hide-on-mobile={isMobile}
   style="position: fixed; bottom: {positionY}px; left: {positionX}px; z-index: 1000; cursor: pointer;"
   on:click={handleModelClick}
-  on:keydown={handleKeydown}
   role="button"
   tabindex="0"
 >
   <div>
     <canvas bind:this={canvasElement} width={canvasWidth} height={canvasHeight}></canvas>
-  </div>
-</div>
-
-<!-- 对话框 -->
-<div 
-  class="dialog-container"
-  class:show={showDialog}
-  style="position: fixed; bottom: {positionY + canvasHeight / 2 + 20}px; left: {positionX + canvasWidth - 30}px; z-index: 1002;"
->
-  <div class="dialog-content">
-    <div class="dialog-arrow"></div>
-    <div class="dialog-header">
-      <span class="dialog-name">Mihari</span>
-      <span class="dialog-emotion">{dialogMessage.emotion}</span>
-    </div>
-    <div class="dialog-text">
-      <span class="japanese">{dialogMessage.text}</span>
-      <span class="translation">「{dialogMessage.translation}」</span>
-    </div>
-    <div class="dialog-footer">
-      <div class="dialog-dots">
-        <span></span><span></span><span></span>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -374,8 +454,8 @@
   on:click={handleButtonClick}
   on:mouseenter={handleButtonMouseEnter}
   on:mouseleave={handleButtonMouseLeave}
-  style="position: fixed; left: {positionX + 20}px; z-index: 1001;"
-  style:bottom={isMinimized ? buttonMinimizedBottom + 'px' :(positionY + canvasHeight + 5) + 'px'}
+  style="position: fixed; left: {positionX}px; z-index: 1001;"
+  style:bottom={isMinimized ? buttonMinimizedBottom + 'px' :(positionY + canvasHeight + -80) + 'px'}
 >
   <!-- 魔法阵光环 -->
   <div class="magic-circle"></div>
@@ -424,7 +504,9 @@
 <style>
   /* ===== 手机端隐藏 ===== */
   .hide-on-mobile {
-    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
   
   .live2d-model {
@@ -695,8 +777,8 @@
   .speech-bubble {
     position: absolute;
     bottom: -52px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    transform: translateX(0);
     background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px);
     padding: 6px 12px;
@@ -729,8 +811,8 @@
     content: '';
     position: absolute;
     top: -4px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 20px;
+    transform: translateX(0);
     width: 0;
     height: 0;
     border-left: 4px solid transparent;
@@ -746,151 +828,18 @@
   .speech-bubble.up::before {
     top: auto;
     bottom: -4px;
+    left: 20px;
     border-bottom: none;
     border-top: 4px solid rgba(255,255,255,0.95);
   }
   
   .magical-btn:hover .speech-bubble {
     opacity: 1;
-    transform: translateX(-50%) translateY(-2px);
+    transform: translateX(0) translateY(-2px);
   }
   
   .magical-btn.minimized {
     background: linear-gradient(135deg, #e0f0ff, #d0e8ff);
     box-shadow: 0 4px 12px rgba(100, 150, 255, 0.3);
-  }
-  
-  /* ===== 对话框样式 ===== */
-  .dialog-container {
-    opacity: 0;
-    transform: translateX(-20px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
-    pointer-events: none;
-  }
-  
-  .dialog-container.show {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-  
-  .dialog-content {
-    position: relative;
-    background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,245,250,0.98));
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    padding: 16px 20px;
-    min-width: 220px;
-    max-width: 280px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255,255,255,0.5);
-    animation: dialogGlow 2s ease-in-out infinite;
-  }
-  
-  @keyframes dialogGlow {
-    0%, 100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255,255,255,0.5); }
-    50% { box-shadow: 0 20px 50px rgba(255,105,180,0.25), 0 0 0 2px rgba(255,105,180,0.3); }
-  }
-  
-  .dialog-arrow {
-    position: absolute;
-    left: -10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 10px solid rgba(255,255,255,0.98);
-    filter: drop-shadow(-2px 0 4px rgba(0,0,0,0.05));
-  }
-  
-  .dialog-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid rgba(255,105,180,0.3);
-  }
-  
-  .dialog-name {
-    font-size: 14px;
-    font-weight: bold;
-    background: linear-gradient(135deg, #ff6b9d, #ff9a9e);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: 1px;
-  }
-  
-  .dialog-emotion {
-    font-size: 16px;
-    animation: emotionBounce 0.5s ease-out;
-  }
-  
-  @keyframes emotionBounce {
-    0% { transform: scale(0); opacity: 0; }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  
-  .dialog-text {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 12px;
-  }
-  
-  .japanese {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    letter-spacing: 1px;
-    animation: textSlideIn 0.3s ease-out;
-  }
-  
-  .translation {
-    font-size: 12px;
-    color: #888;
-    font-style: italic;
-    animation: textSlideIn 0.3s ease-out 0.1s both;
-  }
-  
-  @keyframes textSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(5px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .dialog-dots {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-  }
-  
-  .dialog-dots span {
-    width: 6px;
-    height: 6px;
-    background: #ff6b9d;
-    border-radius: 50%;
-    animation: dotPulse 1.4s ease-in-out infinite;
-  }
-  
-  .dialog-dots span:nth-child(1) { animation-delay: 0s; }
-  .dialog-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .dialog-dots span:nth-child(3) { animation-delay: 0.4s; }
-  
-  @keyframes dotPulse {
-    0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
-    30% { opacity: 1; transform: scale(1.2); }
   }
 </style>
