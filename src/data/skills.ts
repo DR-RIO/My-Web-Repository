@@ -25,7 +25,7 @@ export const skillsData: Skill[] = [
 		id: "HTML-5",
 		name: "HTML-5",
 		description:
-			"现代 JavaScript 开发，涵盖 ES6+ 语法、异步编程以及模块化开发。",
+			"现代 Web 开发的基础，用于构建网页结构与语义化内容。",
 		icon: "logos:html-5",
 		category: "frontend",
 		level: "intermediate",
@@ -38,7 +38,7 @@ export const skillsData: Skill[] = [
 		name: "CSS-3",
 		description:
 			"现代 CSS3 开发，涵盖弹性布局、网格布局以及动画与过渡特效。",
-		icon: "logos:html-5",
+		icon: "logos:css-3",
 		category: "frontend",
 		level: "intermediate",
 		experience: { years: 2, months: 0 },

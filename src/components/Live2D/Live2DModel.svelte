@@ -9,7 +9,7 @@
   export let modelPath = '/pio/models/UGOfficial/ugofficial.model3.json';
   export let canvasWidth = 300;
   export let canvasHeight = 360;
-  export let positionX = 10;
+  export let positionX = 12;
   export let positionY = -50;
 
   let canvasElement;
@@ -436,8 +436,6 @@
   class:hide-on-mobile={isMobile}
   style="position: fixed; bottom: {positionY}px; left: {positionX}px; z-index: 1000; cursor: pointer;"
   on:click={handleModelClick}
-  role="button"
-  tabindex="0"
 >
   <div>
     <canvas bind:this={canvasElement} width={canvasWidth} height={canvasHeight}></canvas>
@@ -544,7 +542,7 @@
   }
   
   .magical-btn.auto-hidden {
-    transform: translateX(-95%);
+    transform: translateX(-80%);
   }
   
   .magical-btn.restoring {
@@ -583,6 +581,7 @@
   .sakura-ring span {
     position: absolute;
     font-size: 10px;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols;
     opacity: 0;
     transition: all 0.3s;
   }
@@ -614,6 +613,7 @@
   .star-particles span {
     position: absolute;
     font-size: 8px;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols;
     opacity: 0;
   }
   
@@ -647,6 +647,7 @@
     content: '💖';
     position: absolute;
     font-size: 10px;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols;
     animation: heartWave 1s ease-out infinite;
   }
   
@@ -678,6 +679,7 @@
   .music-notes span {
     position: absolute;
     font-size: 9px;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols;
     opacity: 0;
   }
   
@@ -714,6 +716,7 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 16px;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols;
     filter: drop-shadow(0 0 3px #ffd700);
     animation: starSpin 3s linear infinite;
   }
@@ -724,6 +727,7 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 9px;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols;
     opacity: 0.8;
     animation: starFloat 1.5s ease-in-out infinite;
   }
