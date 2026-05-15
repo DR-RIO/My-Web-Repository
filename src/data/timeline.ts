@@ -22,7 +22,7 @@ export const timelineData: TimelineItem[] = [
 		featured: true,
 		// 👇 新增图片
 		images: ["https://easyimage.isu183s.top/i/2026/05/04/023316.png","https://easyimage.isu183s.top/i/2026/05/04/024631.jpg"],
-		imageAlt: "国家奖学金",
+		imageAlt: ["国家奖学金","三好学生"],
 		imageHeight: "400px",
 	},
 	

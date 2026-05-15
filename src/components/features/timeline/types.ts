@@ -24,7 +24,7 @@ export interface TimelineItem {
 	// 👇 图片字段
 	image?: string;
 	images?: string[];
-	imageAlt?: string;
+	imageAlt?: string[];
 	imageHeight?: string;
 }
 

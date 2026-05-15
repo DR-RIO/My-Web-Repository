@@ -213,11 +213,11 @@ const hasImages = allImages.length > 0;
 								href={allImages[0]}
 								class="timeline-thumb rounded-xl overflow-hidden border border-black/10 dark:border-white/10 cursor-pointer group/img block"
 								data-fancybox="gallery"
-								data-caption={item.imageAlt || item.title}
+								data-caption={item.imageAlt?.[0] || item.title}
 							>
 								<img
 									src={allImages[0]}
-									alt={item.imageAlt || item.title}
+									alt={item.imageAlt?.[0] || item.title}
 									class="w-full object-contain transition-transform duration-300 group-hover/img:scale-105"
 									style={`max-height: ${item.imageHeight || "300px"};`}
 									loading="lazy"
@@ -232,14 +232,14 @@ const hasImages = allImages.length > 0;
 										class="timeline-thumb rounded-lg overflow-hidden border border-black/10 dark:border-white/10 cursor-pointer group/img block"
 										data-fancybox="gallery"
 										data-caption={
-											item.imageAlt ||
+											item.imageAlt?.[idx] ||
 											`${item.title} - ${idx + 1}`
 										}
 									>
 										<img
 											src={img}
 											alt={
-												item.imageAlt ||
+												item.imageAlt?.[idx] ||
 												`${item.title} - ${idx + 1}`
 											}
 											class="w-full object-contain transition-transform duration-300 group-hover/img:scale-105"
