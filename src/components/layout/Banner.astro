@@ -812,6 +812,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 		</div>
 	)}
 
+
+
 	<!-- Banner 图片来源标注 -->
 	{hasBannerCredit && (
 		<a
@@ -840,7 +842,15 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			</Icon>
 		</a>
 	)}
+
 </div>
+
+<!-- 跟随鼠标的提示 - 放在 body 最后，fixed 定位 -->
+{siteConfig.banner.homeText?.enable && (
+	<div id="banner-follow-hint" class="fixed bg-black/60 text-white/85 text-xs px-3 py-1.5 rounded-full z-[100] opacity-0 transition-opacity duration-200 pointer-events-none backdrop-blur-sm border border-white/10">
+		点击可隐藏
+	</div>
+)}
 
 <style>
 	/* Banner 文本样式 */
@@ -891,6 +901,11 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 	.banner-text-overlay {
 		pointer-events: none !important;
 	}
+	
+	/* 跟随鼠标提示框优化 */
+	#banner-follow-hint {
+		will-change: left, top, opacity;
+	}
 </style>
 
 <!-- 独立功能：点击 Banner 隐藏/显示主副标题并切换导航栏透明模式（不修改核心代码） -->
@@ -901,6 +916,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			const carousel = document.getElementById('banner-carousel');
 			const textOverlay = document.querySelector('.banner-text-overlay');
 			const navbar = document.getElementById('navbar');
+			const bannerWrapper = document.getElementById('banner-wrapper');
+			const followHint = document.getElementById('banner-follow-hint');
 			
 			// 如果是单图模式，则绑定到 wrapper
 			const target = carousel || document.getElementById('banner-wrapper');
@@ -911,6 +928,72 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			
 			// 添加手型光标提示
 			target.style.cursor = 'pointer';
+			
+			// 跟随鼠标的提示功能 - 简化版，fixed 定位直接跟随
+			if (bannerWrapper && followHint) {
+				let isHovering = false;
+				let targetX = 0;
+				let targetY = 0;
+				let currentX = 0;
+				let currentY = 0;
+				let animationId = null;
+				
+				// 缓动动画函数
+				function animate() {
+					if (!isHovering) return;
+					
+					// 缓动系数，数值越小越平滑
+					const ease = 0.15;
+					
+					// 计算当前位置到目标位置的差值
+					const dx = targetX - currentX;
+					const dy = targetY - currentY;
+					
+					// 缓动更新位置
+					currentX += dx * ease;
+					currentY += dy * ease;
+					
+					// 应用位置 - 直接设置 left/top，配合 fixed 定位
+					followHint.style.left = currentX + 'px';
+					followHint.style.top = currentY + 'px';
+					
+					// 继续动画
+					animationId = requestAnimationFrame(animate);
+				}
+				
+				bannerWrapper.addEventListener('mouseenter', function(e) {
+					isHovering = true;
+					// 初始化位置 - 直接用 clientX/Y（fixed 定位）
+					targetX = e.clientX + 15;
+					targetY = e.clientY + 15;
+					currentX = targetX;
+					currentY = targetY;
+					// 设置初始位置
+					followHint.style.left = currentX + 'px';
+					followHint.style.top = currentY + 'px';
+					// 显示提示
+					followHint.style.opacity = '1';
+					// 开始动画
+					animate();
+				});
+				
+				bannerWrapper.addEventListener('mouseleave', function() {
+					isHovering = false;
+					followHint.style.opacity = '0';
+					if (animationId) {
+						cancelAnimationFrame(animationId);
+						animationId = null;
+					}
+				});
+				
+				bannerWrapper.addEventListener('mousemove', function(e) {
+					if (!isHovering) return;
+					
+					// 直接更新目标位置 - 简单！
+					targetX = e.clientX + 15;
+					targetY = e.clientY + 15;
+				});
+			}
 			
 			// 点击事件
 			target.addEventListener('click', function(e) {
@@ -925,12 +1008,20 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					isTextHidden = true;
 					// 切换导航栏为完全透明
 					navbar.dataset.transparentMode = 'full';
+					// 更新提示文字
+					if (followHint) {
+						followHint.textContent = '点击可显示';
+					}
 				} else {
 					// 显示主副标题
 					textOverlay.style.opacity = '1';
 					isTextHidden = false;
 					// 切换导航栏为半透明加圆角
 					navbar.dataset.transparentMode = 'semi';
+					// 更新提示文字
+					if (followHint) {
+						followHint.textContent = '点击可隐藏';
+					}
 				}
 			});
 		}
