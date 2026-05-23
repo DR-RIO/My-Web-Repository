@@ -9,6 +9,33 @@ interface Props {
 
 const { config, className } = Astro.props;
 
+// 标准化图片数组，支持字符串或对象格式
+interface ImageItem {
+	url: string;
+	position?: string;
+}
+
+const normalizeToArray = (images: any): ImageItem[] => {
+	if (!images) return [];
+	if (Array.isArray(images)) {
+		return images.map((img) => {
+			if (typeof img === "string") {
+				return { url: img };
+			}
+			return img;
+		}).filter((img) => img.url);
+	}
+	if (typeof images === "string") {
+		return [{ url: images }];
+	}
+	return [];
+};
+
+// 获取图片的 position，优先使用图片自身的，否则使用默认的
+const getImagePosition = (img: ImageItem): string => {
+	return img.position || config.position || "center";
+};
+
 // 获取当前设备类型的图片源
 const getImageSources = async () => {
 	const srcConfig = config.src;
@@ -20,19 +47,17 @@ const getImageSources = async () => {
 			const text = await response.text();
 			const apiImages = text.split("\n").filter((line) => line.trim());
 			if (apiImages.length > 0) {
-				return { desktop: apiImages, mobile: apiImages };
+				const imageItems = apiImages.map(url => ({ url }));
+				return { desktop: imageItems, mobile: imageItems };
 			}
 		} catch (error) {
 			console.warn("Failed to fetch images from API:", error);
 		}
 	}
 
-	const toArray = (src: string | string[] | undefined): string[] => 
-		Array.isArray(src) ? src : (typeof src === "string" ? [src] : []);
-
 	if (typeof srcConfig === "object" && srcConfig !== null && !Array.isArray(srcConfig)) {
-		const desktop = toArray(srcConfig.desktop);
-		const mobile = toArray(srcConfig.mobile);
+		const desktop = normalizeToArray(srcConfig.desktop);
+		const mobile = normalizeToArray(srcConfig.mobile);
 		return {
 			desktop: desktop.length > 0 ? desktop : mobile,
 			mobile: mobile.length > 0 ? mobile : desktop,
@@ -40,7 +65,7 @@ const getImageSources = async () => {
 	}
 
 	// 如果是字符串或字符串数组，同时用于桌面端和移动端
-	const allImages = toArray(srcConfig as string | string[]);
+	const allImages = normalizeToArray(srcConfig);
 	return { desktop: allImages, mobile: allImages };
 };
 
@@ -56,17 +81,18 @@ const isCarouselEnabled = config.carousel?.enable &&
 const carouselInterval = config.carousel?.interval || 5;
 
 // 样式配置
-const position = config.position || "center";
 const zIndex = config.zIndex || 0;
 const opacity = config.opacity || 0.8;
 const blurAmount = config.blur || 0;
-const positionClass = (() => {
-	switch (position) {
+
+// 获取 Tailwind 类名的辅助函数
+const getPositionClass = (pos: string) => {
+	switch (pos) {
 		case "top": return "object-top";
 		case "bottom": return "object-bottom";
 		default: return "object-center";
 	}
-})();
+};
 
 const renderGroups = [
 	{
@@ -97,80 +123,155 @@ const renderGroups = [
 	{isCarouselEnabled ? (
 		renderGroups.map(group => group.hasImages && (
 			<div class={`${group.containerClass} w-full h-full relative`} style="transform: translateZ(0);">
-				{group.images.map((src, index) => (
+				{group.images.map((img, index) => {
+					const imgPosition = getImagePosition(img);
+					const imgPositionClass = getPositionClass(imgPosition);
+					return (
 					<img
-						src={src}
+						src={img.url}
 						alt={`${group.key} wallpaper ${index + 1}`}
-						class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}`}
+						class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${imgPositionClass}`}
 						data-carousel-item={index}
-						style={`transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''}; opacity: ${index === 0 ? 1 : 0};`}
+						style={`transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''}; opacity: ${index === 0 ? 1 : 0}; object-position: ${imgPosition};`}
 						loading={index === 0 ? "eager" : "lazy"}
 						fetchpriority={index === 0 ? "high" : undefined}
 					/>
-				))}
+				);})}
 			</div>
 		))
 	) : (
 		<div id="wallpaper-single-container" class="w-full h-full relative">
-			<script is:inline define:vars={{ desktopImages: imageSources.desktop, mobileImages: imageSources.mobile, positionClass, blurAmount }}>
-				(function() {
-					const getRandomImage = (images, storageKey) => {
-						if (images.length === 0) {return null;}
-						if (images.length === 1) {return images[0];}
-						
-						const lastIndex = sessionStorage.getItem(storageKey);
-						let newIndex;
-						
-						do {
-							newIndex = Math.floor(Math.random() * images.length);
-						} while (newIndex === parseInt(lastIndex || '-1'));
-						
-						sessionStorage.setItem(storageKey, newIndex.toString());
-						return images[newIndex];
-					};
-					
-					const desktopSrc = getRandomImage(desktopImages, 'wallpaper_desktop_index');
-					const mobileSrc = getRandomImage(mobileImages, 'wallpaper_mobile_index');
-					
-					const container = document.getElementById('wallpaper-single-container');
-					
-					if (desktopSrc) {
-						const desktopDiv = document.createElement('div');
-						desktopDiv.className = 'hidden lg:block w-full h-full relative';
-						desktopDiv.style.transform = 'translateZ(0)';
-						desktopDiv.innerHTML = `
-							<img
-								src="${desktopSrc}"
-								alt="desktop wallpaper"
-								class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}"
-								style="transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1;"
-								decoding="async"
-								loading="eager"
-								fetchpriority="high"
-							/>
-						`;
-						container.appendChild(desktopDiv);
-					}
-					
-					if (mobileSrc) {
-						const mobileDiv = document.createElement('div');
-						mobileDiv.className = 'block lg:hidden w-full h-full relative';
-						mobileDiv.style.transform = 'translateZ(0)';
-						mobileDiv.innerHTML = `
-							<img
-								src="${mobileSrc}"
-								alt="mobile wallpaper"
-								class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}"
-								style="transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1;"
-								decoding="async"
-								loading="eager"
-								fetchpriority="high"
-							/>
-						`;
-						container.appendChild(mobileDiv);
-					}
-				})();
-			</script>
+			{/* 桌面端壁纸 */}
+			{hasDesktopImages && (
+				<div class="hidden md:block w-full h-full relative" style="transform: translateZ(0);">
+					{imageSources.desktop.length === 1 ? (
+						(() => {
+							const img = imageSources.desktop[0];
+							const imgPosition = getImagePosition(img);
+							const imgPositionClass = getPositionClass(imgPosition);
+							return (
+								<img
+									src={img.url}
+									alt="desktop wallpaper"
+									class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${imgPositionClass}`}
+									style={`transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1; object-position: ${imgPosition};`}
+									decoding="async"
+									loading="eager"
+									fetchpriority="high"
+								/>
+							);
+						})()
+					) : (
+						<script is:inline define:vars={{ images: imageSources.desktop.map(img => ({ url: img.url, position: getImagePosition(img) })), blurAmount }}>
+							(function() {
+								const getRandomIndex = (images, storageKey) => {
+									if (images.length === 0) return -1;
+									if (images.length === 1) return 0;
+									
+									const lastIndex = sessionStorage.getItem(storageKey);
+									let newIndex;
+									
+									do {
+										newIndex = Math.floor(Math.random() * images.length);
+									} while (newIndex === parseInt(lastIndex || '-1'));
+									
+									sessionStorage.setItem(storageKey, newIndex.toString());
+									return newIndex;
+								};
+								
+								const randomIndex = getRandomIndex(images, 'wallpaper_desktop_index');
+								if (randomIndex >= 0) {
+									const img = images[randomIndex];
+									const getPositionClass = (pos) => {
+										switch (pos) {
+											case "top": return "object-top";
+											case "bottom": return "object-bottom";
+											default: return "object-center";
+										}
+									};
+									document.currentScript?.parentElement?.insertAdjacentHTML('beforeend', `
+										<img
+											src="${img.url}"
+											alt="desktop wallpaper"
+											class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${getPositionClass(img.position)}"
+											style="transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1; object-position: ${img.position};"
+											decoding="async"
+											loading="eager"
+											fetchpriority="high"
+										/>
+									`);
+								}
+							})();
+						</script>
+					)}
+				</div>
+			)}
+			
+			{/* 移动端壁纸 */}
+			{hasMobileImages && (
+				<div class="block md:hidden w-full h-full relative" style="transform: translateZ(0);">
+					{imageSources.mobile.length === 1 ? (
+						(() => {
+							const img = imageSources.mobile[0];
+							const imgPosition = getImagePosition(img);
+							const imgPositionClass = getPositionClass(imgPosition);
+							return (
+								<img
+									src={img.url}
+									alt="mobile wallpaper"
+									class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${imgPositionClass}`}
+									style={`transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1; object-position: ${imgPosition};`}
+									decoding="async"
+									loading="eager"
+									fetchpriority="high"
+								/>
+							);
+						})()
+					) : (
+						<script is:inline define:vars={{ images: imageSources.mobile.map(img => ({ url: img.url, position: getImagePosition(img) })), blurAmount }}>
+							(function() {
+								const getRandomIndex = (images, storageKey) => {
+									if (images.length === 0) return -1;
+									if (images.length === 1) return 0;
+									
+									const lastIndex = sessionStorage.getItem(storageKey);
+									let newIndex;
+									
+									do {
+										newIndex = Math.floor(Math.random() * images.length);
+									} while (newIndex === parseInt(lastIndex || '-1'));
+									
+									sessionStorage.setItem(storageKey, newIndex.toString());
+									return newIndex;
+								};
+								
+								const randomIndex = getRandomIndex(images, 'wallpaper_mobile_index');
+								if (randomIndex >= 0) {
+									const img = images[randomIndex];
+									const getPositionClass = (pos) => {
+										switch (pos) {
+											case "top": return "object-top";
+											case "bottom": return "object-bottom";
+											default: return "object-center";
+										}
+									};
+									document.currentScript?.parentElement?.insertAdjacentHTML('beforeend', `
+										<img
+											src="${img.url}"
+											alt="mobile wallpaper"
+											class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${getPositionClass(img.position)}"
+											style="transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1; object-position: ${img.position};"
+											decoding="async"
+											loading="eager"
+											fetchpriority="high"
+										/>
+									`);
+								}
+							})();
+						</script>
+					)}
+				</div>
+			)}
 		</div>
 	)}
 </div>

@@ -40,12 +40,35 @@ const {
 	showWave = siteConfig.banner.waves?.enable ?? true,
 } = Astro.props;
 
-// 标准化图片数组
-const normalizeToArray = (images: string | string[]): string[] =>
-	Array.isArray(images) ? images : [images];
+// 标准化图片数组，支持字符串或对象格式
+interface ImageItem {
+	url: string;
+	position?: string;
+}
 
-const desktopImages = normalizeToArray(bannerImages.desktop).filter(Boolean);
-const mobileImages = normalizeToArray(bannerImages.mobile).filter(Boolean);
+const normalizeToArray = (images: any): ImageItem[] => {
+	if (!images) return [];
+	if (Array.isArray(images)) {
+		return images.map((img) => {
+			if (typeof img === "string") {
+				return { url: img };
+			}
+			return img;
+		}).filter((img) => img.url);
+	}
+	if (typeof images === "string") {
+		return [{ url: images }];
+	}
+	return [];
+};
+
+const desktopImages = normalizeToArray(bannerImages.desktop);
+const mobileImages = normalizeToArray(bannerImages.mobile);
+
+// 获取图片的 position，优先使用图片自身的，否则使用默认的
+const getImagePosition = (img: ImageItem): string => {
+	return img.position || siteConfig.banner.position || "center";
+};
 
 const isCarouselEnabled =
 	siteConfig.banner.carousel?.enable &&
@@ -87,57 +110,57 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			data-pause-on-hover={pauseOnHoverValue}
 		>
 			{/* 移动端：第一张图直接渲染，其余放入 template 延迟加载 */}
-			{mobileImages.length > 0 && (
-				<div class="banner-image-slot-mobile absolute inset-0 block md:hidden">
-					<img
-						alt="Mobile banner image 1"
-						class="object-cover h-full w-full"
-						src={mobileImages[0]}
-						style={`object-position: ${siteConfig.banner.position}`}
-						loading="eager"
-						fetchpriority="high"
-					/>
-				</div>
-			)}
-			{mobileImages.slice(1).map((src, i) => (
-				<template class="banner-tpl-mobile">
-					<img
-						alt={`Mobile banner image ${i + 2}`}
-						class="object-cover h-full w-full"
-						src={src}
-						style={`object-position: ${siteConfig.banner.position}`}
-						loading="eager"
-						fetchpriority="high"
-					/>
-				</template>
-			))}
+		{mobileImages.length > 0 && (
+			<div class="banner-image-slot-mobile absolute inset-0 block md:hidden">
+				<img
+					alt="Mobile banner image 1"
+					class="object-cover h-full w-full"
+					src={mobileImages[0].url}
+					style={`object-position: ${getImagePosition(mobileImages[0])}`}
+					loading="eager"
+					fetchpriority="high"
+				/>
+			</div>
+		)}
+		{mobileImages.slice(1).map((img, i) => (
+			<template class="banner-tpl-mobile">
+				<img
+					alt={`Mobile banner image ${i + 2}`}
+					class="object-cover h-full w-full"
+					src={img.url}
+					style={`object-position: ${getImagePosition(img)}`}
+					loading="eager"
+					fetchpriority="high"
+				/>
+			</template>
+		))}
 
-			{/* 桌面端：第一张图直接渲染，其余放入 template 延迟加载 */}
-			{desktopImages.length > 0 && (
-				<div class="banner-image-slot-desktop absolute inset-0 hidden md:block">
-					<img
-						id="banner"
-						alt="Desktop banner image 1"
-						class="object-cover h-full w-full"
-						src={desktopImages[0]}
-						style={`object-position: ${siteConfig.banner.position}`}
-						loading="eager"
-						fetchpriority="high"
-					/>
-				</div>
-			)}
-			{desktopImages.slice(1).map((src, i) => (
-				<template class="banner-tpl-desktop">
-					<img
-						alt={`Desktop banner image ${i + 2}`}
-						class="object-cover h-full w-full"
-						src={src}
-						style={`object-position: ${siteConfig.banner.position}`}
-						loading="eager"
-						fetchpriority="high"
-					/>
-				</template>
-			))}
+		{/* 桌面端：第一张图直接渲染，其余放入 template 延迟加载 */}
+		{desktopImages.length > 0 && (
+			<div class="banner-image-slot-desktop absolute inset-0 hidden md:block">
+				<img
+					id="banner"
+					alt="Desktop banner image 1"
+					class="object-cover h-full w-full"
+					src={desktopImages[0].url}
+					style={`object-position: ${getImagePosition(desktopImages[0])}`}
+					loading="eager"
+					fetchpriority="high"
+				/>
+			</div>
+		)}
+		{desktopImages.slice(1).map((img, i) => (
+			<template class="banner-tpl-desktop">
+				<img
+					alt={`Desktop banner image ${i + 2}`}
+					class="object-cover h-full w-full"
+					src={img.url}
+					style={`object-position: ${getImagePosition(img)}`}
+					loading="eager"
+					fetchpriority="high"
+				/>
+			</template>
+		))}
 		</div>
 	) : (
 		/* 单图模式 */
@@ -147,8 +170,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					<img
 						alt="Mobile banner image of the blog"
 						class="object-cover h-full w-full"
-						src={mobileImages[0]}
-						style={`object-position: ${siteConfig.banner.position}`}
+						src={mobileImages[0].url}
+						style={`object-position: ${getImagePosition(mobileImages[0])}`}
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -160,8 +183,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 						id="banner"
 						alt="Desktop banner image of the blog"
 						class="object-cover h-full w-full"
-						src={desktopImages[0]}
-						style={`object-position: ${siteConfig.banner.position}`}
+						src={desktopImages[0].url}
+						style={`object-position: ${getImagePosition(desktopImages[0])}`}
 						loading="eager"
 						fetchpriority="high"
 					/>

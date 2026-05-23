@@ -60,7 +60,10 @@ const getDefaultBanner = (): string => {
 		return src;
 	}
 	if (Array.isArray(src)) {
-		return src[0] || "";
+		const first = src[0];
+		if (typeof first === "string") return first;
+		if (first && typeof first === "object" && "url" in first) return first.url;
+		return "";
 	}
 	if (src && typeof src === "object") {
 		// 优先使用desktop，如果没有则使用mobile
@@ -70,13 +73,17 @@ const getDefaultBanner = (): string => {
 			return desktopSrc;
 		}
 		if (Array.isArray(desktopSrc) && desktopSrc.length > 0) {
-			return desktopSrc[0];
+			const first = desktopSrc[0];
+			if (typeof first === "string") return first;
+			if (first && typeof first === "object" && "url" in first) return first.url;
 		}
 		if (typeof mobileSrc === "string") {
 			return mobileSrc;
 		}
 		if (Array.isArray(mobileSrc) && mobileSrc.length > 0) {
-			return mobileSrc[0];
+			const first = mobileSrc[0];
+			if (typeof first === "string") return first;
+			if (first && typeof first === "object" && "url" in first) return first.url;
 		}
 	}
 	return "";

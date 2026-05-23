@@ -142,11 +142,12 @@ export interface SiteConfig {
 		src:
 			| string
 			| string[]
+			| { url: string; position?: string }[]
 			| {
-					desktop?: string | string[];
-					mobile?: string | string[];
-			  }; // 支持单个图片、图片数组或分别设置桌面端和移动端图片
-		position?: "top" | "center" | "bottom";
+					desktop?: string | string[] | { url: string; position?: string }[];
+					mobile?: string | string[] | { url: string; position?: string }[];
+			  }; // 支持单个图片、图片数组、图片对象数组（含独立position）或分别设置桌面端和移动端
+		position?: "top" | "center" | "bottom" | string; // 默认 position，当图片未指定时使用
 		carousel?: {
 			enable: boolean; // 是否启用轮播
 			interval: number; // 轮播间隔时间（秒）
@@ -450,11 +451,12 @@ export interface FullscreenWallpaperConfig {
 	src:
 		| string
 		| string[]
+		| { url: string; position?: string }[]
 		| {
-				desktop?: string | string[];
-				mobile?: string | string[];
-		  }; // 支持单个图片、图片数组或分别设置桌面端和移动端图片
-	position?: "top" | "center" | "bottom"; // 壁纸位置，等同于 object-position
+				desktop?: string | string[] | { url: string; position?: string }[];
+				mobile?: string | string[] | { url: string; position?: string }[];
+		  }; // 支持单个图片、图片数组、图片对象数组（含独立position）或分别设置桌面端和移动端
+	position?: "top" | "center" | "bottom" | string; // 默认 position，当图片未指定时使用
 	carousel?: {
 		enable: boolean; // 是否启用轮播
 		interval: number; // 轮播间隔时间（秒）

@@ -122,30 +122,31 @@ export const siteConfig: SiteConfig = {
 	},
 
 	banner: {
-		// 支持单张图片或图片数组，当数组长度 > 1 时自动启用轮播
+		// 支持单张图片、图片数组或图片对象数组（含独立 position），当数组长度 > 1 时自动启用轮播
 		src: {
 			desktop: [
-				"https://image.isu183s.top/desktop/desktop1.webp",
-				"https://image.isu183s.top/desktop/amy.webp",
-				"https://image.isu183s.top/desktop/linglan1.webp",
-				"https://image.isu183s.top/desktop/linglan2.webp",
-				"https://image.isu183s.top/desktop/mdx.webp",
-				"https://image.isu183s.top/desktop/big.jpg",
-			], // 桌面横幅图片
+				{ url: "https://image.isu183s.top/desktop/desktop1.webp", position: "center" },
+				{ url: "https://image.isu183s.top/desktop/amy.webp", position: "top" },
+				{ url: "https://image.isu183s.top/desktop/linglan1.webp", position: "center" },
+				{ url: "https://image.isu183s.top/desktop/linglan2.webp", position: "center" },
+				{ url: "https://image.isu183s.top/desktop/mdx.webp", position: "top" },
+				{ url: "https://image.isu183s.top/desktop/big.jpg", position: "center" },
+				{ url: "https://image.isu183s.top/desktop/2233plus-RTX.webp", position: "top" },
+			], // 桌面横幅图片，每张图可独立设置 position
 			mobile: [
-				"https://image.isu183s.top/mobile/dbtamy.webp",
-				"https://image.isu183s.top/mobile/ll.webp",
-				"https://image.isu183s.top/mobile/mmx.webp",
-				"https://image.isu183s.top/mobile/mmx2.webp",
-				"https://image.isu183s.top/mobile/mmxhh.webp",
-			], // 移动横幅图片
+				{ url: "https://image.isu183s.top/mobile/dbtamy.webp", position: "center" },
+				{ url: "https://image.isu183s.top/mobile/ll.webp", position: "center" },
+				{ url: "https://image.isu183s.top/mobile/mmx.webp", position: "center" },
+				{ url: "https://image.isu183s.top/mobile/mmx2.webp", position: "center" },
+				{ url: "https://image.isu183s.top/mobile/mmxhh.webp", position: "center" },
+			], // 移动横幅图片，每张图可独立设置 position
 		}, // 使用本地横幅图片
 
-		position: "center", // 等同于 object-position，仅支持 'top', 'center', 'bottom'。默认为 'center'
+		position: "center", // 默认 position，当图片未指定时使用
 
 		carousel: {
 			enable: true, // 为 true 时：为多张图片启用轮播。为 false 时：从数组中随机显示一张图片
-			interval: 4, // 轮播间隔时间（秒）
+			interval: 5, // 轮播间隔时间（秒）
 			pauseOnHover: false, // 鼠标悬停时是否暂停轮播（false = 不暂停，true = 暂停）
 		},
 
@@ -249,23 +250,23 @@ export const siteConfig: SiteConfig = {
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
 		desktop: [
-			"https://image.isu183s.top/desktop/desktop1.webp",
-			"https://image.isu183s.top/desktop/amy.webp",
-			"https://image.isu183s.top/desktop/linglan1.webp",
-			"https://image.isu183s.top/desktop/linglan2.webp",
-			"https://image.isu183s.top/desktop/mdx.webp",
-			"https://image.isu183s.top/desktop/big.jpg",
-			"https://image.isu183s.top/desktop/bg1.webp",
-		], // 桌面横幅图片
+			{ url: "https://image.isu183s.top/desktop/desktop1.webp", position: "bottom" },
+			{ url: "https://image.isu183s.top/desktop/amy.webp", position: "center" },
+			{ url: "https://image.isu183s.top/desktop/linglan1.webp", position: "top" },
+			{ url: "https://image.isu183s.top/desktop/linglan2.webp", position: "50% 30%" },
+			{ url: "https://image.isu183s.top/desktop/mdx.webp", position: "center" },
+			{ url: "https://image.isu183s.top/desktop/big.jpg", position: "center" },
+			{ url: "https://image.isu183s.top/desktop/bg1.webp", position: "center" },
+		], // 桌面横幅图片，每张图可独立设置 position
 		mobile: [
-			"https://image.isu183s.top/mobile/dbtamy.webp",
-			"https://image.isu183s.top/mobile/ll.webp",
-			"https://image.isu183s.top/mobile/mmx.webp",
-			"https://image.isu183s.top/mobile/mmx2.webp",
-			"https://image.isu183s.top/mobile/mmxhh.webp",
-		], // 移动横幅图片
+			{ url: "https://image.isu183s.top/mobile/dbtamy.webp", position: "center" },
+			{ url: "https://image.isu183s.top/mobile/ll.webp", position: "center" },
+			{ url: "https://image.isu183s.top/mobile/mmx.webp", position: "center" },
+			{ url: "https://image.isu183s.top/mobile/mmx2.webp", position: "center" },
+			{ url: "https://image.isu183s.top/mobile/mmxhh.webp", position: "center" },
+		], // 移动横幅图片，每张图可独立设置 position
 	}, // 使用本地横幅图片
-	position: "center", // 壁纸位置，等同于 object-position
+	position: "center", // 默认 position，当图片未指定时使用
 	carousel: {
 		enable: true, // 启用轮播
 		interval: 4, // 轮播间隔时间（秒）
