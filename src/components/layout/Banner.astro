@@ -293,6 +293,38 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				collectFrames('banner-image-slot-mobile', 'banner-tpl-mobile');
 				collectFrames('banner-image-slot-desktop', 'banner-tpl-desktop');
 
+				// 预加载所有轮播图片，并跟踪已加载状态
+				if (!window.__bannerImagesLoaded) window.__bannerImagesLoaded = {};
+
+				function preloadAllImages() {
+					// 从所有 frame 中提取图片 URL
+					var allImages = [];
+					var allFrames = Object.values(window.__bannerCarouselFrames || {}).flat();
+					allFrames.forEach(function(frame) {
+						var tempDiv = document.createElement('div');
+						tempDiv.innerHTML = frame;
+						var images = tempDiv.querySelectorAll('img');
+						images.forEach(function(img) {
+							if (img.src && allImages.indexOf(img.src) === -1) {
+								allImages.push(img.src);
+							}
+						});
+					});
+
+					// 预加载所有图片
+					allImages.forEach(function(src) {
+						if (!window.__bannerImagesLoaded[src]) {
+							var img = new Image();
+							img.onload = img.onerror = function() {
+								window.__bannerImagesLoaded[src] = true;
+							};
+							img.src = src;
+						}
+					});
+				}
+
+				preloadAllImages();
+
 				// 初始化轮播索引
 				window.__bannerCarouselIndex = {
 					mobile: window.__bannerRandomIndex ? window.__bannerRandomIndex.mobile : 0,
@@ -383,32 +415,67 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					newSlot.innerHTML = frames[targetIndex % frames.length];
 					oldSlot.parentNode.insertBefore(newSlot, oldSlot.nextSibling);
 
-					// 预加载图片，确保图片加载完成后再进行淡入
+					// 检查图片是否已经预加载过
 					var images = newSlot.querySelectorAll('img');
+					var needToWait = false;
 					var loadedCount = 0;
 					var totalImages = images.length;
+					var hasFadedIn = false;
+
+					// 强制超时，最多等待 500ms，避免图片加载卡住导致轮播暂停
+					var timeoutId = setTimeout(function() {
+						if (!hasFadedIn) {
+							hasFadedIn = true;
+							fadeInNewSlot();
+						}
+					}, 500);
+
+					function checkAndFadeIn() {
+						loadedCount++;
+						if (loadedCount === totalImages && !hasFadedIn) {
+							hasFadedIn = true;
+							clearTimeout(timeoutId);
+							fadeInNewSlot();
+						}
+					}
 
 					if (totalImages === 0) {
 						// 没有图片，直接淡入
+						clearTimeout(timeoutId);
+						hasFadedIn = true;
 						fadeInNewSlot();
 					} else {
-						// 有图片，等待所有图片加载完成后再淡入
+						// 检查是否所有图片都已经预加载
 						images.forEach(function(img) {
-							var imgElement = new Image();
-							imgElement.onload = function() {
-								loadedCount++;
-								if (loadedCount === totalImages) {
-									fadeInNewSlot();
-								}
-							};
-							imgElement.onerror = function() {
-								loadedCount++;
-								if (loadedCount === totalImages) {
-									fadeInNewSlot();
-								}
-							};
-							imgElement.src = img.src;
+							if (!window.__bannerImagesLoaded[img.src]) {
+								needToWait = true;
+							}
 						});
+
+						if (!needToWait) {
+							// 所有图片都已经预加载，直接淡入
+							clearTimeout(timeoutId);
+							hasFadedIn = true;
+							fadeInNewSlot();
+						} else {
+							// 还有图片未加载，等待它们加载完成
+							images.forEach(function(img) {
+								if (window.__bannerImagesLoaded[img.src]) {
+									checkAndFadeIn();
+								} else {
+									var imgElement = new Image();
+									imgElement.onload = function() {
+										window.__bannerImagesLoaded[img.src] = true;
+										checkAndFadeIn();
+									};
+									imgElement.onerror = function() {
+										window.__bannerImagesLoaded[img.src] = true;
+										checkAndFadeIn();
+									};
+									imgElement.src = img.src;
+								}
+							});
+						}
 					}
 
 					function fadeInNewSlot() {
@@ -431,12 +498,38 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					}
 				}
 
+				// 预加载接下来的几张图片
+				function preloadNextImages(slotClass, totalCount, type) {
+					var frames = window.__bannerCarouselFrames[slotClass];
+					if (!frames || frames.length === 0) return;
+					var currentIndex = window.__bannerCarouselIndex[type];
+					// 预加载接下来的 2 张图片
+					for (var i = 1; i <= 2; i++) {
+						var nextIndex = (currentIndex + i) % totalCount;
+						var frame = frames[nextIndex];
+						var tempDiv = document.createElement('div');
+						tempDiv.innerHTML = frame;
+						var images = tempDiv.querySelectorAll('img');
+						images.forEach(function(img) {
+							if (!window.__bannerImagesLoaded[img.src]) {
+								var imgElement = new Image();
+								imgElement.onload = imgElement.onerror = function() {
+									window.__bannerImagesLoaded[img.src] = true;
+								};
+								imgElement.src = img.src;
+							}
+						});
+					}
+				}
+
 				// 自动轮播用的 crossfade（前进到下一张）
 				function crossfade(slotClass, totalCount, type) {
 					var frames = window.__bannerCarouselFrames[slotClass];
 					if (!frames || frames.length === 0) return;
 					var currentIndex = window.__bannerCarouselIndex[type];
 					var nextIndex = (currentIndex + 1) % totalCount;
+					// 先预加载接下来的几张图片
+					preloadNextImages(slotClass, totalCount, type);
 					crossfadeToIndex(slotClass, totalCount, type, nextIndex);
 				}
 
