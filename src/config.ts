@@ -484,13 +484,17 @@ export const shareConfig: ShareConfig = {
 export const announcementConfig: AnnouncementConfig = {
 	title: "哈喽~ 我是公告栏！", // 公告标题，填空使用i18n字符串Key.announcement
 	content: `[人IO]: 
-	状态: 正在调试和优化网页项目···
+	状态: 正在调试和优化网站项目···
 
 	---建议访问桌面端，桌面端网页样式和功能非常齐全(如果使用PC端的旧浏览器。可能连网页都打不开)。
 
 	桌面端使用Windows10以上的系统和最新浏览器有优秀体验,移动端使用微信打开网址和夸克浏览器访问体验最佳!
 
-	遇到奇奇怪怪的问题请直接刷新~`, // 公告内容
+	遇到奇奇怪怪的问题请直接刷新~
+	
+	在评论区使用QQ邮箱发送评论会自动获取QQ头像，
+	
+	如果不是QQ邮箱则需要前往 <a href="https://weavatar.com" target="_blank" rel="noopener noreferrer">https://weavatar.com</a> 上传图像`, // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
