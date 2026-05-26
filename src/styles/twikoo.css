@@ -1,9 +1,17 @@
 :root {
   --tk-text: black;
   --code-block-text: #333; /* 调整为深色但在浅色背景下仍然舒适的值 */
+  /* 评论框背景图片配置 */
+  --comment-bg-img: url('https://image.isu183s.top/desktop/2233plus-RTX.webp');
 }
 
 @reference "tailwindcss";
+
+/* 评论框背景图片样式 */
+.twikoo-container,
+#tcomment {
+  position: relative;
+}
 
 html.dark {
   --tk-text: #d1d5db;
@@ -25,11 +33,31 @@ html.dark {
   .tk-col {
     @apply flex-col-reverse;
     .tk-input {
-      textarea {
+      textarea.el-textarea__inner {
         @apply rounded-(--radius-large) py-4 px-6 !min-h-[150px] focus:border-(--primary);
+        /* 覆盖内联样式，设置背景图片完全覆盖并添加暗色蒙版 */
+        background: 
+          linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)),
+          var(--comment-bg-img) !important;
+        background-size: cover !important;
+        background-position: top center !important;
+        background-repeat: no-repeat !important;
+        background-clip: padding-box !important;
+        background-origin: padding-box !important;
       }
     }
   }
+}
+
+html.dark .tk-row .tk-col .tk-input textarea.el-textarea__inner {
+  background: 
+    linear-gradient(rgba(30, 30, 30, 0.65), rgba(30, 30, 30, 0.65)),
+    var(--comment-bg-img) !important;
+  background-size: cover !important;
+  background-position: top center !important;
+  background-repeat: no-repeat !important;
+  background-clip: padding-box !important;
+  background-origin: padding-box !important;
 }
 
 /* Meta */
@@ -72,9 +100,16 @@ html.dark {
 
 .tk-comment {
   @apply border-[1px] border-[rgba(144,147,153,0.31)] p-4 rounded-2xl hover:shadow-md transition-all;
+  /* 给评论卡片添加半透明背景以确保文字可读性 */
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
   .tk-action-icon svg {
     @apply fill-(--primary);
   }
+}
+
+html.dark .tk-comment {
+  background-color: rgba(30, 30, 30, 0.85);
 }
 
 .tk-action {

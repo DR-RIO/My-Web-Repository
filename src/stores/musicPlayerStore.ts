@@ -48,6 +48,7 @@ function getAssetPath(path: string): string {
 class MusicPlayerStore {
 	private audio: HTMLAudioElement | null = null;
 	private state: MusicPlayerState;
+	private originalPlaylist: Song[] = [];
 	private isInitialized = false;
 	private unregisterInteraction: (() => void) | undefined;
 	private listeners = new Set<(state: MusicPlayerState) => void>();
@@ -317,6 +318,8 @@ class MusicPlayerStore {
 			this.state.playlist = list.map((song) =>
 				this.convertMetingSong(song),
 			);
+			// 保存原始歌单
+			this.originalPlaylist = [...this.state.playlist];
 			this.state.isLoading = false;
 
 			if (this.state.playlist.length > 0) {
@@ -409,7 +412,10 @@ class MusicPlayerStore {
 
 	async restorePlaylist(): Promise<void> {
 		this.state.isSearchMode = false;
-		await this.loadPlaylist();
+		this.state.playlist = [...this.originalPlaylist];
+		// 取消高亮，不匹配任何歌曲
+		this.state.currentIndex = -1;
+		this.broadcastState();
 	}
 
 	private convertMetingSong(song: any): Song {
@@ -442,6 +448,8 @@ class MusicPlayerStore {
 
 	private loadLocalPlaylist(): void {
 		this.state.playlist = [...LOCAL_PLAYLIST];
+		// 保存原始歌单
+		this.originalPlaylist = [...this.state.playlist];
 		if (this.state.playlist.length === 0) {
 			this.showError("本地播放列表为空");
 		} else {
