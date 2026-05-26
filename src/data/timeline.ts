@@ -9,7 +9,8 @@ export const timelineData: TimelineItem[] = [
 		description: "目前就读于计算机网络技术专业，涵盖计算机网络技术各个方向。",
 		type: "education",
 		startDate: "2023-09-01",
-		location: "广东·佛山·南海",
+		endDate: "2026-06-28",
+		location: "广东·佛山·南海区",
 		organization: "广东省佛山市华材职业技术学校",
 		skills: ["HTML/CSS", "Visual Studio Code", "JavaScript", "After Effects", "MySQL","Tableau","Photoshop","HBulid X","Linux","Windows server"],
 		achievements: [
@@ -21,8 +22,28 @@ export const timelineData: TimelineItem[] = [
 		color: "#059669",
 		featured: true,
 		// 👇 新增图片
-		images: ["https://easyimage.isu183s.top/i/2026/05/04/023316.png","https://easyimage.isu183s.top/i/2026/05/04/024631.jpg"],
-		imageAlt: ["国家奖学金","三好学生"],
+		images: ["https://easyimage.isu183s.top/i/2026/05/04/023316.png","https://easyimage.isu183s.top/i/2026/05/04/024631.jpg","https://easyimage.isu183s.top/i/2026/05/24/213948.jpg"],
+		imageAlt: ["国家奖学金","三好学生","技能大赛一等奖"],
+		imageHeight: "400px",
+	},
+	{
+		id: "current-study",
+		title: "移动互联应用技术新生",
+		description: "马上步入深圳职业技术大学继续深造，期待在移动互联应用技术专业学习更多前沿技术和实践经验。",
+		type: "education",
+		startDate: "2026-09-01",
+		location: "广东·深圳·南山区",
+		organization: "广东省深圳市深圳职业技术大学",
+		skills: ["HTML/CSS", "Visual Studio Code", "JavaScript", "Linux", "MySQL","Windows server"],
+		achievements: [
+			"",
+		],
+		icon: "material-symbols:school",
+		color: "#00a6ff",
+		featured: true,
+		// 👇 新增图片
+		images: ["",],
+		imageAlt: ["",],
 		imageHeight: "400px",
 	},
 	

@@ -99,7 +99,7 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 	style={`top: -${BANNER_HEIGHT_EXTEND}vh`}
 >
 	{isCarouselEnabled ? (
-		/* 轮播图模式：Ken Burns + Crossfade */
+		/* 轮播图模式：预渲染所有槽位 + CSS 类切换 */
 		<div
 			id="banner-carousel"
 			class="relative h-full w-full"
@@ -109,58 +109,39 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			data-fade-ms={fadeMs}
 			data-pause-on-hover={pauseOnHoverValue}
 		>
-			{/* 移动端：第一张图直接渲染，其余放入 template 延迟加载 */}
-		{mobileImages.length > 0 && (
-			<div class="banner-image-slot-mobile absolute inset-0 block md:hidden">
-				<img
-					alt="Mobile banner image 1"
-					class="object-cover h-full w-full"
-					src={mobileImages[0].url}
-					style={`object-position: ${getImagePosition(mobileImages[0])}`}
-					loading="eager"
-					fetchpriority="high"
-				/>
-			</div>
-		)}
-		{mobileImages.slice(1).map((img, i) => (
-			<template class="banner-tpl-mobile">
-				<img
-					alt={`Mobile banner image ${i + 2}`}
-					class="object-cover h-full w-full"
-					src={img.url}
-					style={`object-position: ${getImagePosition(img)}`}
-					loading="eager"
-					fetchpriority="high"
-				/>
-			</template>
-		))}
+			{/* 移动端：预渲染所有图片槽位 */}
+			{mobileImages.map((img, i) => (
+				<div
+					class={`banner-slot banner-slot-mobile absolute inset-0 block md:hidden ${i === 0 ? 'banner-active' : ''}`}
+					data-index={i}
+				>
+					<img
+						alt={`Mobile banner image ${i + 1}`}
+						class="object-cover h-full w-full"
+						src={img.url}
+						style={`object-position: ${getImagePosition(img)}`}
+						loading="eager"
+						fetchpriority="high"
+					/>
+				</div>
+			))}
 
-		{/* 桌面端：第一张图直接渲染，其余放入 template 延迟加载 */}
-		{desktopImages.length > 0 && (
-			<div class="banner-image-slot-desktop absolute inset-0 hidden md:block">
-				<img
-					id="banner"
-					alt="Desktop banner image 1"
-					class="object-cover h-full w-full"
-					src={desktopImages[0].url}
-					style={`object-position: ${getImagePosition(desktopImages[0])}`}
-					loading="eager"
-					fetchpriority="high"
-				/>
-			</div>
-		)}
-		{desktopImages.slice(1).map((img, i) => (
-			<template class="banner-tpl-desktop">
-				<img
-					alt={`Desktop banner image ${i + 2}`}
-					class="object-cover h-full w-full"
-					src={img.url}
-					style={`object-position: ${getImagePosition(img)}`}
-					loading="eager"
-					fetchpriority="high"
-				/>
-			</template>
-		))}
+			{/* 桌面端：预渲染所有图片槽位 */}
+			{desktopImages.map((img, i) => (
+				<div
+					class={`banner-slot banner-slot-desktop absolute inset-0 hidden md:block ${i === 0 ? 'banner-active' : ''}`}
+					data-index={i}
+				>
+					<img
+						alt={`Desktop banner image ${i + 1}`}
+						class="object-cover h-full w-full"
+						src={img.url}
+						style={`object-position: ${getImagePosition(img)}`}
+						loading="eager"
+						fetchpriority="high"
+					/>
+				</div>
+			))}
 		</div>
 	) : (
 		/* 单图模式 */
@@ -197,16 +178,32 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 	{isCarouselEnabled && (
 		<Fragment set:html={`<style>
 			@keyframes bannerKenBurns {
-				0% { transform: scale(1.03); }
-				100% { transform: scale(1.13); }
+				0% { transform: scale3d(1.03, 1.03, 1); }
+				100% { transform: scale3d(1.13, 1.13, 1); }
 			}
 			.banner-kb {
+				animation: bannerKenBurns ${kbDurationMs}ms ease-out forwards;
+				will-change: transform;
+				backface-visibility: hidden;
+				transform: translateZ(0);
+			}
+			.banner-slot {
+				opacity: 0;
+				will-change: opacity, transform;
+				backface-visibility: hidden;
+				transform: translateZ(0);
+				transition: opacity ${fadeMs}ms ease-in-out;
+			}
+			.banner-slot.banner-active {
+				opacity: 1;
+			}
+			.banner-slot.banner-active.banner-kb {
 				animation: bannerKenBurns ${kbDurationMs}ms ease-out forwards;
 			}
 		</style>`} />
 	)}
 
-	<!-- 轮播脚本：随机起始 + 帧收集 + Ken Burns + Crossfade + 触摸/鼠标事件 -->
+	<!-- 轮播脚本：预渲染槽位 + CSS 类切换（零 DOM 操作） -->
 	{isCarouselEnabled && (
 		<script is:inline data-swup-ignore-script>
 			(window.initBannerCarousel = function initBannerCarousel() {
@@ -217,38 +214,20 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				var desktopCount = parseInt(container.dataset.desktopCount || '0', 10);
 				var interval = parseInt(container.dataset.carouselInterval || '6000', 10);
 				var FADE_MS = parseInt(container.dataset.fadeMs || '1500', 10);
-				var pauseOnHover = container.dataset.pauseOnHover !== 'false'; // 默认暂停
+				var pauseOnHover = container.dataset.pauseOnHover !== 'false';
 
 				if (mobileCount <= 1 && desktopCount <= 1) return;
 
-				// 检查轮播图是否已经初始化，如果已经初始化，直接返回
 				if (window.__bannerCarouselInitialized) {
-					// 轮播图已经初始化，直接启动轮播
 					startCarousel();
 					return;
 				}
 
-				// 清理上一次 Swup 导航遗留的监听器和定时器
 				if (window.__bannerCarouselCleanup) {
 					window.__bannerCarouselCleanup();
 					window.__bannerCarouselCleanup = null;
 				}
 
-				// 保存初始帧 HTML，供帧收集使用
-				if (typeof window.__bannerInitialFrameHtml === 'undefined') {
-					window.__bannerInitialFrameHtml = {};
-				}
-
-				function rememberInitialFrame(slotClass) {
-					var slot = container.querySelector('.' + slotClass);
-					if (!slot) return;
-					window.__bannerInitialFrameHtml[slotClass] = slot.innerHTML;
-				}
-
-				rememberInitialFrame('banner-image-slot-mobile');
-				rememberInitialFrame('banner-image-slot-desktop');
-
-				// 随机起始索引（Swup 导航间保留，F5 刷新重置）
 				if (typeof window.__bannerRandomIndex === 'undefined') {
 					window.__bannerRandomIndex = {
 						mobile: mobileCount > 1 ? Math.floor(Math.random() * mobileCount) : 0,
@@ -256,82 +235,27 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					};
 				}
 
-				// 从 template 替换默认图片
-				function applyRandom(slotClass, tplClass, randomIndex) {
-					if (randomIndex === 0) return;
-					var slot = container.querySelector('.' + slotClass);
-					var templates = container.querySelectorAll('.' + tplClass);
-					if (!slot || !templates.length) return;
-					var tpl = templates[randomIndex - 1];
-					if (!tpl) return;
-					slot.innerHTML = '';
-					slot.appendChild(tpl.content.cloneNode(true));
-				}
-
-				applyRandom('banner-image-slot-mobile', 'banner-tpl-mobile', window.__bannerRandomIndex.mobile);
-				applyRandom('banner-image-slot-desktop', 'banner-tpl-desktop', window.__bannerRandomIndex.desktop);
-
-				// 收集所有帧 HTML 字符串（每次都重新收集）
-				if (!window.__bannerCarouselFrames) window.__bannerCarouselFrames = {};
-
-				function collectFrames(slotClass, tplClass) {
-					var frames = [];
-					var initialFrame = window.__bannerInitialFrameHtml && window.__bannerInitialFrameHtml[slotClass];
-					var slot = container.querySelector('.' + slotClass);
-					if (initialFrame) {
-						frames.push(initialFrame);
-					} else if (slot) {
-						frames.push(slot.innerHTML);
-					}
-					var tpls = container.querySelectorAll('.' + tplClass);
-					for (var i = 0; i < tpls.length; i++) {
-						frames.push(tpls[i].innerHTML);
-					}
-					window.__bannerCarouselFrames[slotClass] = frames;
-				}
-
-				collectFrames('banner-image-slot-mobile', 'banner-tpl-mobile');
-				collectFrames('banner-image-slot-desktop', 'banner-tpl-desktop');
-
-				// 预加载所有轮播图片，并跟踪已加载状态
+				// 预加载所有轮播图片
 				if (!window.__bannerImagesLoaded) window.__bannerImagesLoaded = {};
 
 				function preloadAllImages() {
-					// 从所有 frame 中提取图片 URL
-					var allImages = [];
-					var allFrames = Object.values(window.__bannerCarouselFrames || {}).flat();
-					allFrames.forEach(function(frame) {
-						var tempDiv = document.createElement('div');
-						tempDiv.innerHTML = frame;
-						var images = tempDiv.querySelectorAll('img');
-						images.forEach(function(img) {
-							if (img.src && allImages.indexOf(img.src) === -1) {
-								allImages.push(img.src);
-							}
-						});
-					});
-
-					// 预加载所有图片
-					allImages.forEach(function(src) {
-						if (!window.__bannerImagesLoaded[src]) {
-							var img = new Image();
-							img.onload = img.onerror = function() {
-								window.__bannerImagesLoaded[src] = true;
-							};
-							img.src = src;
+					var allImages = container.querySelectorAll('img');
+					allImages.forEach(function(img) {
+						if (img.src && !window.__bannerImagesLoaded[img.src]) {
+							window.__bannerImagesLoaded[img.src] = true;
+							var preloadImg = new Image();
+							preloadImg.src = img.src;
 						}
 					});
 				}
 
 				preloadAllImages();
 
-				// 初始化轮播索引
 				window.__bannerCarouselIndex = {
 					mobile: window.__bannerRandomIndex ? window.__bannerRandomIndex.mobile : 0,
 					desktop: window.__bannerRandomIndex ? window.__bannerRandomIndex.desktop : 0
 				};
 
-				// 断点检测（md = 768px）
 				function isSlotHiddenByBreakpoint(slot) {
 					var cl = slot.classList;
 					var isMd = window.matchMedia('(min-width: 768px)').matches;
@@ -340,16 +264,14 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					return false;
 				}
 
-				// 给首张图启动 Ken Burns
-				function applyInitialKB(slotClass) {
-					var slot = container.querySelector('.' + slotClass);
-					if (!slot || isSlotHiddenByBreakpoint(slot)) return;
+				// 重置 Ken Burns 动画（使用 rAF 避免强制布局）
+				function resetKenBurns(slot) {
 					slot.classList.remove('banner-kb');
-					void slot.offsetWidth;
-					slot.classList.add('banner-kb');
+					requestAnimationFrame(function() {
+						slot.classList.add('banner-kb');
+					});
 				}
 
-				// 暂停 Ken Burns 动画（保持当前进度）
 				function pauseKenBurns() {
 					var slots = container.querySelectorAll('.banner-kb');
 					for (var i = 0; i < slots.length; i++) {
@@ -357,7 +279,6 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					}
 				}
 
-				// 恢复 Ken Burns 动画（从暂停位置继续）
 				function resumeKenBurns() {
 					var slots = container.querySelectorAll('.banner-kb');
 					for (var i = 0; i < slots.length; i++) {
@@ -365,172 +286,62 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					}
 				}
 
-				// Crossfade 防重入锁（每种 slot 类型独立）
+				// 防重入锁
 				var isCrossfading = { mobile: false, desktop: false };
 
-				// 清理 orphaned 中间层（快速滑动时可能残留）
-				function cleanupOrphanedLayers(slotClass, currentSlot) {
-					var allSlots = container.querySelectorAll('.' + slotClass);
-					for (var i = 0; i < allSlots.length; i++) {
-						if (allSlots[i] !== currentSlot && allSlots[i].parentNode) {
-							allSlots[i].parentNode.removeChild(allSlots[i]);
-						}
-					}
+				// 获取槽位列表
+				function getSlots(type) {
+					return container.querySelectorAll('.banner-slot-' + type);
 				}
 
-				// Crossfade：创建新层叠在旧层上方，淡入后移除旧层
-				function crossfadeToIndex(slotClass, totalCount, type, targetIndex) {
-					if (totalCount <= 1) return;
+				// 切换到指定索引（纯 CSS 类操作，无 DOM 创建/销毁）
+				function switchToIndex(type, targetIndex) {
+					var count = type === 'mobile' ? mobileCount : desktopCount;
+					if (count <= 1) return;
 					if (isCrossfading[type]) return;
 
-					var frames = window.__bannerCarouselFrames[slotClass];
-					if (!frames || frames.length === 0) return;
-
-					var oldSlot = container.querySelector('.' + slotClass);
-					if (!oldSlot) return;
-					if (isSlotHiddenByBreakpoint(oldSlot)) return;
-
 					isCrossfading[type] = true;
-					// 确保 targetIndex 在有效范围内
-					window.__bannerCarouselIndex[type] = targetIndex % frames.length;
+					window.__bannerCarouselIndex[type] = targetIndex % count;
 
-					// 保存轮播状态到 localStorage
 					try {
 						localStorage.setItem('bannerCarouselState', JSON.stringify({
 							randomIndex: window.__bannerRandomIndex,
 							carouselIndex: window.__bannerCarouselIndex
 						}));
-					} catch (e) {
-						// localStorage 存储失败，忽略错误
+					} catch (e) {}
+
+					var slots = getSlots(type);
+					var currentSlot = container.querySelector('.banner-slot-' + type + '.banner-active');
+
+					if (currentSlot) {
+						currentSlot.classList.remove('banner-active');
 					}
 
-					// 清理快速交互可能残留的中间层
-					cleanupOrphanedLayers(slotClass, oldSlot);
-
-					var newSlot = document.createElement('div');
-					var baseClass = oldSlot.className.replace(/\bbanner-kb\b/g, '').trim();
-					newSlot.className = baseClass;
-					newSlot.style.opacity = '0';
-					newSlot.style.transition = 'opacity ' + FADE_MS + 'ms ease-in-out';
-					newSlot.innerHTML = frames[targetIndex % frames.length];
-					oldSlot.parentNode.insertBefore(newSlot, oldSlot.nextSibling);
-
-					// 检查图片是否已经预加载过
-					var images = newSlot.querySelectorAll('img');
-					var needToWait = false;
-					var loadedCount = 0;
-					var totalImages = images.length;
-					var hasFadedIn = false;
-
-					// 强制超时，最多等待 500ms，避免图片加载卡住导致轮播暂停
-					var timeoutId = setTimeout(function() {
-						if (!hasFadedIn) {
-							hasFadedIn = true;
-							fadeInNewSlot();
-						}
-					}, 500);
-
-					function checkAndFadeIn() {
-						loadedCount++;
-						if (loadedCount === totalImages && !hasFadedIn) {
-							hasFadedIn = true;
-							clearTimeout(timeoutId);
-							fadeInNewSlot();
-						}
+					var newSlot = slots[targetIndex % count];
+					if (newSlot) {
+						newSlot.classList.add('banner-active');
+						resetKenBurns(newSlot);
 					}
 
-					if (totalImages === 0) {
-						// 没有图片，直接淡入
-						clearTimeout(timeoutId);
-						hasFadedIn = true;
-						fadeInNewSlot();
-					} else {
-						// 检查是否所有图片都已经预加载
-						images.forEach(function(img) {
-							if (!window.__bannerImagesLoaded[img.src]) {
-								needToWait = true;
-							}
-						});
-
-						if (!needToWait) {
-							// 所有图片都已经预加载，直接淡入
-							clearTimeout(timeoutId);
-							hasFadedIn = true;
-							fadeInNewSlot();
-						} else {
-							// 还有图片未加载，等待它们加载完成
-							images.forEach(function(img) {
-								if (window.__bannerImagesLoaded[img.src]) {
-									checkAndFadeIn();
-								} else {
-									var imgElement = new Image();
-									imgElement.onload = function() {
-										window.__bannerImagesLoaded[img.src] = true;
-										checkAndFadeIn();
-									};
-									imgElement.onerror = function() {
-										window.__bannerImagesLoaded[img.src] = true;
-										checkAndFadeIn();
-									};
-									imgElement.src = img.src;
-								}
-							});
-						}
-					}
-
-					function fadeInNewSlot() {
-						// 双 rAF：确保 opacity:0 已绘制，然后同时触发淡入 + Ken Burns
-						requestAnimationFrame(function() {
-							requestAnimationFrame(function() {
-								newSlot.style.opacity = '1';
-								newSlot.classList.add('banner-kb');
-							});
-						});
-
-						// 淡入完成后：移除旧层，清理 transition，释放锁
-						setTimeout(function() {
-							if (oldSlot.parentNode) oldSlot.parentNode.removeChild(oldSlot);
-							newSlot.style.transition = '';
-							isCrossfading[type] = false;
-						},
-						FADE_MS + 50
-					);
-					}
+					setTimeout(function() {
+						isCrossfading[type] = false;
+					}, FADE_MS);
 				}
 
-				// 预加载接下来的几张图片
-				function preloadNextImages(slotClass, totalCount, type) {
-					var frames = window.__bannerCarouselFrames[slotClass];
-					if (!frames || frames.length === 0) return;
+				// 前进到下一张
+				function crossfade(type) {
 					var currentIndex = window.__bannerCarouselIndex[type];
-					// 预加载接下来的 2 张图片
-					for (var i = 1; i <= 2; i++) {
-						var nextIndex = (currentIndex + i) % totalCount;
-						var frame = frames[nextIndex];
-						var tempDiv = document.createElement('div');
-						tempDiv.innerHTML = frame;
-						var images = tempDiv.querySelectorAll('img');
-						images.forEach(function(img) {
-							if (!window.__bannerImagesLoaded[img.src]) {
-								var imgElement = new Image();
-								imgElement.onload = imgElement.onerror = function() {
-									window.__bannerImagesLoaded[img.src] = true;
-								};
-								imgElement.src = img.src;
-							}
-						});
-					}
+					var count = type === 'mobile' ? mobileCount : desktopCount;
+					var nextIndex = (currentIndex + 1) % count;
+					switchToIndex(type, nextIndex);
 				}
 
-				// 自动轮播用的 crossfade（前进到下一张）
-				function crossfade(slotClass, totalCount, type) {
-					var frames = window.__bannerCarouselFrames[slotClass];
-					if (!frames || frames.length === 0) return;
+				// 后退到上一张
+				function crossfadePrev(type) {
 					var currentIndex = window.__bannerCarouselIndex[type];
-					var nextIndex = (currentIndex + 1) % totalCount;
-					// 先预加载接下来的几张图片
-					preloadNextImages(slotClass, totalCount, type);
-					crossfadeToIndex(slotClass, totalCount, type, nextIndex);
+					var count = type === 'mobile' ? mobileCount : desktopCount;
+					var prevIndex = (currentIndex - 1 + count) % count;
+					switchToIndex(type, prevIndex);
 				}
 
 				var timerId = null;
@@ -539,7 +350,6 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				var remainingTime = 0;
 				var resumeTimerId = null;
 
-				// 触摸手势状态
 				var touchStartX = 0;
 				var touchStartY = 0;
 				var isSwiping = false;
@@ -548,17 +358,12 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					stopCarousel();
 					if (isPaused) return;
 
-					if (!isFromResume) {
-						applyInitialKB('banner-image-slot-mobile');
-						applyInitialKB('banner-image-slot-desktop');
-					}
-
 					intervalStartTime = Date.now();
 					timerId = setInterval(function() {
 						if (!isPaused) {
 							intervalStartTime = Date.now();
-							crossfade('banner-image-slot-mobile', mobileCount, 'mobile');
-							crossfade('banner-image-slot-desktop', desktopCount, 'desktop');
+							crossfade('mobile');
+							crossfade('desktop');
 						}
 					}, interval);
 				}
@@ -586,8 +391,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 						if (remainingTime > 0) {
 							resumeTimerId = setTimeout(function() {
 								resumeTimerId = null;
-								crossfade('banner-image-slot-mobile', mobileCount, 'mobile');
-								crossfade('banner-image-slot-desktop', desktopCount, 'desktop');
+								crossfade('mobile');
+								crossfade('desktop');
 								startCarousel(true);
 							}, remainingTime);
 						} else {
@@ -597,7 +402,6 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 				};
 				document.addEventListener('visibilitychange', visibilityHandler);
 
-				// 事件处理函数引用（用于清理）
 				var onTouchStart = function(e) {
 					touchStartX = e.touches[0].clientX;
 					touchStartY = e.touches[0].clientY;
@@ -623,8 +427,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 						if (remainingTime > 0) {
 							resumeTimerId = setTimeout(function() {
 								resumeTimerId = null;
-								crossfade('banner-image-slot-mobile', mobileCount, 'mobile');
-								crossfade('banner-image-slot-desktop', desktopCount, 'desktop');
+								crossfade('mobile');
+								crossfade('desktop');
 								startCarousel(true);
 							}, remainingTime);
 						} else {
@@ -636,9 +440,6 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					var endX = e.changedTouches[0].clientX;
 					var diffX = touchStartX - endX;
 					var isMobile = window.innerWidth < 768;
-					var slotClass = isMobile
-						? 'banner-image-slot-mobile'
-						: 'banner-image-slot-desktop';
 					var type = isMobile ? 'mobile' : 'desktop';
 					var count = isMobile ? mobileCount : desktopCount;
 					var current = window.__bannerCarouselIndex[type];
@@ -646,10 +447,10 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					if (Math.abs(diffX) > 50) {
 						if (diffX > 0) {
 							var next = (current + 1) % count;
-							crossfadeToIndex(slotClass, count, type, next);
+							switchToIndex(type, next);
 						} else {
 							var prev = (current - 1 + count) % count;
-							crossfadeToIndex(slotClass, count, type, prev);
+							switchToIndex(type, prev);
 						}
 					}
 
@@ -672,8 +473,8 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					if (remainingTime > 0) {
 						resumeTimerId = setTimeout(function() {
 							resumeTimerId = null;
-							crossfade('banner-image-slot-mobile', mobileCount, 'mobile');
-							crossfade('banner-image-slot-desktop', desktopCount, 'desktop');
+							crossfade('mobile');
+							crossfade('desktop');
 							startCarousel(true);
 						}, remainingTime);
 					} else {
@@ -840,6 +641,14 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			</Icon>
 		</a>
 	)}
+
+	<!-- 点击可隐藏提示 -->
+	<div
+		id="banner-hint"
+		class="transition absolute left-6 bottom-16 md:bottom-16 text-white/40 text-xs md:text-sm pointer-events-none z-30"
+	>
+		点击可隐藏文字
+	</div>
 </div>
 
 <style>
@@ -901,6 +710,7 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 			const carousel = document.getElementById('banner-carousel');
 			const textOverlay = document.querySelector('.banner-text-overlay');
 			const navbar = document.getElementById('navbar');
+			const bannerHint = document.getElementById('banner-hint');
 			
 			// 如果是单图模式，则绑定到 wrapper
 			const target = carousel || document.getElementById('banner-wrapper');
@@ -922,12 +732,21 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					// 隐藏主副标题
 					textOverlay.style.transition = 'opacity 0.4s ease';
 					textOverlay.style.opacity = '0';
+					// 隐藏提示文字
+					if (bannerHint) {
+						bannerHint.style.transition = 'opacity 0.4s ease';
+						bannerHint.style.opacity = '0';
+					}
 					isTextHidden = true;
 					// 切换导航栏为完全透明
 					navbar.dataset.transparentMode = 'full';
 				} else {
 					// 显示主副标题
 					textOverlay.style.opacity = '1';
+					// 显示提示文字
+					if (bannerHint) {
+						bannerHint.style.opacity = '1';
+					}
 					isTextHidden = false;
 					// 切换导航栏为半透明加圆角
 					navbar.dataset.transparentMode = 'semi';

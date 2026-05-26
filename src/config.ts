@@ -495,7 +495,7 @@ export const announcementConfig: AnnouncementConfig = {
 	
 	在评论区使用QQ邮箱发送评论会自动获取QQ头像，
 	
-	如果不是QQ邮箱则需要前往 <a href="https://weavatar.com" target="_blank" rel="noopener noreferrer">https://weavatar.com</a> 上传图像`, // 公告内容
+	如果不是QQ邮箱则需要前往 <a href="https://weavatar.com" target="_blank" rel="noopener noreferrer" alt="新一代头像服务">https://weavatar.com</a> 选择邮箱注册并上传头像`, // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接

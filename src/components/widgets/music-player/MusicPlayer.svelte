@@ -308,6 +308,9 @@
 				show={state.showPlaylist}
 				onClose={togglePlaylist}
 				onPlaySong={playIndex}
+				onSearch={(keyword) => musicPlayerStore.searchSongs(keyword)}
+				isSearchMode={state.isSearchMode}
+				onRestorePlaylist={() => musicPlayerStore.restorePlaylist()}
 			/>
 		</div>
 	{/if}

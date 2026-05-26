@@ -92,7 +92,8 @@ const remainingSkills =
 const allImages: string[] = [];
 if (item.image) allImages.push(item.image);
 if (item.images) allImages.push(...item.images);
-const hasImages = allImages.length > 0;
+const validImages = allImages.filter(img => img && img.trim() !== '');
+const hasImages = validImages.length > 0;
 ---
 
 <div
@@ -208,15 +209,15 @@ const hasImages = allImages.length > 0;
 			{
 				hasImages && (
 					<div class="mb-4">
-						{allImages.length === 1 && (
+						{validImages.length === 1 && (
 							<a
-								href={allImages[0]}
+								href={validImages[0]}
 								class="timeline-thumb rounded-xl overflow-hidden border border-black/10 dark:border-white/10 cursor-pointer group/img block"
 								data-fancybox="gallery"
 								data-caption={item.imageAlt?.[0] || item.title}
 							>
 								<img
-									src={allImages[0]}
+									src={validImages[0]}
 									alt={item.imageAlt?.[0] || item.title}
 									class="w-full object-contain transition-transform duration-300 group-hover/img:scale-105"
 									style={`max-height: ${item.imageHeight || "300px"};`}
@@ -224,9 +225,9 @@ const hasImages = allImages.length > 0;
 								/>
 							</a>
 						)}
-						{allImages.length > 1 && (
+						{validImages.length > 1 && (
 							<div class="grid grid-cols-2 gap-3">
-								{allImages.map((img, idx) => (
+								{validImages.map((img, idx) => (
 									<a
 										href={img}
 										class="timeline-thumb rounded-lg overflow-hidden border border-black/10 dark:border-white/10 cursor-pointer group/img block"

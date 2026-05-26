@@ -29,6 +29,7 @@ export interface MusicPlayerState {
 	isHidden: boolean;
 	autoplayFailed: boolean;
 	willAutoPlay: boolean;
+	isSearchMode: boolean;
 }
 
 function getAssetPath(path: string): string {
@@ -75,6 +76,7 @@ class MusicPlayerStore {
 			isHidden: false,
 			autoplayFailed: false,
 			willAutoPlay: false,
+			isSearchMode: false,
 		};
 	}
 
@@ -326,6 +328,88 @@ class MusicPlayerStore {
 			this.state.isLoading = false;
 		}
 		this.broadcastState();
+	}
+
+	async searchSongs(keyword: string): Promise<void> {
+		if (!keyword.trim()) {
+			await this.loadPlaylist();
+			return;
+		}
+
+		const api = musicPlayerConfig.meting_api;
+		const server = musicPlayerConfig.server ?? "netease";
+
+		if (!api) {
+			return;
+		}
+
+		this.state.isLoading = true;
+		this.broadcastState();
+
+		const searchApi = api
+			.replace(":server", server)
+			.replace(":type", "search")
+			.replace(":id", "")
+			.replace(":r", Date.now().toString()) + `&keyword=${encodeURIComponent(keyword.trim())}`;
+
+		console.log('Search API URL:', searchApi);
+
+		try {
+			const res = await fetch(searchApi);
+			
+			console.log('Fetch response:', res);
+			
+			if (!res.ok) {
+				const errorText = await res.text();
+				console.error(`Search API error: ${res.status} - ${errorText}`);
+				throw new Error(`HTTP error ${res.status}`);
+			}
+			
+			const result = await res.json();
+			console.log('Search result:', result);
+			
+			if (!Array.isArray(result)) {
+				console.warn('Search result is not an array:', result);
+				this.showError("搜索结果格式异常");
+				this.state.isLoading = false;
+				this.broadcastState();
+				return;
+			}
+			
+			const list: any[] = result;
+			this.state.playlist = list.map((song) => this.convertMetingSong(song));
+			this.state.isSearchMode = true;
+			this.state.isLoading = false;
+
+			if (this.state.playlist.length === 0) {
+				this.showError("未找到相关歌曲");
+			} else {
+				if (this.state.currentSong) {
+					const currentSongIndex = this.state.playlist.findIndex(
+						song => song.title === this.state.currentSong.title && 
+							   song.artist === this.state.currentSong.artist
+					);
+					this.state.currentIndex = currentSongIndex;
+				} else {
+					this.state.currentIndex = -1;
+				}
+			}
+		} catch (e) {
+			console.error('Search error:', e);
+			
+			if ((e as Error).message.includes('CORS')) {
+				this.showError("搜索服务暂时不可用");
+			} else {
+				this.showError("搜索失败，请重试");
+			}
+			this.state.isLoading = false;
+		}
+		this.broadcastState();
+	}
+
+	async restorePlaylist(): Promise<void> {
+		this.state.isSearchMode = false;
+		await this.loadPlaylist();
 	}
 
 	private convertMetingSong(song: any): Song {
