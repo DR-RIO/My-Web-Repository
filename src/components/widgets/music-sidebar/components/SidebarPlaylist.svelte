@@ -51,16 +51,15 @@
 <AccordionDrawer {show} class="playlist-drawer">
 	<div class="playlist-shell">
 		{#if onSearch}
-			<div class="search-box mb-2">
-				<div class="search-input-wrapper flex items-center gap-2 rounded-lg p-2">
+			<div class="search-box mb-2 w-full min-w-[200px]">
+				<div class="search-input-wrapper flex items-center gap-2 rounded-lg px-4 py-2">
 					<Icon icon="material-symbols:search" class="text-lg" style="color: var(--btn-content)" />
 					<input
 						type="text"
 						bind:value={searchKeyword}
-						placeholder="搜索歌曲-已接入网易云曲库"
+						placeholder="在网易云搜索...( •̀ ω •́ )✧"
 						onkeydown={handleKeydown}
-						class="search-input flex-1 bg-transparent border-none outline-none text-sm"
-						style="color: var(--btn-content)"
+						class="search-input flex-1 min-w-[80px] bg-transparent border-none outline-none text-xs text-black/75 dark:text-white py-1.5"
 					/>
 					<button 
 						onclick={clearSearch}
@@ -75,6 +74,10 @@
 					>
 						<Icon icon="material-symbols:arrow-forward" class="text-sm" style="color: var(--btn-content)" />
 					</button>
+				</div>
+				<!-- 网易云提示移到下方 -->
+				<div class="text-[10px] opacity-60 mt-1 px-1" style="color: var(--content-meta)">
+					已接入 网易云音乐® 中国大陆版权曲库
 				</div>
 				{#if isSearchMode && onRestorePlaylist}
 					<button 
@@ -165,6 +168,7 @@
 		transition: background-color 0.2s, color 0.2s;
 		background-color: var(--btn-regular-bg);
 		color: var(--btn-content);
+		cursor: pointer;
 	}
 
 	.restore-playlist-btn:hover {
