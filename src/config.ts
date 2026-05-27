@@ -304,6 +304,12 @@ export const navBarConfig: NavBarConfig = {
 					external: true,
 					icon: "simple-icons:xiaohongshu",
 				},
+				{
+				name: "云.原神",
+				url: "https://ys.mihoyo.com/cloud/#/",
+				external: true,
+				icon: "simple-icons:mihoyo",
+			},
 				
 			],
 		},

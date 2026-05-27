@@ -52,14 +52,14 @@
 	<div class="playlist-shell">
 		{#if onSearch}
 			<div class="search-box mb-2 w-full min-w-[200px]">
-				<div class="search-input-wrapper flex items-center gap-2 rounded-lg px-4 py-2">
-					<Icon icon="material-symbols:search" class="text-lg" style="color: var(--btn-content)" />
+				<div class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-3">
+					<Icon icon="simple-icons:neteasecloudmusic" width="20" height="20" class="inline-flex items-center justify-center" style="color: #C20C0C;" />
 					<input
 						type="text"
 						bind:value={searchKeyword}
 						placeholder="在网易云搜索...( •̀ ω •́ )✧"
 						onkeydown={handleKeydown}
-						class="search-input flex-1 min-w-[80px] bg-transparent border-none outline-none text-xs text-black/75 dark:text-white py-1.5"
+						class="search-input flex-1 min-w-[80px] bg-transparent border-none outline-none text-xs text-black/75 dark:text-white p-0"
 					/>
 					<button 
 						onclick={clearSearch}

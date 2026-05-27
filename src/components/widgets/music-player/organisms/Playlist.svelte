@@ -67,14 +67,14 @@
 		
 		{#if onSearch}
 				<div class="search-box p-3 border-b border-[var(--line-divider)]">
-					<div class="search-input-wrapper flex items-center gap-2 rounded-lg p-2">
-						<Icon icon="material-symbols:search" class="text-lg" style="color: var(--btn-content)" />
+					<div class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-3">
+						<Icon icon="simple-icons:neteasecloudmusic" width="20" height="20" class="inline-flex items-center justify-center" style="color: #C20C0C;" />
 						<input
 							type="text"
 							bind:value={searchKeyword}
 							placeholder="搜索歌曲..."
 							onkeydown={handleKeydown}
-							class="search-input flex-1 bg-transparent border-none outline-none text-sm"
+							class="search-input flex-1 bg-transparent border-none outline-none text-sm p-0"
 							style="color: var(--btn-content)"
 						/>
 						<button 
