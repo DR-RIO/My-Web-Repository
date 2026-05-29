@@ -406,8 +406,11 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 					touchStartX = e.touches[0].clientX;
 					touchStartY = e.touches[0].clientY;
 					isSwiping = false;
-					isPaused = true;
-					stopCarousel();
+					// 只有在 pauseOnHover 为 true 时才暂停轮播
+					if (pauseOnHover) {
+						isPaused = true;
+						stopCarousel();
+					}
 				};
 
 				var onTouchMove = function(e) {
@@ -422,17 +425,20 @@ const pauseOnHoverValue = siteConfig.banner.carousel?.pauseOnHover ?? true;
 
 				var onTouchEnd = function(e) {
 					if (!touchStartX || !touchStartY || !isSwiping) {
-						isPaused = false;
-						resumeKenBurns();
-						if (remainingTime > 0) {
-							resumeTimerId = setTimeout(function() {
-								resumeTimerId = null;
-								crossfade('mobile');
-								crossfade('desktop');
+						// 只有在 pauseOnHover 为 true 时才恢复轮播
+						if (pauseOnHover) {
+							isPaused = false;
+							resumeKenBurns();
+							if (remainingTime > 0) {
+								resumeTimerId = setTimeout(function() {
+									resumeTimerId = null;
+									crossfade('mobile');
+									crossfade('desktop');
+									startCarousel(true);
+								}, remainingTime);
+							} else {
 								startCarousel(true);
-							}, remainingTime);
-						} else {
-							startCarousel(true);
+							}
 						}
 						return;
 					}

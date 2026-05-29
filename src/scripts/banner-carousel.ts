@@ -87,7 +87,7 @@ export class BannerCarouselManager {
 
 		// 移动端触摸事件
 		if ("ontouchstart" in window) {
-			this.setupTouchEvents(carousel);
+			this.setupTouchEvents(carousel, config);
 		}
 
 		// 鼠标悬停暂停（桌面端）- 仅在配置启用时生效
@@ -137,15 +137,18 @@ export class BannerCarouselManager {
 	/**
 	 * 设置触摸事件
 	 */
-	private setupTouchEvents(carousel: HTMLElement): void {
+	private setupTouchEvents(carousel: HTMLElement, config: CarouselConfig): void {
 		carousel.addEventListener(
 			"touchstart",
 			(e: TouchEvent) => {
 				this.startX = e.touches[0].clientX;
 				this.startY = e.touches[0].clientY;
 				this.isSwiping = false;
-				this.isPaused = true;
-				this.stopCarousel();
+				// 只有在 pauseOnHover 为 true 时才暂停轮播
+				if (config.pauseOnHover) {
+					this.isPaused = true;
+					this.stopCarousel();
+				}
 			},
 			{ passive: true },
 		);
@@ -170,10 +173,13 @@ export class BannerCarouselManager {
 			"touchend",
 			(e: TouchEvent) => {
 				if (!this.startX || !this.startY || !this.isSwiping) {
-					this.isPaused = false;
-					this.startCarousel(
-						siteConfig.banner.carousel?.interval || 6,
-					);
+					// 只有在 pauseOnHover 为 true 时才恢复轮播
+					if (config.pauseOnHover) {
+						this.isPaused = false;
+						this.startCarousel(
+							siteConfig.banner.carousel?.interval || 6,
+						);
+					}
 					return;
 				}
 
@@ -198,8 +204,11 @@ export class BannerCarouselManager {
 				this.startX = 0;
 				this.startY = 0;
 				this.isSwiping = false;
-				this.isPaused = false;
-				this.startCarousel(siteConfig.banner.carousel?.interval || 6);
+				// 只有在 pauseOnHover 为 true 时才恢复轮播
+				if (config.pauseOnHover) {
+					this.isPaused = false;
+					this.startCarousel(siteConfig.banner.carousel?.interval || 6);
+				}
 			},
 			{ passive: true },
 		);
