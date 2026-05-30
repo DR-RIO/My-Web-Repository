@@ -1,6 +1,8 @@
 <script lang="ts">
-	import AccordionDrawer from "../../common/AccordionDrawer.svelte";
 	import Icon from "@iconify/svelte";
+	import { tick } from "svelte";
+
+	import AccordionDrawer from "../../common/AccordionDrawer.svelte";
 	import type { Song } from "../../music-player/types";
 	import TrackListItem from "./TrackListItem.svelte";
 
@@ -14,6 +16,8 @@
 		onSearch?: (keyword: string) => void;
 		isSearchMode?: boolean;
 		onRestorePlaylist?: () => void;
+		onClearSearch?: () => void;
+		initialSearchKeyword?: string;
 	}
 
 	const {
@@ -26,10 +30,18 @@
 		onSearch,
 		isSearchMode = false,
 		onRestorePlaylist,
+		onClearSearch,
+		initialSearchKeyword = "",
 	}: Props = $props();
 
-	let searchKeyword = $state("");
-	let showClear = $derived(searchKeyword.length > 0);
+	let searchKeyword = $state(initialSearchKeyword);
+	const showClear = $derived(searchKeyword.length > 0);
+
+	$effect(() => {
+		if (initialSearchKeyword !== undefined) {
+			searchKeyword = initialSearchKeyword;
+		}
+	});
 
 	function handleSearch() {
 		if (onSearch) {
@@ -45,6 +57,16 @@
 
 	function clearSearch() {
 		searchKeyword = "";
+		if (onClearSearch) {
+			onClearSearch();
+		}
+	}
+
+	function handleRestorePlaylist() {
+		clearSearch();
+		if (onRestorePlaylist) {
+			onRestorePlaylist();
+		}
 	}
 </script>
 
@@ -52,8 +74,16 @@
 	<div class="playlist-shell">
 		{#if onSearch}
 			<div class="search-box mb-2 w-full min-w-[200px]">
-				<div class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-3">
-					<Icon icon="simple-icons:neteasecloudmusic" width="20" height="20" class="inline-flex items-center justify-center" style="color: #C20C0C;" />
+				<div
+					class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-3"
+				>
+					<Icon
+						icon="simple-icons:neteasecloudmusic"
+						width="20"
+						height="20"
+						class="inline-flex items-center justify-center"
+						style="color: #C20C0C;"
+					/>
 					<input
 						type="text"
 						bind:value={searchKeyword}
@@ -61,36 +91,51 @@
 						onkeydown={handleKeydown}
 						class="search-input flex-1 min-w-[80px] bg-transparent border-none outline-none text-xs text-black/75 dark:text-white p-0"
 					/>
-					<button 
+					<button
 						onclick={clearSearch}
 						class="clear-btn w-6 h-6 rounded flex items-center justify-center"
 						class:visible={showClear}
 					>
 						<Icon icon="material-symbols:close" class="text-sm" />
 					</button>
-					<button 
+					<button
 						onclick={handleSearch}
 						class="btn-plain w-6 h-6 rounded"
 					>
-						<Icon icon="material-symbols:arrow-forward" class="text-sm" style="color: var(--btn-content)" />
+						<Icon
+							icon="material-symbols:arrow-forward"
+							class="text-sm"
+							style="color: var(--btn-content)"
+						/>
 					</button>
 				</div>
 				<!-- 网易云提示移到下方 -->
-				<div class="text-[10px] opacity-60 mt-1 px-1" style="color: var(--content-meta)">
+				<div
+					class="text-[10px] opacity-60 mt-1 px-1"
+					style="color: var(--content-meta)"
+				>
 					已接入 网易云音乐® 中国大陆版权曲库
 				</div>
 				{#if isSearchMode && onRestorePlaylist}
-					<button 
-						onclick={onRestorePlaylist}
+					<button
+						onclick={handleRestorePlaylist}
 						class="restore-playlist-btn w-full mt-2 py-1.5 px-3 text-xs rounded-lg flex items-center justify-center gap-1.5 transition-colors"
 					>
-						<Icon icon="material-symbols:arrow-back" class="text-xs" />
+						<Icon
+							icon="material-symbols:arrow-back"
+							class="text-xs"
+						/>
 						<span>返回站长歌单</span>
 					</button>
 				{/if}
 			</div>
 		{/if}
-		<div class="playlist-content" role="listbox" aria-label="Playlist" aria-multiselectable="false">
+		<div
+			class="playlist-content"
+			role="listbox"
+			aria-label="Playlist"
+			aria-multiselectable="false"
+		>
 			{#each playlist as song, index}
 				<TrackListItem
 					{song}
@@ -165,7 +210,9 @@
 	}
 
 	.restore-playlist-btn {
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 		background-color: var(--btn-regular-bg);
 		color: var(--btn-content);
 		cursor: pointer;
@@ -177,5 +224,29 @@
 
 	.restore-playlist-btn:active {
 		background-color: var(--btn-regular-bg-active);
+	}
+
+	/* 移动端优化 */
+	@media (max-width: 768px) {
+		.search-input-wrapper {
+			padding: 0.75rem 1rem;
+		}
+
+		.search-input {
+			font-size: 14px;
+		}
+
+		.clear-btn,
+		.btn-plain {
+			min-width: 44px;
+			min-height: 44px;
+			touch-action: manipulation;
+		}
+
+		.restore-playlist-btn {
+			padding: 0.75rem 1rem;
+			font-size: 13px;
+			min-height: 44px;
+		}
 	}
 </style>
