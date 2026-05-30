@@ -49,6 +49,7 @@ class MusicPlayerStore {
 	private audio: HTMLAudioElement | null = null;
 	private state: MusicPlayerState;
 	private originalPlaylist: Song[] = [];
+	private originalRepeatMode: RepeatMode = 0;
 	private isInitialized = false;
 	private unregisterInteraction: (() => void) | undefined;
 	private listeners = new Set<(state: MusicPlayerState) => void>();
@@ -349,6 +350,10 @@ class MusicPlayerStore {
 		this.state.isLoading = true;
 		this.broadcastState();
 
+		// 保存当前播放模式，然后切换到单曲循环
+		this.originalRepeatMode = this.state.isRepeating;
+		this.state.isRepeating = 1;
+
 		const searchApi = api
 			.replace(":server", server)
 			.replace(":type", "search")
@@ -413,6 +418,8 @@ class MusicPlayerStore {
 	async restorePlaylist(): Promise<void> {
 		this.state.isSearchMode = false;
 		this.state.playlist = [...this.originalPlaylist];
+		// 恢复原来的播放模式
+		this.state.isRepeating = this.originalRepeatMode;
 		// 取消高亮，不匹配任何歌曲
 		this.state.currentIndex = -1;
 		this.broadcastState();

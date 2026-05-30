@@ -75,7 +75,7 @@
 		{#if onSearch}
 			<div class="search-box mb-2 w-full min-w-[200px]">
 				<div
-					class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-3"
+					class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-1.5"
 				>
 					<Icon
 						icon="simple-icons:neteasecloudmusic"

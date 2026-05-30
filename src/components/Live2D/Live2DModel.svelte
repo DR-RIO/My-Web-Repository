@@ -502,6 +502,8 @@
 
 <!-- 看板娘 -->
 <div
+	role="button"
+	tabindex="0"
 	class="live2d-model"
 	class:minimized={isMinimized}
 	class:auto-hidden={isAutoHidden}
@@ -509,6 +511,12 @@
 	class:hide-on-mobile={isMobile}
 	style="position: fixed; bottom: {positionY}px; left: {positionX}px; z-index: 1000; cursor: pointer;"
 	on:click={handleModelClick}
+	on:keydown={(e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			handleModelClick();
+		}
+	}}
 >
 	<div>
 		<canvas
