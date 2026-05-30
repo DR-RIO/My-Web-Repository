@@ -94,7 +94,7 @@
 			currentSong={state.currentSong}
 			isPlaying={state.isPlaying}
 			isLoading={state.isLoading}
-		/>
+			/>
 		<SidebarTrackInfo
 			currentSong={state.currentSong}
 			currentTime={state.currentTime}
@@ -104,7 +104,7 @@
 			onToggleMute={toggleMute}
 			onSetVolume={setVolume}
 			onArtistClick={handleArtistClick}
-		/>
+			/>
 	</div>
 
 	<SidebarLyrics
@@ -127,7 +127,7 @@
 		onNext={next}
 		onTogglePlay={togglePlay}
 		onTogglePlaylist={togglePlaylistView}
-	/>
+		/>
 
 	<SidebarPlaylist
 		playlist={state.playlist}
@@ -141,7 +141,7 @@
 		onRestorePlaylist={() => musicPlayerStore.restorePlaylist()}
 		onClearSearch={handleClearSearch}
 		{initialSearchKeyword}
-	/>
+		/>
 </div>
 
 <style>

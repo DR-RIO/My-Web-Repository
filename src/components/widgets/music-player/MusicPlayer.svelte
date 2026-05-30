@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import Icon from "@iconify/svelte";
 	import { onDestroy, onMount } from "svelte";
 	import { cubicOut } from "svelte/easing";
@@ -155,7 +154,8 @@
 		}
 
 		if (
-			event.key.toLowerCase() === "m" && (event.ctrlKey || event.metaKey)
+			event.key.toLowerCase() === "m" &&
+			(event.ctrlKey || event.metaKey)
 		) {
 			event.preventDefault();
 			toggleMute();

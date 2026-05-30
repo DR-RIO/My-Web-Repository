@@ -45,10 +45,10 @@
 	// 滚动相关
 	let titleContainer: HTMLElement;
 	let artistContainer: HTMLElement;
-	let titleOverflow = false;
-	let artistOverflow = false;
-	let titleScrollDistance = "-100%";
-	let artistScrollDistance = "-100%";
+	let titleOverflow = $state(false);
+	let artistOverflow = $state(false);
+	let titleScrollDistance = $state("-100%");
+	let artistScrollDistance = $state("-100%");
 
 	function calculateScrollDistance(
 		container: HTMLElement | undefined,
@@ -176,9 +176,7 @@
 			<div class="scroll-content">
 				{#if onArtistClick}
 					{#each currentSong.artist.split("/") as artistName, i}
-						{#if i > 0}<span class="artist-text artist-separator"
-								>/</span
-							>{/if}
+						{#if i > 0}<span class="artist-text artist-separator">/</span>{/if}
 						<button
 							type="button"
 							class="artist-text artist-link"
@@ -235,10 +233,6 @@
 					class="volume-fill"
 					style={`width: ${volumePercent}%`}
 				></div>
-				<div
-					class="volume-thumb"
-					style={`left: ${thumbPosition}%`}
-				></div>
 			</div>
 		</div>
 	</div>
@@ -246,13 +240,13 @@
 
 <style>
 	.title-row {
-		margin-bottom: 0.06rem;
+		margin-bottom: 0.02rem;
 	}
 
 	.title-text {
 		font-weight: 600;
 		color: var(--content-main);
-		line-height: 1.1;
+		line-height: 1;
 		white-space: nowrap;
 	}
 
@@ -289,6 +283,7 @@
 
 	.artist-row {
 		margin-bottom: 0.36rem;
+		margin-top: -0.28rem;
 	}
 
 	/* 滚动容器样式 */
@@ -453,44 +448,6 @@
 		z-index: 1;
 	}
 
-	.volume-thumb {
-		position: absolute;
-		top: 50%;
-		transform: translate(-50%, -50%);
-
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-
-		background: #fff;
-		border: 2px solid var(--primary);
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-
-		opacity: 0;
-		transition:
-			opacity 0.2s ease,
-			transform 0.2s ease;
-
-		pointer-events: none;
-		z-index: 2;
-	}
-
-	@media (hover: hover) {
-		.volume-slider:hover .volume-thumb,
-		.volume-slider:focus-visible .volume-thumb {
-			opacity: 1;
-			transform: translate(-50%, -50%) scale(1.15);
-		}
-	}
-
-	@media (hover: none) and (pointer: coarse) {
-		.volume-thumb {
-			width: 12px;
-			height: 12px;
-			opacity: 1;
-		}
-	}
-
 	.volume-slider:focus-visible {
 		outline: 2px solid var(--primary);
 		outline-offset: 2px;
@@ -500,11 +457,6 @@
 	@media (max-width: 768px) {
 		.volume-slider {
 			height: 0.375rem;
-		}
-
-		.volume-thumb {
-			width: 10px;
-			height: 10px;
 		}
 
 		.scroll-content {
@@ -539,11 +491,6 @@
 		.volume-slider {
 			width: 3.2rem;
 			height: 0.375rem;
-		}
-
-		.volume-thumb {
-			width: 10px;
-			height: 10px;
 		}
 	}
 </style>

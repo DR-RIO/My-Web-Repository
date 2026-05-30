@@ -26,14 +26,14 @@
 	}
 
 	function parseLyric(str: string): ParsedLyric[] {
-		if (!str) return [];
+		if (!str) {return [];}
 
 		const reg = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/;
 
 		return str.split("\n")
 			.map(line => {
 				const m = line.match(reg);
-				if (!m) return null;
+				if (!m) {return null;}
 
 				const t =
 					+ m[1] * 60 +
@@ -41,7 +41,7 @@
 					(m[3] ? +m[3].padEnd(3, "0") / 1000 : 0);
 
 				const text = line.replace(reg, "").trim();
-				if (!text) return null;
+				if (!text) {return null;}
 
 				const { original, translation } = splitLyric(text);
 
@@ -54,8 +54,8 @@
 	function getIndex(list: ParsedLyric[], t: number) {
 		let i = -1;
 		for (let j = 0; j < list.length; j++) {
-			if (list[j].time <= t) i = j;
-			else break;
+			if (list[j].time <= t) {i = j;}
+			else {break;}
 		}
 		return i;
 	}
@@ -68,7 +68,7 @@
 	const next = $derived(index + 1 < lyrics.length ? lyrics[index + 1] : null);
 
 	const progress = $derived(() => {
-		if (index < 0) return 0;
+		if (index < 0) {return 0;}
 
 		const currentTimeVal = lyrics[index].time;
 		const nextTime =

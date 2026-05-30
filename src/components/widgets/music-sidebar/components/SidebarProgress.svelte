@@ -53,7 +53,7 @@
 	}
 
 	function handlePointerMove(event: PointerEvent) {
-		if (!isDragging) return;
+		if (!isDragging) {return;}
 		seekByClientX(event.clientX);
 	}
 
