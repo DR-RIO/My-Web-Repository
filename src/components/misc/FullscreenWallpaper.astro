@@ -16,7 +16,7 @@ interface ImageItem {
 }
 
 const normalizeToArray = (images: any): ImageItem[] => {
-	if (!images) return [];
+	if (!images) {return [];}
 	if (Array.isArray(images)) {
 		return images.map((img) => {
 			if (typeof img === "string") {
@@ -165,8 +165,8 @@ const renderGroups = [
 						<script is:inline define:vars={{ images: imageSources.desktop.map(img => ({ url: img.url, position: getImagePosition(img) })), blurAmount }}>
 							(function() {
 								const getRandomIndex = (images, storageKey) => {
-									if (images.length === 0) return -1;
-									if (images.length === 1) return 0;
+									if (images.length === 0) {return -1;}
+									if (images.length === 1) {return 0;}
 									
 									const lastIndex = sessionStorage.getItem(storageKey);
 									let newIndex;
@@ -231,8 +231,8 @@ const renderGroups = [
 						<script is:inline define:vars={{ images: imageSources.mobile.map(img => ({ url: img.url, position: getImagePosition(img) })), blurAmount }}>
 							(function() {
 								const getRandomIndex = (images, storageKey) => {
-									if (images.length === 0) return -1;
-									if (images.length === 1) return 0;
+									if (images.length === 0) {return -1;}
+									if (images.length === 1) {return 0;}
 									
 									const lastIndex = sessionStorage.getItem(storageKey);
 									let newIndex;

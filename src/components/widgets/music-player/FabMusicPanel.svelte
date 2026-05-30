@@ -13,6 +13,7 @@
 
 	let state: MusicPlayerState = $state(musicPlayerStore.getState());
 	let showPlaylist = $state(false);
+	let initialSearchKeyword = $state("");
 
 	function handleStateUpdate(event: Event) {
 		const custom = event as CustomEvent<MusicPlayerState>;
@@ -69,6 +70,20 @@
 	function setVolume(volume: number) {
 		musicPlayerStore.setVolume(volume);
 	}
+
+	function handleSearch(keyword: string) {
+		initialSearchKeyword = keyword;
+		musicPlayerStore.searchSongs(keyword);
+		showPlaylist = true;
+	}
+
+	function handleClearSearch() {
+		initialSearchKeyword = "";
+	}
+
+	function handleSearchArtist(artist: string) {
+		handleSearch(artist);
+	}
 </script>
 
 <div
@@ -88,6 +103,7 @@
 			isMuted={state.isMuted}
 			onToggleMute={toggleMute}
 			onSetVolume={setVolume}
+			onSearchArtist={handleSearchArtist}
 		/>
 	</div>
 
@@ -120,9 +136,11 @@
 		show={showPlaylist}
 		onClose={togglePlaylistView}
 		onPlaySong={playIndex}
-		onSearch={(keyword) => musicPlayerStore.searchSongs(keyword)}
+		onSearch={handleSearch}
 		isSearchMode={state.isSearchMode}
 		onRestorePlaylist={() => musicPlayerStore.restorePlaylist()}
+		onClearSearch={handleClearSearch}
+		{initialSearchKeyword}
 	/>
 </div>
 

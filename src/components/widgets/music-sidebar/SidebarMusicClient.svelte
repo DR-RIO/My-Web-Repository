@@ -14,6 +14,7 @@
 
 	let state: MusicPlayerState = $state(musicPlayerStore.getState());
 	let showPlaylist = $state(false);
+	let initialSearchKeyword = $state("");
 
 	function handleStateUpdate(event: Event) {
 		const custom = event as CustomEvent<MusicPlayerState>;
@@ -25,7 +26,10 @@
 	onMount(() => {
 		// 初始化音乐播放器
 		musicPlayerStore.initialize().catch((error) => {
-			console.error('Failed to initialize music player from SidebarMusicClient:', error);
+			console.error(
+				"Failed to initialize music player from SidebarMusicClient:",
+				error,
+			);
 		});
 		// 监听状态更新
 		window.addEventListener("music-sidebar:state", handleStateUpdate);
@@ -75,6 +79,20 @@
 	function setVolume(volume: number) {
 		musicPlayerStore.setVolume(volume);
 	}
+
+	function handleSearch(keyword: string) {
+		initialSearchKeyword = keyword;
+		musicPlayerStore.searchSongs(keyword);
+		showPlaylist = true;
+	}
+
+	function handleClearSearch() {
+		initialSearchKeyword = "";
+	}
+
+	function handleSearchArtist(artist: string) {
+		handleSearch(artist);
+	}
 </script>
 
 <div class="music-sidebar-widget">
@@ -92,6 +110,7 @@
 			isMuted={state.isMuted}
 			onToggleMute={toggleMute}
 			onSetVolume={setVolume}
+			onSearchArtist={handleSearchArtist}
 		/>
 	</div>
 
@@ -124,9 +143,11 @@
 		show={showPlaylist}
 		onClose={togglePlaylistView}
 		onPlaySong={playIndex}
-		onSearch={(keyword) => musicPlayerStore.searchSongs(keyword)}
+		onSearch={handleSearch}
 		isSearchMode={state.isSearchMode}
 		onRestorePlaylist={() => musicPlayerStore.restorePlaylist()}
+		onClearSearch={handleClearSearch}
+		{initialSearchKeyword}
 	/>
 </div>
 

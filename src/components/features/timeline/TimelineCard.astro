@@ -90,8 +90,8 @@ const remainingSkills =
 	maxSkills && item.skills ? item.skills.length - maxSkills : 0;
 
 const allImages: string[] = [];
-if (item.image) allImages.push(item.image);
-if (item.images) allImages.push(...item.images);
+if (item.image) {allImages.push(item.image);}
+if (item.images) {allImages.push(...item.images);}
 const validImages = allImages.filter(img => img && img.trim() !== '');
 const hasImages = validImages.length > 0;
 ---

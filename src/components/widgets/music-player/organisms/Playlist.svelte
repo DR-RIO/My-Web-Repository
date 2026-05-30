@@ -31,7 +31,7 @@
 	}: Props = $props();
 
 	let searchKeyword = $state("");
-	let showClear = $derived(searchKeyword.length > 0);
+	const showClear = $derived(searchKeyword.length > 0);
 
 	function handleSearch() {
 		if (onSearch) {
@@ -52,8 +52,8 @@
 
 {#if show}
 	<div
-			class="playlist-panel card-base-transparent fixed bottom-70 right-4 w-80 max-h-96 overflow-hidden z-50"
-		>
+		class="playlist-panel card-base-transparent fixed bottom-70 right-4 w-80 max-h-96 overflow-hidden z-50"
+	>
 		<div
 			class="playlist-header flex items-center justify-between p-4 border-b border-[var(--line-divider)]"
 		>
@@ -64,45 +64,60 @@
 				<Icon icon="material-symbols:close" class="text-lg" />
 			</button>
 		</div>
-		
+
 		{#if onSearch}
-				<div class="search-box p-3 border-b border-[var(--line-divider)]">
-					<div class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-3">
-						<Icon icon="simple-icons:neteasecloudmusic" width="20" height="20" class="inline-flex items-center justify-center" style="color: #C20C0C;" />
-						<input
-							type="text"
-							bind:value={searchKeyword}
-							placeholder="搜索歌曲..."
-							onkeydown={handleKeydown}
-							class="search-input flex-1 bg-transparent border-none outline-none text-sm p-0"
+			<div class="search-box p-3 border-b border-[var(--line-divider)]">
+				<div
+					class="search-input-wrapper flex items-center gap-2 rounded-lg px-2.5 py-3"
+				>
+					<Icon
+						icon="simple-icons:neteasecloudmusic"
+						width="20"
+						height="20"
+						class="inline-flex items-center justify-center"
+						style="color: #C20C0C;"
+					/>
+					<input
+						type="text"
+						bind:value={searchKeyword}
+						placeholder="搜索歌曲..."
+						onkeydown={handleKeydown}
+						class="search-input flex-1 bg-transparent border-none outline-none text-sm p-0"
+						style="color: var(--btn-content)"
+					/>
+					<button
+						onclick={clearSearch}
+						class="clear-btn w-6 h-6 rounded flex items-center justify-center"
+						class:visible={showClear}
+					>
+						<Icon icon="material-symbols:close" class="text-sm" />
+					</button>
+					<button
+						onclick={handleSearch}
+						class="btn-plain w-6 h-6 rounded"
+					>
+						<Icon
+							icon="material-symbols:arrow-forward"
+							class="text-sm"
 							style="color: var(--btn-content)"
 						/>
-						<button 
-							onclick={clearSearch}
-							class="clear-btn w-6 h-6 rounded flex items-center justify-center"
-							class:visible={showClear}
-						>
-							<Icon icon="material-symbols:close" class="text-sm" />
-						</button>
-						<button 
-							onclick={handleSearch}
-							class="btn-plain w-6 h-6 rounded"
-						>
-							<Icon icon="material-symbols:arrow-forward" class="text-sm" style="color: var(--btn-content)" />
-						</button>
-					</div>
-					{#if isSearchMode && onRestorePlaylist}
-						<button 
-							onclick={onRestorePlaylist}
-							class="restore-playlist-btn w-full mt-2 py-1.5 px-3 text-xs rounded-lg flex items-center justify-center gap-1.5 transition-colors"
-						>
-							<Icon icon="material-symbols:arrow-back" class="text-xs" />
-							<span>返回站长歌单</span>
-						</button>
-					{/if}
+					</button>
 				</div>
-			{/if}
-		
+				{#if isSearchMode && onRestorePlaylist}
+					<button
+						onclick={onRestorePlaylist}
+						class="restore-playlist-btn w-full mt-2 py-1.5 px-3 text-xs rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+					>
+						<Icon
+							icon="material-symbols:arrow-back"
+							class="text-xs"
+						/>
+						<span>返回站长歌单</span>
+					</button>
+				{/if}
+			</div>
+		{/if}
+
 		<div
 			class="playlist-content overflow-y-auto max-h-80 hide-scrollbar"
 			role="presentation"
@@ -185,7 +200,9 @@
 	}
 
 	.restore-playlist-btn {
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 		background-color: var(--btn-regular-bg);
 		color: var(--btn-content);
 	}
