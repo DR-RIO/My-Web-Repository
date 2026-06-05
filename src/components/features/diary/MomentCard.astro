@@ -1,16 +1,23 @@
 ---
-import { formatRelativeTime } from "../../../utils/timeFormat";
+import { formatRelativeTime, formatElegantDate } from "../../../utils/timeFormat";
+import { linkifyContent } from "../../../utils/content-utils";
+import { Icon } from "astro-icon/components";
+import { profileConfig, commentConfig } from "../../../config";
 
 interface Props {
 	moment: {
 		content: string;
 		date: string;
 		images?: string[];
+		location?: string;
+		mood?: string;
+		tags?: string[];
 		pinned?: boolean;
 	};
 	index: number;
 	minutesAgo: string;
 	hoursAgo: string;
+	hourAgo?: string;
 	daysAgo: string;
 }
 
@@ -23,62 +30,134 @@ const relativeTime = formatRelativeTime(
 	daysAgo,
 );
 
+const elegantDate = formatElegantDate(moment.date);
+const contentWithLinks = linkifyContent(moment.content);
+
 // ✅ 过滤空图片
 const validImages = moment.images?.filter(Boolean) || [];
+const twikooEnvId = commentConfig.twikoo.envId;
 ---
 
 <div
 	class="moment-item card-base-daily p-4 md:p-6 lg:p-8 hover:shadow-lg transition-all"
 	data-index={index}
 >
+	<!-- 头像和名字 -->
+	<div class="moment-header flex items-center gap-3 mb-4">
+		<img
+			src={profileConfig.avatar}
+			alt={profileConfig.name}
+			class="w-10 h-10 rounded-full object-cover flex-shrink-0"
+		/>
+		<div class="flex flex-col">
+			<span class="font-semibold text-base text-90">{profileConfig.name}</span>
+		</div>
+	</div>
+
 	<div class="moment-content">
 		<p
 			class="moment-text text-sm md:text-base lg:text-lg text-90 leading-relaxed mb-3 md:mb-4"
-		>
-			{moment.content}
-		</p>
+			set:html={contentWithLinks}
+		></p>
 
-		{
-			validImages.length > 0 && (
-				<div class="diary-images grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4">
-					{validImages.map((image, imgIndex) => (
-						<div class="image-item relative rounded-md overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform">
-							<a
-								href="javascript:void(0)"
-								data-src={image}
-								data-fancybox={`gallery-${index}-${imgIndex}`}
-								class="block w-full h-full"
-							>
-								<img
-									src={image}
-									alt="diary moment image"
-									class="w-full h-full object-cover"
-									loading="lazy"
-								/>
-							</a>
-						</div>
-					))}
+		{validImages.length > 0 && (
+			<div class="diary-images grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-5 mb-3 md:mb-4">
+				{validImages.map((image, imgIndex) => (
+					<div class="image-item relative rounded-md overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform">
+						<a
+							href="javascript:void(0)"
+							data-src={image}
+							data-fancybox={`gallery-${index}-${imgIndex}`}
+							class="block w-full h-full"
+						>
+							<img
+								src={image}
+								alt="diary moment image"
+								class="w-full h-full object-cover"
+								loading="lazy"
+							/>
+						</a>
+					</div>
+				))}
 
-					{validImages.length === 1 && <div class="aspect-square" />}
-				</div>
-			)
-		}
+				{validImages.length === 1 && <div class="aspect-square" />}
+			</div>
+		)}
 	</div>
 
 	<hr
 		class="moment-divider border-t border-[var(--line-divider)] my-3 md:my-4"
 	/>
 
-	<!-- ✅ footer：时间 + 置顶标识 -->
-	<div class="moment-footer flex justify-between items-center">
-		<div
-			class="moment-time flex items-center gap-1.5 text-75 text-xs md:text-sm lg:text-base"
-		>
-			<i class="time-icon text-xs md:text-sm">🕐</i>
-			<time datetime={moment.date}>{relativeTime}</time>
+	<!-- ✅ footer：时间 + 地点 + 心情 + 标签 + 置顶标识 + 点赞按钮 -->
+	<div class="moment-footer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-5">
+		<!-- 左侧：时间 + 地点 + 心情 -->
+		<div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+			<div
+				class="moment-time flex items-center gap-1.5 text-75"
+			>
+				<i class="time-icon text-xs md:text-sm">🕐</i>
+				<time datetime={moment.date} class="flex flex-col sm:flex-row gap-1 items-center">
+					<span class="text-[var(--content-main)] font-medium text-xs md:text-sm lg:text-base">{elegantDate}</span>
+					<span class="text-xs md:text-sm">({relativeTime})</span>
+				</time>
+			</div>
+
+			<!-- 地点 -->
+			{moment.location && (
+				<div class="moment-location flex items-center gap-1 text-75">
+					<Icon
+						name="material-symbols:location-on"
+						class="text-xs md:text-sm w-3.5 h-3.5"
+					/>
+					<span class="text-xs md:text-sm">{moment.location}</span>
+				</div>
+			)}
+
+			<!-- 心情 -->
+			{moment.mood && (
+				<div class="moment-mood flex items-center gap-1 text-75">
+					<Icon
+						name="material-symbols:sentiment-satisfied"
+						class="text-xs md:text-sm w-3.5 h-3.5"
+					/>
+					<span class="text-xs md:text-sm">{moment.mood}</span>
+				</div>
+			)}
 		</div>
 
-		{moment.pinned && <div class="pin-inline">📌 置顶</div>}
+		<!-- 右侧：标签 + 置顶 + 点赞按钮 -->
+		<div class="flex flex-wrap items-center gap-3">
+			<!-- 标签 -->
+			{moment.tags && moment.tags.length > 0 && (
+				<div class="moment-tags flex flex-wrap gap-1">
+					{moment.tags.map((tag) => (
+						<span class="tag-item text-xs px-2 py-1 rounded-full bg-[var(--btn-plain-bg)] text-[var(--primary)]">
+							#{tag}
+						</span>
+					))}
+				</div>
+			)}
+
+			{moment.pinned && <div class="pin-inline">📌 置顶</div>}
+
+			<!-- 点赞按钮 -->
+			<button 
+				class="like-btn flex items-center gap-1.5 text-75 hover:text-[var(--primary)] transition-colors"
+				data-index={index}
+				data-env-id={twikooEnvId}
+			>
+				<!-- 未点赞图标 -->
+				<span class="like-icon-outline">
+					<Icon name="material-symbols:favorite-outline" class="w-4.5 h-4.5" />
+				</span>
+				<!-- 已点赞图标 -->
+				<span class="like-icon-filled" style="display: none;">
+					<Icon name="material-symbols:favorite" class="w-4.5 h-4.5" />
+				</span>
+				<span class="like-count text-xs">0</span>
+			</button>
+		</div>
 	</div>
 </div>
 
@@ -91,16 +170,67 @@ const validImages = moment.images?.filter(Boolean) || [];
 		transition: all 0.3s ease;
 	}
 
+	/* 头像悬停效果 */
+	.moment-header img {
+		transition: transform 0.3s ease;
+	}
+	.moment-header img:hover {
+		transform: scale(1.1);
+	}
+
+	/* 点赞按钮效果 */
+	.like-btn {
+		background: none;
+		border: none;
+		padding: 0.3rem 0.6rem;
+		border-radius: 999px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		transition: all 0.2s ease;
+	}
+	
+	.like-btn:hover {
+		background: rgba(255, 71, 87, 0.1);
+	}
+
+	.like-btn:active {
+		transform: scale(0.95);
+	}
+
+	.like-btn.liked {
+		color: #ff4757 !important;
+		background: rgba(255, 71, 87, 0.15);
+	}
+
+	.like-btn .like-icon-outline,
+	.like-btn .like-icon-filled {
+		transition: transform 0.3s ease;
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.like-btn.liked .like-icon-filled {
+		animation: heartBeat 0.6s ease-in-out;
+	}
+
+	@keyframes heartBeat {
+		0% { transform: scale(1); }
+		25% { transform: scale(1.3); }
+		50% { transform: scale(0.9); }
+		75% { transform: scale(1.1); }
+		100% { transform: scale(1); }
+	}
+
 	/* ⭐ 置顶标识（右侧） */
 	.pin-inline {
 		font-size: 12px;
 		color: #f59e0b;
 		font-weight: 600;
-
 		display: flex;
 		align-items: center;
 		gap: 4px;
-
 		background: rgba(245, 158, 11, 0.1);
 		padding: 2px 8px;
 		border-radius: 999px;
@@ -111,106 +241,229 @@ const validImages = moment.images?.filter(Boolean) || [];
 		border-color: #f59e0b;
 	}
 
+	/* ⭐ 标签样式 */
+	.tag-item {
+		font-weight: 500;
+		transition: all 0.2s ease;
+		cursor: pointer;
+	}
+	.tag-item:hover {
+		background: var(--btn-plain-bg-hover);
+		transform: translateY(-1px);
+	}
+
+	/* ⭐ 地点和心情样式 */
+	.moment-location,
+	.moment-mood {
+		transition: color 0.2s ease;
+	}
+	.moment-location:hover,
+	.moment-mood:hover {
+		color: var(--content-main);
+	}
+
 	.image-item img {
 		transition: transform 0.3s ease;
 	}
-
 	.image-item:hover img {
 		transform: scale(1.05);
 	}
-
 	.moment-text {
 		white-space: pre-line;
 	}
-
-	/* ===== 响应式 ===== */
-
-	@media (max-width: 768px) {
-		.card-base-daily {
-			padding: 2rem;
-		}
-
-		.diary-images {
-			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-			max-width: 600px;
-			gap: 1rem;
-		}
-
-		.moment-text {
-			font-size: 1rem;
-			line-height: 1.2;
-		}
-	}
-
-	@media (min-width: 769px) and (max-width: 1280px) {
-		.card-base-daily {
-			padding: 1.5rem;
-		}
-
-		.diary-images {
-			grid-template-columns: repeat(3, 1fr);
-			gap: 0.75rem;
-			max-width: 650px;
-		}
-
-		.moment-text {
-			font-size: 0.88rem;
-			line-height: 1.2;
-		}
-
-		.moment-footer {
-			margin-top: 1rem;
-		}
-	}
-
-	@media (min-width: 1281px) {
-		.card-base-daily {
-			padding: 2rem;
-		}
-
-		.diary-images {
-			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-			max-width: 580px;
-			gap: 1rem;
-		}
-
-		.moment-text {
-			font-size: 1.2rem;
-			line-height: 1.2;
-		}
-	}
-
-	@media (max-width: 1280px) {
-		.card-base-daily {
-			padding: 2rem;
-		}
-
-		.diary-images {
-			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-			max-width: 500px;
-			gap: 1rem;
-		}
-
-		.moment-text {
-			font-size: 1rem;
-			line-height: 1.2;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.card-base-daily {
-			border-radius: 8px;
-		}
-
-		.diary-images {
-			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-			max-width: 500px;
-			gap: 1rem;
-		}
-
-		.moment-text {
-			font-size: 0.9rem;
-			line-height: 1.2;
-		}
-	}
 </style>
+
+<script is:inline define:vars={{twikooEnvId}}>
+	// 点赞功能 - 使用 Waline 实现多用户点赞
+	const STORAGE_KEY_PREFIX = 'diary_liked_';
+
+	// ⚠️ 配置你的 Waline 服务器地址！
+	// 部署 Waline 后，把地址填在这里，例如：'https://your-waline.netlify.app'
+	const WALINE_SERVER_URL = '';
+
+	// 生成日记的唯一ID
+	function getDiaryId(index) {
+		return `diary_${index}`;
+	}
+
+	// 获取日记的点赞 URL（用于 Waline）
+	function getLikeUrl(index) {
+		return `/diary/${getDiaryId(index)}`;
+	}
+
+	// 检查当前用户是否已经点赞（本地存储）
+	function hasLiked(index) {
+		return localStorage.getItem(STORAGE_KEY_PREFIX + getDiaryId(index)) === 'true';
+	}
+
+	// 保存点赞状态到本地
+	function setLiked(index, liked) {
+		if (liked) {
+			localStorage.setItem(STORAGE_KEY_PREFIX + getDiaryId(index), 'true');
+		} else {
+			localStorage.removeItem(STORAGE_KEY_PREFIX + getDiaryId(index));
+		}
+	}
+
+	// 更新按钮显示状态
+	function updateButtonDisplay(btn, liked, count) {
+		const iconOutline = btn.querySelector('.like-icon-outline');
+		const iconFilled = btn.querySelector('.like-icon-filled');
+		const countEl = btn.querySelector('.like-count');
+
+		if (liked) {
+			btn.classList.add('liked');
+			if (iconOutline) iconOutline.style.display = 'none';
+			if (iconFilled) iconFilled.style.display = 'inline-flex';
+		} else {
+			btn.classList.remove('liked');
+			if (iconOutline) iconOutline.style.display = 'inline-flex';
+			if (iconFilled) iconFilled.style.display = 'none';
+		}
+
+		if (countEl) {
+			countEl.textContent = count;
+		}
+	}
+
+	// 从 Waline 获取点赞数
+	async function getLikesFromWaline(likeUrl) {
+		try {
+			if (!WALINE_SERVER_URL) {
+				console.warn('WALINE_SERVER_URL 未配置，使用本地存储');
+				return null;
+			}
+
+			const response = await fetch(`${WALINE_SERVER_URL}/like?url=${encodeURIComponent(likeUrl)}`);
+			if (!response.ok) {
+				throw new Error('Waline 请求失败');
+			}
+			const data = await response.json();
+			return data.likes || 0;
+		} catch (error) {
+			console.error('获取 Waline 点赞数据失败:', error);
+			return null;
+		}
+	}
+
+	// 提交点赞到 Waline
+	async function submitLikeToWaline(likeUrl, liked) {
+		try {
+			if (!WALINE_SERVER_URL) {
+				console.warn('WALINE_SERVER_URL 未配置');
+				return null;
+			}
+
+			const response = await fetch(`${WALINE_SERVER_URL}/like`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					url: likeUrl,
+					type: liked ? 'like' : 'unlike'
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error('Waline 请求失败');
+			}
+			
+			const data = await response.json();
+			return data.likes;
+		} catch (error) {
+			console.error('提交 Waline 点赞失败:', error);
+			return null;
+		}
+	}
+
+	// 初始化所有点赞按钮
+	async function initAllLikes() {
+		const buttons = document.querySelectorAll('.like-btn');
+		
+		for (const btn of buttons) {
+			const index = parseInt(btn.dataset.index);
+			const diaryId = getDiaryId(index);
+			const liked = hasLiked(index);
+			const likeUrl = getLikeUrl(index);
+			
+			let count = 0;
+			
+			// 尝试从 Waline 获取点赞数
+			const walineCount = await getLikesFromWaline(likeUrl);
+			if (walineCount !== null) {
+				count = walineCount;
+			} else {
+				// 降级到本地存储
+				const savedCount = localStorage.getItem(`diary_count_${diaryId}`);
+				if (savedCount) {
+					count = parseInt(savedCount);
+				}
+			}
+			
+			updateButtonDisplay(btn, liked, count);
+		}
+	}
+
+	// 处理点赞点击
+	async function handleLikeClick(btn) {
+		const index = parseInt(btn.dataset.index);
+		const diaryId = getDiaryId(index);
+		const wasLiked = hasLiked(index);
+		const countEl = btn.querySelector('.like-count');
+		let currentCount = countEl ? parseInt(countEl.textContent) : 0;
+		const likeUrl = getLikeUrl(index);
+		
+		// 切换点赞状态
+		const newLiked = !wasLiked;
+		
+		if (newLiked) {
+			// 点赞
+			setLiked(index, true);
+			currentCount = currentCount + 1;
+			
+			// 添加心跳动画
+			btn.style.transform = 'scale(1.15)';
+			setTimeout(() => {
+				btn.style.transform = 'scale(1)';
+			}, 200);
+		} else {
+			// 取消点赞
+			setLiked(index, false);
+			currentCount = Math.max(0, currentCount - 1);
+		}
+		
+		// 保存点赞数到本地（作为降级方案）
+		localStorage.setItem(`diary_count_${diaryId}`, currentCount.toString());
+		
+		// 更新显示（先本地更新，给用户即时反馈）
+		updateButtonDisplay(btn, newLiked, currentCount);
+		
+		// 异步提交到 Waline
+		const walineCount = await submitLikeToWaline(likeUrl, newLiked);
+		if (walineCount !== null) {
+			// 如果 Waline 返回了更新后的数量，再同步一次
+			updateButtonDisplay(btn, newLiked, walineCount);
+			localStorage.setItem(`diary_count_${diaryId}`, walineCount.toString());
+		}
+	}
+
+	// 点击事件委托
+	document.addEventListener('click', function(e) {
+		const btn = e.target.closest('.like-btn');
+		if (btn) {
+			handleLikeClick(btn);
+		}
+	});
+
+	// 页面加载完成后初始化
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initAllLikes);
+	} else {
+		initAllLikes();
+	}
+
+	// 延迟再执行一次，确保 Astro 组件加载完
+	setTimeout(initAllLikes, 50);
+	setTimeout(initAllLikes, 200);
+</script>

@@ -1,6 +1,18 @@
 import { siteConfig } from '../config';
 
 /**
+ * Format date to elegant Chinese format (YYYY年MM月DD日)
+ * @param dateString ISO date string
+ */
+export function formatElegantDate(dateString: string): string {
+	const date = new Date(dateString);
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+	return `${year}年${month}月${day}日`;
+}
+
+/**
  * Format relative time for diary moments
  * @param dateString ISO date string
  * @param minutesAgo text for minutes

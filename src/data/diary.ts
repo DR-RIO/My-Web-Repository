@@ -9,7 +9,6 @@ export interface DiaryItem {
 	location?: string;
 	mood?: string;
 	tags?: string[];
-
 	pinned?: boolean; // ⭐ 是否置顶
 }
 
@@ -18,13 +17,42 @@ const diaryData: DiaryItem[] = [
 	// {
 	// 	id: ,
 	// 	content:"",
-	// 	date: "2026-04-23T04:24:00Z",
+	// 	date: "yyyy-MM-dd HH:mm:ssZ",
 	// 	images: [
 	// 		"",
 	// 		""
-	// 	]
+	// 	],
+	// 	location: "",
+	// 	mood: "",
+	// 	tags: [""],
+	// 	pinned: true/false,
 	// },
-
+	
+	{
+		id: 6,
+		content:"黄埔!黄埔!　　　　tips:黄埔军校不给拍照，差点当罕见了",
+		date: "2026-06-03T04:24:00Z",
+		images: [
+			"https://easyimage.isu183s.top/i/2026/06/05/022101.jpg",
+			"https://easyimage.isu183s.top/i/2026/06/05/022307.jpg"
+		],
+		location: "佛山市  → 黄埔军校",
+		mood: "累",
+		tags: ["黄埔军校"],
+		pinned: false,
+	},
+	{
+		id: 5,
+		content: `今日份主谓祈使句: "猫！你去把老鼠打败！"　[为了打败老鼠特地买了个狸花猫](https://www.bilibili.com/video/BV1BdGy6dEeh/?spm_id_from=333.337.search-card.all.click&vd_source=6a6cd981e4537c9742d3abfd226b8198)`,
+		date: "2026-05-30T01:00:00Z",
+		images: [
+			"https://easyimage.isu183s.top/i/2026/05/30/045006.png",
+		],
+		location: "bilibili",
+		mood: "笑不活了",
+		tags: ["bilibili"],
+		pinned: false
+	},
 	{
 		id: 4,
 		content:"Today:　　　　　　　　　　　　*OS:王牌一代目自然是可爱！",
@@ -34,7 +62,11 @@ const diaryData: DiaryItem[] = [
 			"https://easyimage.isu183s.top/i/2026/04/25/003659.png",
 			"https://easyimage.isu183s.top/i/2026/04/25/034411.png",
 			"https://easyimage.isu183s.top/i/2026/04/25/003456.png"
-		]
+		],
+		location: "异环",
+		mood: "开心",
+		tags: ["二次元","摄影"],
+		pinned: false
 	},
 
 	{
@@ -45,7 +77,11 @@ const diaryData: DiaryItem[] = [
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/23/6vcfkt.png",
 			"https://easyimage.isu183s.top/i/2026/04/23/6x4rex.png"
-		]
+		],
+		location: "Windows文件管理器",
+		mood: "兴奋",
+		tags: ["网站调试过程","截图"],
+		pinned: false
 	},
 
 	{
@@ -59,6 +95,9 @@ const diaryData: DiaryItem[] = [
 		images: [
 			"https://easyimage.isu183s.top/app/thumb.php?img=/i/2026/04/20/6u5mv.webp"
 		],
+		location: "心里",
+		mood: "疑惑",
+		tags: ["自我思考"],
 		pinned: true, // ⭐ 这条置顶
 	},
 
@@ -71,6 +110,9 @@ const diaryData: DiaryItem[] = [
 			"https://easyimage.isu183s.top/i/2026/04/19/12ybk7v-0.jpg",
 			"https://easyimage.isu183s.top/i/2026/04/19/12yao4y-0.jpg"
 		],
+		location: "心里",
+		mood: "期待",
+		tags: ["I crsuh"],
 		pinned: true, // ⭐ 这条置顶
 	},
 

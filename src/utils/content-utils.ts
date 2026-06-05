@@ -4,6 +4,67 @@ import { initPostIdMap } from "@utils/permalink-utils";
 import { getCategoryUrl, getPostUrl } from "@utils/url-utils";
 import { type CollectionEntry, getCollection } from "astro:content";
 
+/**
+ * Extract and simplify URL for display
+ * @param url The full URL
+ * @param maxLength Maximum display length
+ */
+function simplifyUrl(url: string, maxLength: number = 30): string {
+	try {
+		const parsedUrl = new URL(url);
+		let display = parsedUrl.hostname + parsedUrl.pathname;
+		if (display.startsWith("www.")) {
+			display = display.slice(4);
+		}
+		if (display.length > maxLength) {
+			display = display.slice(0, maxLength - 3) + "...";
+		}
+		return display;
+	} catch {
+		if (url.length > maxLength) {
+			return url.slice(0, maxLength - 3) + "...";
+		}
+		return url;
+	}
+}
+
+/**
+ * Convert URLs in content to clickable links
+ * @param content The content string
+ */
+export function linkifyContent(content: string): string {
+	let result = content;
+	
+	// 先处理 Markdown 链接格式 [别名](链接)
+	// 临时标记一下已处理的链接，避免后面的正则再次匹配
+	const markdownLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
+	const processedMarkers: string[] = [];
+	let markerIndex = 0;
+	
+	result = result.replace(markdownLinkPattern, (_, displayText, url) => {
+		const marker = `__MARKDOWN_LINK_${markerIndex}__`;
+		markerIndex++;
+		processedMarkers.push(
+			`<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--btn-plain-bg)] text-[var(--primary)] text-xs md:text-sm hover:bg-[var(--btn-plain-bg-hover)] transition-colors">🔗 ${displayText}</a>`
+		);
+		return marker;
+	});
+	
+	// 再处理普通 URL 链接
+	const urlPattern = /https?:\/\/[^\s]+/g;
+	result = result.replace(urlPattern, (url) => {
+		const displayText = simplifyUrl(url);
+		return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--btn-plain-bg)] text-[var(--primary)] text-xs md:text-sm hover:bg-[var(--btn-plain-bg-hover)] transition-colors">🔗 ${displayText}</a>`;
+	});
+	
+	// 最后把临时标记替换回来
+	for (let i = 0; i < markerIndex; i++) {
+		result = result.replace(`__MARKDOWN_LINK_${i}__`, processedMarkers[i]);
+	}
+	
+	return result;
+}
+
 // // Retrieve posts and sort them by publication date
 async function getRawSortedPosts() {
 	const allBlogPosts = await getCollection("posts", ({ data }) => {
