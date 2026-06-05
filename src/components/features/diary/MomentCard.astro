@@ -6,6 +6,7 @@ import { profileConfig, commentConfig } from "../../../config";
 
 interface Props {
 	moment: {
+		id: number;
 		content: string;
 		date: string;
 		images?: string[];
@@ -15,13 +16,14 @@ interface Props {
 		pinned?: boolean;
 	};
 	index: number;
+	momentId: number;
 	minutesAgo: string;
 	hoursAgo: string;
 	hourAgo?: string;
 	daysAgo: string;
 }
 
-const { moment, index, minutesAgo, hoursAgo, daysAgo } = Astro.props;
+const { moment, index, momentId, minutesAgo, hoursAgo, daysAgo } = Astro.props;
 
 const relativeTime = formatRelativeTime(
 	moment.date,
@@ -35,7 +37,7 @@ const contentWithLinks = linkifyContent(moment.content);
 
 // ✅ 过滤空图片
 const validImages = moment.images?.filter(Boolean) || [];
-const twikooEnvId = commentConfig.twikoo.envId;
+const twikooEnvId = commentConfig.twikoo?.envId || "";
 ---
 
 <div
@@ -61,9 +63,9 @@ const twikooEnvId = commentConfig.twikoo.envId;
 		></p>
 
 		{validImages.length > 0 && (
-			<div class="diary-images grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-5 mb-3 md:mb-4">
+			<div class="diary-images mb-3 md:mb-4">
 				{validImages.map((image, imgIndex) => (
-					<div class="image-item relative rounded-md overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform">
+					<div class="image-item relative rounded-md overflow-hidden cursor-pointer hover:scale-105 transition-transform">
 						<a
 							href="javascript:void(0)"
 							data-src={image}
@@ -73,14 +75,11 @@ const twikooEnvId = commentConfig.twikoo.envId;
 							<img
 								src={image}
 								alt="diary moment image"
-								class="w-full h-full object-cover"
 								loading="lazy"
 							/>
 						</a>
 					</div>
 				))}
-
-				{validImages.length === 1 && <div class="aspect-square" />}
 			</div>
 		)}
 	</div>
@@ -144,7 +143,7 @@ const twikooEnvId = commentConfig.twikoo.envId;
 			<!-- 点赞按钮 -->
 			<button 
 				class="like-btn flex items-center gap-1.5 text-75 hover:text-[var(--primary)] transition-colors"
-				data-index={index}
+			data-moment-id={momentId}
 				data-env-id={twikooEnvId}
 			>
 				<!-- 未点赞图标 -->
@@ -204,9 +203,15 @@ const twikooEnvId = commentConfig.twikoo.envId;
 		background: rgba(255, 71, 87, 0.15);
 	}
 
+	.like-btn:disabled {
+		/* 禁用时保持视觉一致，只通过程序防止重复点击 */
+		pointer-events: none;
+	}
+
 	.like-btn .like-icon-outline,
-	.like-btn .like-icon-filled {
-		transition: transform 0.3s ease;
+	.like-btn .like-icon-filled,
+	.like-btn .like-count {
+		transition: transform 0.3s ease, opacity 0.15s ease;
 		display: inline-flex;
 		align-items: center;
 	}
@@ -271,37 +276,287 @@ const twikooEnvId = commentConfig.twikoo.envId;
 	.moment-text {
 		white-space: pre-line;
 	}
+
+	/* ========== 移动端优化 ========== */
+	@media (max-width: 768px) {
+		.card-base-daily {
+			border-radius: var(--radius-large);
+		}
+
+		.moment-header {
+			margin-bottom: 0.75rem !important;
+		}
+
+		.moment-header img {
+			width: 36px !important;
+			height: 36px !important;
+		}
+
+		.moment-text {
+			font-size: 0.875rem !important;
+			line-height: 1.6 !important;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
+		}
+
+		.diary-images {
+			gap: 0.5rem !important;
+			margin-bottom: 0.75rem !important;
+		}
+
+		.image-item {
+			border-radius: 0.5rem !important;
+		}
+
+		.moment-divider {
+			margin: 0.5rem 0 !important;
+		}
+
+		.moment-footer {
+			margin-top: 0.75rem !important;
+			gap: 0.5rem !important;
+		}
+
+		.pin-inline {
+			font-size: 0.7rem !important;
+			padding: 1px 6px !important;
+		}
+
+		.tag-item {
+			font-size: 0.7rem !important;
+			padding: 2px 6px !important;
+		}
+
+		.like-btn {
+			padding: 0.25rem 0.5rem !important;
+			gap: 0.25rem !important;
+		}
+
+		.like-count {
+			font-size: 0.75rem !important;
+		}
+	}
+
+	/* 超小屏幕（如 iPhone SE）优化 */
+	@media (max-width: 480px) {
+		.card-base-daily {
+			padding: 0.75rem !important;
+		}
+
+		.moment-text {
+			font-size: 0.8125rem !important;
+		}
+
+		.diary-images {
+			gap: 0.375rem !important;
+		}
+
+		/* 单张图片：适中大小，保持原始比例 */
+		.diary-images:not(:has(.image-item:nth-child(2))) .image-item {
+			max-width: 220px !important;
+		}
+
+		/* 2张图片 */
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) {
+			gap: 0.375rem !important;
+		}
+
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) .image-item {
+			max-width: 140px !important;
+		}
+
+		/* 3张及以上图片 */
+		.diary-images:has(.image-item:nth-child(3)) {
+			gap: 0.375rem !important;
+		}
+	}
+
+	/* 图片容器和图片优化 - 基础样式（应用于所有宽度） */
+	.diary-images {
+		width: 100%;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.75rem;
+	}
+
+	/* 基础：2张图片 */
+	.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	/* 基础：3张及以上图片 */
+	.diary-images:has(.image-item:nth-child(3)) {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.75rem;
+	}
+
+	/* 单张图片：保持原始比例，不截断 */
+	.diary-images:not(:has(.image-item:nth-child(2))) .image-item {
+		max-width: 400px;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.diary-images:not(:has(.image-item:nth-child(2))) .image-item img {
+		width: 100%;
+		height: auto;
+		object-fit: contain;
+		display: block;
+	}
+
+	/* 2张及以上图片：保持正方形，使用 cover 裁剪 */
+	.diary-images:has(.image-item:nth-child(2)) .image-item {
+		aspect-ratio: 1;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.diary-images:has(.image-item:nth-child(2)) .image-item img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	/* 平板端 (768px - 1280px) 优化 */
+	@media (min-width: 768px) and (max-width: 1279px) {
+		.diary-images {
+			gap: 0.75rem;
+		}
+
+		/* 单张图片：适中大小 */
+		.diary-images:not(:has(.image-item:nth-child(2))) .image-item {
+			max-width: 350px;
+		}
+
+		/* 2张图片 */
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) {
+			gap: 0.75rem;
+		}
+
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) .image-item {
+			max-width: 180px;
+		}
+
+		/* 3张及以上图片 */
+		.diary-images:has(.image-item:nth-child(3)) {
+			gap: 0.75rem;
+		}
+	}
+
+	/* 桌面端 (1280px+) 优化 */
+	@media (min-width: 1280px) {
+		.diary-images {
+			gap: 1rem;
+		}
+
+		/* 单张图片：合适大小 */
+		.diary-images:not(:has(.image-item:nth-child(2))) .image-item {
+			max-width: 400px;
+		}
+
+		/* 2张图片 */
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) {
+			gap: 1rem;
+		}
+
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) .image-item {
+			max-width: 220px;
+		}
+
+		/* 3张及以上图片 */
+		.diary-images:has(.image-item:nth-child(3)) {
+			gap: 1rem;
+		}
+	}
+
+	/* 横屏移动端优化 */
+	@media (max-width: 768px) and (orientation: landscape) {
+		.diary-images {
+			gap: 0.375rem !important;
+		}
+
+		/* 单张图片 */
+		.diary-images:not(:has(.image-item:nth-child(2))) .image-item {
+			max-width: 200px !important;
+		}
+
+		/* 2张图片 */
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) .image-item {
+			max-width: 150px !important;
+		}
+	}
+
+	/* 确保单张图片在移动端也能很好地展示 */
+	@media (max-width: 768px) {
+		.diary-images {
+			max-width: 100%;
+			gap: 0.5rem;
+		}
+
+		/* 单张图片：适中大小，保持原始比例 */
+		.diary-images:not(:has(.image-item:nth-child(2))) .image-item {
+			max-width: 260px;
+		}
+
+		/* 2张图片 */
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) {
+			gap: 0.5rem;
+		}
+
+		.diary-images:has(.image-item:nth-child(2)):not(:has(.image-item:nth-child(3))) .image-item {
+			max-width: 160px;
+		}
+
+		/* 3张及以上图片 */
+		.diary-images:has(.image-item:nth-child(3)) {
+			gap: 0.5rem;
+		}
+	}
+
+	/* 针对触摸设备的优化 */
+	@media (hover: none) and (pointer: coarse) {
+		.image-item {
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		.image-item:active img {
+			transform: scale(0.98);
+			transition: transform 0.1s ease;
+		}
+	}
 </style>
 
 <script is:inline define:vars={{twikooEnvId}}>
 	// 点赞功能 - 使用 Waline 实现多用户点赞
 	const STORAGE_KEY_PREFIX = 'diary_liked_';
 
-	// ⚠️ 配置你的 Waline 服务器地址！
-	// 部署 Waline 后，把地址填在这里，例如：'https://your-waline.netlify.app'
-	const WALINE_SERVER_URL = '';
+	// ✅ 配置你的 Waline 服务器地址！
+	const WALINE_SERVER_URL = 'https://waline.isu183s.top';
 
 	// 生成日记的唯一ID
-	function getDiaryId(index) {
-		return `diary_${index}`;
+	function getDiaryId(momentId) {
+		return `diary_${momentId}`;
 	}
 
 	// 获取日记的点赞 URL（用于 Waline）
-	function getLikeUrl(index) {
-		return `/diary/${getDiaryId(index)}`;
+	function getLikeUrl(momentId) {
+		return `/diary/${getDiaryId(momentId)}`;
 	}
 
 	// 检查当前用户是否已经点赞（本地存储）
-	function hasLiked(index) {
-		return localStorage.getItem(STORAGE_KEY_PREFIX + getDiaryId(index)) === 'true';
+	function hasLiked(momentId) {
+		return localStorage.getItem(STORAGE_KEY_PREFIX + getDiaryId(momentId)) === 'true';
 	}
 
 	// 保存点赞状态到本地
-	function setLiked(index, liked) {
+	function setLiked(momentId, liked) {
 		if (liked) {
-			localStorage.setItem(STORAGE_KEY_PREFIX + getDiaryId(index), 'true');
+			localStorage.setItem(STORAGE_KEY_PREFIX + getDiaryId(momentId), 'true');
 		} else {
-			localStorage.removeItem(STORAGE_KEY_PREFIX + getDiaryId(index));
+			localStorage.removeItem(STORAGE_KEY_PREFIX + getDiaryId(momentId));
 		}
 	}
 
@@ -327,19 +582,61 @@ const twikooEnvId = commentConfig.twikoo.envId;
 	}
 
 	// 从 Waline 获取点赞数
-	async function getLikesFromWaline(likeUrl) {
+	async function getLikesFromWaline(path) {
 		try {
+			console.log('getLikesFromWaline 被调用, path:', path);
 			if (!WALINE_SERVER_URL) {
 				console.warn('WALINE_SERVER_URL 未配置，使用本地存储');
 				return null;
 			}
 
-			const response = await fetch(`${WALINE_SERVER_URL}/like?url=${encodeURIComponent(likeUrl)}`);
+			const url = `${WALINE_SERVER_URL}/article?path=${encodeURIComponent(path)}&type=reaction0`;
+			console.log('请求 URL:', url);
+			const response = await fetch(url);
+			console.log('响应状态:', response.status);
 			if (!response.ok) {
+				const text = await response.text();
+				console.error('响应内容:', text);
 				throw new Error('Waline 请求失败');
 			}
-			const data = await response.json();
-			return data.likes || 0;
+			let data = await response.json();
+			console.log('响应数据:', data, '类型:', typeof data);
+			
+			// 如果有 data 字段，先取出来
+			if (data && data.data) {
+				data = data.data;
+				console.log('取到 data 字段后:', data);
+			}
+			// 处理可能的响应格式
+			// 格式 1: 直接返回数字
+			if (typeof data === 'number') {
+				return data;
+			}
+			// 格式 2: 字符串数字
+			if (typeof data === 'string' && !isNaN(parseInt(data))) {
+				return parseInt(data);
+			}
+			// 格式 3: 数组
+			if (Array.isArray(data) && data.length > 0) {
+				if (typeof data[0].reaction0 === 'number') {
+					return data[0].reaction0;
+				}
+				if (typeof data[0] === 'number') {
+					return data[0];
+				}
+			}
+			// 格式 4: 对象
+			if (typeof data === 'object' && data !== null) {
+				for (const key in data) {
+					if (typeof data[key].reaction0 === 'number') {
+						return data[key].reaction0;
+					}
+					if (typeof data[key] === 'number') {
+						return data[key];
+					}
+				}
+			}
+			return 0;
 		} catch (error) {
 			console.error('获取 Waline 点赞数据失败:', error);
 			return null;
@@ -347,30 +644,74 @@ const twikooEnvId = commentConfig.twikoo.envId;
 	}
 
 	// 提交点赞到 Waline
-	async function submitLikeToWaline(likeUrl, liked) {
+	async function submitLikeToWaline(path, liked) {
 		try {
+			console.log('submitLikeToWaline 被调用, path:', path, 'liked:', liked);
 			if (!WALINE_SERVER_URL) {
 				console.warn('WALINE_SERVER_URL 未配置');
 				return null;
 			}
 
-			const response = await fetch(`${WALINE_SERVER_URL}/like`, {
+			const url = `${WALINE_SERVER_URL}/article`;
+			const payload = JSON.stringify({
+				path: path,
+				type: 'reaction0',
+				action: liked ? 'inc' : 'desc'
+			});
+			console.log('提交数据:', payload);
+			const response = await fetch(url, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({
-					url: likeUrl,
-					type: liked ? 'like' : 'unlike'
-				})
+				body: payload
 			});
 
+			console.log('响应状态:', response.status);
 			if (!response.ok) {
+				const text = await response.text();
+				console.error('响应内容:', text);
 				throw new Error('Waline 请求失败');
 			}
 			
-			const data = await response.json();
-			return data.likes;
+			let data = await response.json();
+			console.log('响应数据:', data, '类型:', typeof data);
+			
+			// 如果有 data 字段，先取出来
+			if (data && data.data) {
+				data = data.data;
+				console.log('取到 data 字段后:', data);
+			}
+			// 处理可能的响应格式
+			// 格式 1: 直接返回数字
+			if (typeof data === 'number') {
+				return data;
+			}
+			// 格式 2: 字符串数字
+			if (typeof data === 'string' && !isNaN(parseInt(data))) {
+				return parseInt(data);
+			}
+			// 格式 3: 数组
+			if (Array.isArray(data) && data.length > 0) {
+				if (typeof data[0].reaction0 === 'number') {
+					return data[0].reaction0;
+				}
+				if (typeof data[0] === 'number') {
+					return data[0];
+				}
+			}
+			// 格式 4: 对象
+			if (typeof data === 'object' && data !== null) {
+				for (const key in data) {
+					if (typeof data[key].reaction0 === 'number') {
+						return data[key].reaction0;
+					}
+					if (typeof data[key] === 'number') {
+						return data[key];
+					}
+				}
+			}
+			return null;
 		} catch (error) {
 			console.error('提交 Waline 点赞失败:', error);
 			return null;
@@ -379,13 +720,18 @@ const twikooEnvId = commentConfig.twikoo.envId;
 
 	// 初始化所有点赞按钮
 	async function initAllLikes() {
+		console.log('initAllLikes 被调用');
 		const buttons = document.querySelectorAll('.like-btn');
+		console.log('找到的点赞按钮数量:', buttons.length);
 		
 		for (const btn of buttons) {
-			const index = parseInt(btn.dataset.index);
-			const diaryId = getDiaryId(index);
-			const liked = hasLiked(index);
-			const likeUrl = getLikeUrl(index);
+			const momentId = parseInt(btn.dataset.momentId);
+			console.log('处理按钮 momentId:', momentId);
+			const diaryId = getDiaryId(momentId);
+			const liked = hasLiked(momentId);
+			const likeUrl = getLikeUrl(momentId);
+			
+			console.log('momentId:', momentId, 'diaryId:', diaryId, 'liked:', liked, 'likeUrl:', likeUrl);
 			
 			let count = 0;
 			
@@ -401,25 +747,42 @@ const twikooEnvId = commentConfig.twikoo.envId;
 				}
 			}
 			
+			console.log('设置按钮 momentId:', momentId, '的 count 为:', count, 'liked:', liked);
 			updateButtonDisplay(btn, liked, count);
 		}
+		console.log('initAllLikes 完成');
 	}
 
 	// 处理点赞点击
 	async function handleLikeClick(btn) {
-		const index = parseInt(btn.dataset.index);
-		const diaryId = getDiaryId(index);
-		const wasLiked = hasLiked(index);
+		// 防止快速点击
+		if (btn.disabled) return;
+		console.log('handleLikeClick 被调用');
+		
+		// 记录开始时间，用于计算最小冷却时间
+		const startTime = Date.now();
+		const MIN_COOLDOWN_MS = 50; // 最小冷却时间缩短到 50ms
+		
+		const momentId = parseInt(btn.dataset.momentId);
+		console.log('momentId:', momentId);
+		const diaryId = getDiaryId(momentId);
+		const wasLiked = hasLiked(momentId);
+		console.log('wasLiked:', wasLiked);
 		const countEl = btn.querySelector('.like-count');
 		let currentCount = countEl ? parseInt(countEl.textContent) : 0;
-		const likeUrl = getLikeUrl(index);
+		console.log('currentCount:', currentCount);
+		const likeUrl = getLikeUrl(momentId);
+		
+		// 立即禁用按钮，防止重复点击
+		btn.disabled = true;
 		
 		// 切换点赞状态
 		const newLiked = !wasLiked;
+		console.log('newLiked:', newLiked);
 		
 		if (newLiked) {
 			// 点赞
-			setLiked(index, true);
+			setLiked(momentId, true);
 			currentCount = currentCount + 1;
 			
 			// 添加心跳动画
@@ -429,7 +792,7 @@ const twikooEnvId = commentConfig.twikoo.envId;
 			}, 200);
 		} else {
 			// 取消点赞
-			setLiked(index, false);
+			setLiked(momentId, false);
 			currentCount = Math.max(0, currentCount - 1);
 		}
 		
@@ -440,12 +803,36 @@ const twikooEnvId = commentConfig.twikoo.envId;
 		updateButtonDisplay(btn, newLiked, currentCount);
 		
 		// 异步提交到 Waline
+		console.log('开始提交到 Waline');
 		const walineCount = await submitLikeToWaline(likeUrl, newLiked);
+		console.log('Waline 返回:', walineCount);
+		
+		// 修复数字抽搐问题：只有当 Waline 返回的数值和本地预期相差较大时才更新
+		// 本地预期：点赞+1，取消-1
 		if (walineCount !== null) {
-			// 如果 Waline 返回了更新后的数量，再同步一次
-			updateButtonDisplay(btn, newLiked, walineCount);
-			localStorage.setItem(`diary_count_${diaryId}`, walineCount.toString());
+			// 只在合理范围内更新，避免数字异常
+			if (typeof walineCount === 'number' && walineCount >= 0) {
+				// 检查变化是否合理
+				const diff = Math.abs(walineCount - currentCount);
+				if (diff <= 1) {
+					// 合理的变化，更新显示
+					updateButtonDisplay(btn, newLiked, walineCount);
+					localStorage.setItem(`diary_count_${diaryId}`, walineCount.toString());
+				} else {
+					console.warn('Waline 返回数值异常，使用本地数值:', walineCount, '预期附近:', currentCount);
+				}
+			}
 		}
+		
+		// 确保最小冷却时间
+		const elapsedTime = Date.now() - startTime;
+		if (elapsedTime < MIN_COOLDOWN_MS) {
+			// 如果请求太快，等待剩余时间
+			await new Promise(resolve => setTimeout(resolve, MIN_COOLDOWN_MS - elapsedTime));
+		}
+		
+		// 恢复按钮可用
+		btn.disabled = false;
 	}
 
 	// 点击事件委托

@@ -60,6 +60,7 @@ const daysAgo = i18n(I18nKey.diaryDaysAgo);
 							<MomentCard
 								moment={moment}
 								index={index}
+								momentId={moment.id}
 								minutesAgo={minutesAgo}
 								hoursAgo={hoursAgo}
 								daysAgo={daysAgo}
@@ -112,17 +113,61 @@ const daysAgo = i18n(I18nKey.diaryDaysAgo);
 		color: rgba(255, 255, 255, 0.8);
 	}
 
-	/* 响应式设计 */
+	/* ========== 移动端优化 ========== */
 	/* 手机端 (小于768px) */
 	@media (max-width: 768px) {
 		.moments-header {
-			padding: 0.75rem;
+			padding: 0.875rem 0.75rem;
+			margin-bottom: 1rem !important;
 		}
 
 		.header-content {
 			flex-direction: column;
 			text-align: center;
 			gap: 0.75rem;
+		}
+
+		.moments-title {
+			font-size: 1.25rem !important;
+			margin-bottom: 0.25rem !important;
+		}
+
+		.moments-subtitle {
+			font-size: 0.875rem !important;
+		}
+
+		.stat-number {
+			font-size: 1.125rem !important;
+		}
+
+		.stat-label {
+			font-size: 0.75rem !important;
+		}
+
+		.header-stats {
+			padding: 0.5rem 1rem;
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 999px;
+		}
+	}
+
+	/* 超小屏幕（如 iPhone SE）优化 */
+	@media (max-width: 480px) {
+		.moments-header {
+			padding: 0.75rem 0.625rem;
+			border-radius: 6px;
+		}
+
+		.moments-title {
+			font-size: 1.125rem !important;
+		}
+
+		.moments-subtitle {
+			font-size: 0.8125rem !important;
+		}
+
+		.header-content {
+			gap: 0.625rem;
 		}
 	}
 
@@ -146,10 +191,66 @@ const daysAgo = i18n(I18nKey.diaryDaysAgo);
 		}
 	}
 
-	/* 优化小屏幕显示 */
-	@media (max-width: 480px) {
+	/* 横屏移动端优化 */
+	@media (max-width: 768px) and (orientation: landscape) {
 		.moments-header {
-			border-radius: 6px;
+			padding: 0.75rem 1rem;
+		}
+
+		.header-content {
+			flex-direction: row;
+			text-align: left;
+			gap: 1rem;
+		}
+	}
+
+	/* ========== 日记列表整体移动端优化 ========== */
+	@media (max-width: 768px) {
+		.timeline-list {
+			gap: 0.75rem !important;
+		}
+
+		.moments-tips {
+			margin-top: 1rem !important;
+			font-size: 0.75rem !important;
+		}
+
+		/* 优化触摸交互 */
+		.moment-item {
+			-webkit-tap-highlight-color: transparent;
+		}
+	}
+
+	@media (max-width: 480px) {
+		/* 超小屏幕的额外优化 */
+		.timeline-list {
+			gap: 0.5rem !important;
+		}
+
+		.card-base.z-10 {
+			padding: 0.5rem !important;
+		}
+
+		.relative.max-w-4xl.w-full {
+			padding: 0 !important;
+		}
+	}
+
+	/* 高对比度模式优化 */
+	@media (prefers-contrast: high) {
+		.moments-header {
+			background: var(--primary) !important;
+		}
+	}
+
+	/* 减少动画模式 */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
 		}
 	}
 </style>
