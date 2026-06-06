@@ -89,16 +89,16 @@ const twikooEnvId = commentConfig.twikoo?.envId || "";
 	/>
 
 	<!-- ✅ footer：时间 + 地点 + 心情 + 标签 + 置顶标识 + 点赞按钮 -->
-	<div class="moment-footer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-5">
-		<!-- 左侧：时间 + 地点 + 心情 -->
-		<div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+		<div class="moment-footer flex flex-wrap items-start mt-4">
+			<!-- 左侧：时间 + 地点 + 心情 -->
+			<div class="flex flex-wrap items-center gap-3 flex-shrink-0">
 			<div
 				class="moment-time flex items-center gap-1.5 text-75"
 			>
-				<i class="time-icon text-xs md:text-sm">🕐</i>
-				<time datetime={moment.date} class="flex flex-col sm:flex-row gap-1 items-center">
-					<span class="text-[var(--content-main)] font-medium text-xs md:text-sm lg:text-base">{elegantDate}</span>
-					<span class="text-xs md:text-sm">({relativeTime})</span>
+				<i class="time-icon text-xs">🕐</i>
+				<time datetime={moment.date} class="flex flex-row gap-1 items-center">
+					<span class="text-[var(--content-main)] font-medium text-xs">{elegantDate}</span>
+					<span class="text-xs">({relativeTime})</span>
 				</time>
 			</div>
 
@@ -107,9 +107,9 @@ const twikooEnvId = commentConfig.twikoo?.envId || "";
 				<div class="moment-location flex items-center gap-1 text-75">
 					<Icon
 						name="material-symbols:location-on"
-						class="text-xs md:text-sm w-3.5 h-3.5"
+						class="text-xs w-3.5 h-3.5"
 					/>
-					<span class="text-xs md:text-sm">{moment.location}</span>
+					<span class="text-xs">{moment.location}</span>
 				</div>
 			)}
 
@@ -118,15 +118,15 @@ const twikooEnvId = commentConfig.twikoo?.envId || "";
 				<div class="moment-mood flex items-center gap-1 text-75">
 					<Icon
 						name="material-symbols:sentiment-satisfied"
-						class="text-xs md:text-sm w-3.5 h-3.5"
+						class="text-xs w-3.5 h-3.5"
 					/>
-					<span class="text-xs md:text-sm">{moment.mood}</span>
+					<span class="text-xs">{moment.mood}</span>
 				</div>
 			)}
 		</div>
 
 		<!-- 右侧：标签 + 置顶 + 点赞按钮 -->
-		<div class="flex flex-wrap items-center gap-3">
+		<div class="flex flex-wrap items-center gap-2 ml-auto w-full sm:w-auto flex-shrink-0 justify-end">
 			<!-- 标签 -->
 			{moment.tags && moment.tags.length > 0 && (
 				<div class="moment-tags flex flex-wrap gap-1">

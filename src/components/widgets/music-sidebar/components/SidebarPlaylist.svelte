@@ -229,17 +229,18 @@
 	/* 移动端优化 */
 	@media (max-width: 768px) {
 		.search-input-wrapper {
-			padding: 0.75rem 1rem;
+			padding: 4px 8px;
+			height: 32px;
 		}
 
 		.search-input {
-			font-size: 14px;
+			font-size: 12px;
 		}
 
 		.clear-btn,
 		.btn-plain {
-			min-width: 44px;
-			min-height: 44px;
+			min-width: 24px;
+			min-height: 24px;
 			touch-action: manipulation;
 		}
 

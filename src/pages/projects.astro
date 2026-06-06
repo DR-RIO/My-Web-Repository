@@ -94,7 +94,10 @@ const subtitle = i18n(I18nKey.projectsSubtitle);
 
 			<div
 				id="projects-grid"
-				class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start"
+				class="grid gap-6 items-start"
+				class:list={[
+					projectsData.length === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
+				]}
 			>
 				{
 					projectsData.map((project) => (
@@ -106,9 +109,9 @@ const subtitle = i18n(I18nKey.projectsSubtitle);
 			<div id="no-results" class="hidden text-center py-16">
 				<Icon
 					name="material-symbols:search-off-rounded"
-					class="text-6xl text-black/15 dark:text-white/15 mb-4"
+					class="text-4xl md:text-5xl lg:text-6xl text-black/15 dark:text-white/15 mb-4"
 				/>
-				<p class="text-black/40 dark:text-white/40 text-lg">
+				<p class="text-black/40 dark:text-white/40 text-base md:text-lg">
 					No matching projects
 				</p>
 			</div>

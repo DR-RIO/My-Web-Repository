@@ -48,6 +48,17 @@
 					if (noResults) {
 						noResults.classList.toggle("hidden", visibleCount > 0);
 					}
+
+					var grid = parent.querySelector("#projects-grid");
+					if (grid) {
+						if (visibleCount === 1) {
+							grid.classList.remove("grid-cols-1", "md:grid-cols-2");
+							grid.classList.add("grid-cols-1");
+						} else {
+							grid.classList.remove("grid-cols-1");
+							grid.classList.add("grid-cols-1", "md:grid-cols-2");
+						}
+					}
 				});
 			});
 		});

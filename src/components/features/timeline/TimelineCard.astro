@@ -114,7 +114,7 @@ const hasImages = validImages.length > 0;
 				>
 					<Icon
 						name={icon}
-						class="text-lg"
+						class="text-base md:text-lg"
 						style={`color: ${item.color || "var(--primary)"};`}
 					/>
 				</div>
@@ -122,7 +122,7 @@ const hasImages = validImages.length > 0;
 				<div class="flex-1 min-w-0">
 					<div class="flex items-center gap-2 mb-0.5">
 						<h3
-							class="text-lg font-bold text-black/90 dark:text-white/90 group-hover:text-[var(--primary)] transition-colors duration-200"
+							class="text-base md:text-lg font-bold text-black/90 dark:text-white/90 group-hover:text-[var(--primary)] transition-colors duration-200"
 						>
 							{item.title}
 						</h3>
@@ -130,14 +130,14 @@ const hasImages = validImages.length > 0;
 							item.featured && (
 								<Icon
 									name="material-symbols:star-rounded"
-									class="text-base w-4 h-4 text-[var(--primary)] flex-shrink-0"
+									class="text-sm md:text-base w-4 h-4 text-[var(--primary)] flex-shrink-0"
 								/>
 							)
 						}
 					</div>
 					{
 						item.organization && (
-							<p class="text-sm text-black/60 dark:text-white/60">
+							<p class="text-xs md:text-sm text-black/60 dark:text-white/60">
 								{item.organization}
 								{item.position ? ` · ${item.position}` : ""}
 							</p>
@@ -162,7 +162,7 @@ const hasImages = validImages.length > 0;
 			</div>
 
 			<p
-				class="text-sm text-black/70 dark:text-white/70 mb-4 leading-relaxed"
+				class="text-xs md:text-sm text-black/70 dark:text-white/70 mb-4 leading-relaxed"
 			>
 				{item.description}
 			</p>
