@@ -36,7 +36,7 @@ export const timelineData: TimelineItem[] = [
 		organization: "广东省深圳市深圳职业技术大学",
 		skills: ["HTML/CSS", "Visual Studio Code", "JavaScript", "Linux", "MySQL","Windows server"],
 		achievements: [
-			"",
+			"第一次的开端，满怀期待",
 		],
 		icon: "material-symbols:school",
 		color: "#00a6ff",
