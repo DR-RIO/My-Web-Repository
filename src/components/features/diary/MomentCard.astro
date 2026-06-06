@@ -530,11 +530,14 @@ const twikooEnvId = commentConfig.twikoo?.envId || "";
 </style>
 
 <script is:inline define:vars={{twikooEnvId}}>
-	// 点赞功能 - 使用 Waline 实现多用户点赞
+	// 点赞功能 - 使用 Waline SDK + WebSocket 实现实时推送
 	const STORAGE_KEY_PREFIX = 'diary_liked_';
 
 	// ✅ 配置你的 Waline 服务器地址！
 	const WALINE_SERVER_URL = 'https://waline.isu183s.top';
+
+	// Waline SDK 实例（用于 WebSocket 实时推送）
+	let walineInstance = null;
 
 	// 生成日记的唯一ID
 	function getDiaryId(momentId) {
@@ -718,40 +721,69 @@ const twikooEnvId = commentConfig.twikoo?.envId || "";
 		}
 	}
 
-	// 初始化所有点赞按钮
-	async function initAllLikes() {
-		console.log('initAllLikes 被调用');
-		const buttons = document.querySelectorAll('.like-btn');
-		console.log('找到的点赞按钮数量:', buttons.length);
-		
-		for (const btn of buttons) {
-			const momentId = parseInt(btn.dataset.momentId);
-			console.log('处理按钮 momentId:', momentId);
-			const diaryId = getDiaryId(momentId);
-			const liked = hasLiked(momentId);
-			const likeUrl = getLikeUrl(momentId);
-			
-			console.log('momentId:', momentId, 'diaryId:', diaryId, 'liked:', liked, 'likeUrl:', likeUrl);
-			
-			let count = 0;
-			
-			// 尝试从 Waline 获取点赞数
-			const walineCount = await getLikesFromWaline(likeUrl);
-			if (walineCount !== null) {
-				count = walineCount;
-			} else {
-				// 降级到本地存储
-				const savedCount = localStorage.getItem(`diary_count_${diaryId}`);
-				if (savedCount) {
-					count = parseInt(savedCount);
-				}
-			}
-			
-			console.log('设置按钮 momentId:', momentId, '的 count 为:', count, 'liked:', liked);
-			updateButtonDisplay(btn, liked, count);
-		}
-		console.log('initAllLikes 完成');
+	// 内存缓存，避免重复请求
+const likeCache = new Map();
+let pendingRequests = new Map();
+
+// 带缓存的 Waline 请求
+async function getLikesFromWalineWithCache(path) {
+	if (likeCache.has(path)) {
+		return likeCache.get(path);
 	}
+	
+	if (pendingRequests.has(path)) {
+		return pendingRequests.get(path);
+	}
+	
+	const promise = getLikesFromWaline(path);
+	pendingRequests.set(path, promise);
+	
+	try {
+		const result = await promise;
+		likeCache.set(path, result);
+		return result;
+	} finally {
+		pendingRequests.delete(path);
+	}
+}
+
+// 初始化所有点赞按钮（优化：并行请求）
+async function initAllLikes() {
+	console.log('initAllLikes 被调用');
+	const buttons = document.querySelectorAll('.like-btn');
+	console.log('找到的点赞按钮数量:', buttons.length);
+	
+	if (buttons.length === 0) return;
+	
+	// ⚡ 并行请求所有点赞数据
+	const promises = Array.from(buttons).map(async (btn) => {
+		const momentId = parseInt(btn.dataset.momentId);
+		const diaryId = getDiaryId(momentId);
+		const liked = hasLiked(momentId);
+		const likeUrl = getLikeUrl(momentId);
+		
+		let count = 0;
+		const walineCount = await getLikesFromWalineWithCache(likeUrl);
+		if (walineCount !== null) {
+			count = walineCount;
+			localStorage.setItem(`diary_count_${diaryId}`, count.toString());
+		} else {
+			const savedCount = localStorage.getItem(`diary_count_${diaryId}`);
+			if (savedCount) count = parseInt(savedCount);
+		}
+		
+		return { btn, liked, count };
+	});
+	
+	// 等待所有请求完成
+	const results = await Promise.all(promises);
+	
+	// 批量更新显示
+	results.forEach(({ btn, liked, count }) => {
+		updateButtonDisplay(btn, liked, count);
+	});
+	console.log('initAllLikes 完成');
+}
 
 	// 处理点赞点击
 	async function handleLikeClick(btn) {
@@ -843,14 +875,76 @@ const twikooEnvId = commentConfig.twikoo?.envId || "";
 		}
 	});
 
+	// 初始化 Waline SDK（WebSocket 实时推送）
+	async function initWalineSocket() {
+		if (!WALINE_SERVER_URL) {
+			console.warn('WALINE_SERVER_URL 未配置，跳过 WebSocket 初始化');
+			return;
+		}
+
+		try {
+			// 动态加载 Waline SDK
+			const { Waline } = await import('@waline/client');
+			
+			// 创建 Waline 实例
+			walineInstance = Waline({
+				el: document.createElement('div'), // 不需要渲染评论区
+				serverURL: WALINE_SERVER_URL,
+				path: '/diary',
+				socket: true, // ⚡ 启用 WebSocket 实时推送
+				reaction: ['👍'], // 启用点赞功能
+			});
+
+			// 🚀 监听点赞事件（实时推送）
+			walineInstance.on('reaction', (data) => {
+				console.log('❤️ 收到实时点赞更新:', data);
+				
+				// 解析日记 ID
+				if (data.path && data.path.startsWith('/diary/diary_')) {
+					const momentId = parseInt(data.path.replace('/diary/diary_', ''));
+					const btn = document.querySelector(`.like-btn[data-moment-id="${momentId}"]`);
+					
+					if (btn) {
+						const liked = hasLiked(momentId);
+						updateButtonDisplay(btn, liked, data.count);
+						
+						// 同步到本地存储
+						const diaryId = getDiaryId(momentId);
+						localStorage.setItem(`diary_count_${diaryId}`, data.count.toString());
+					}
+				}
+			});
+
+			console.log('✅ Waline WebSocket 连接成功');
+		} catch (error) {
+			console.error('❌ Waline SDK 初始化失败:', error);
+		}
+	}
+
 	// 页面加载完成后初始化
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initAllLikes);
+		document.addEventListener('DOMContentLoaded', () => {
+			initAllLikes();
+			initWalineSocket();
+		});
 	} else {
 		initAllLikes();
+		initWalineSocket();
 	}
 
 	// 延迟再执行一次，确保 Astro 组件加载完
 	setTimeout(initAllLikes, 50);
 	setTimeout(initAllLikes, 200);
+
+	// 页面卸载时清理资源
+	document.addEventListener('beforeunload', () => {
+		if (walineInstance) {
+			try {
+				walineInstance.destroy();
+				console.log('✅ Waline 实例已销毁');
+			} catch (error) {
+				console.error('❌ 销毁 Waline 实例失败:', error);
+			}
+		}
+	});
 </script>
