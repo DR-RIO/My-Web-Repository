@@ -22,8 +22,8 @@ export const timelineData: TimelineItem[] = [
 		color: "#059669",
 		featured: true,
 		// 👇 新增图片
-		images: ["https://easyimage.isu183s.top/i/2026/05/04/023316.png","https://easyimage.isu183s.top/i/2026/05/04/024631.jpg","https://easyimage.isu183s.top/i/2026/05/24/213948.jpg"],
-		imageAlt: ["国家奖学金","三好学生","技能大赛一等奖"],
+		images: ["https://easyimage.isu183s.top/i/2026/05/04/023316.png","https://easyimage.isu183s.top/i/2026/05/04/024631.jpg","https://easyimage.isu183s.top/i/2026/05/24/213948.jpg","https://easyimage.isu183s.top/i/2026/06/06/214704.png","https://easyimage.isu183s.top/i/2026/06/06/214708.png","https://easyimage.isu183s.top/i/2026/06/06/214720.png"],
+		imageAlt: ["国家奖学金","三好学生","技能大赛一等奖","华材之星","学习积极分子","优秀学生"],
 		imageHeight: "400px",
 	},
 	{
@@ -42,8 +42,8 @@ export const timelineData: TimelineItem[] = [
 		color: "#00a6ff",
 		featured: true,
 		// 👇 新增图片
-		images: ["",],
-		imageAlt: ["",],
+		images: ["https://easyimage.isu183s.top/i/2026/06/06/213937.jpeg",],
+		imageAlt: ["深圳职业技术大学录取查询",],
 		imageHeight: "400px",
 	},
 	
