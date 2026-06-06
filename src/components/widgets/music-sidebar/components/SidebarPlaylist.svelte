@@ -230,7 +230,7 @@
 	@media (max-width: 768px) {
 		.search-input-wrapper {
 			padding: 4px 8px;
-			height: 32px;
+			height: 38px;
 		}
 
 		.search-input {
