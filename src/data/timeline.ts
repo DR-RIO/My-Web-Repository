@@ -10,7 +10,7 @@ export const timelineData: TimelineItem[] = [
 		type: "education",
 		startDate: "2023-09-01",
 		endDate: "2026-06-28",
-		location: "广东·佛山·南海区",
+		location: "广东·佛山·禅城区",
 		organization: "广东省佛山市华材职业技术学校",
 		skills: ["HTML/CSS", "Visual Studio Code", "JavaScript", "After Effects", "MySQL","Tableau","Photoshop","HBulid X","Linux","Windows server"],
 		achievements: [
