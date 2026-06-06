@@ -24,6 +24,16 @@
 
 	onMount(() => {
 		window.addEventListener("music-sidebar:state", handleStateUpdate);
+		
+		// 监听音乐搜索事件
+		window.addEventListener("music-sidebar:search", (event) => {
+			const customEvent = event as CustomEvent<{ keyword: string }>;
+			if (customEvent.detail?.keyword) {
+				console.log('🎵 FabMusicPanel 收到搜索请求:', customEvent.detail.keyword);
+				initialSearchKeyword = customEvent.detail.keyword;
+				showPlaylist = true;
+			}
+		});
 	});
 
 	onDestroy(() => {

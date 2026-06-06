@@ -33,9 +33,25 @@ function simplifyUrl(url: string, maxLength: number = 30): string {
  * @param content The content string
  */
 export function linkifyContent(content: string): string {
+	console.log('🔗 linkifyContent 开始处理:', content);
 	let result = content;
 	
-	// 先处理 Markdown 链接格式 [别名](链接)
+	// 先处理音乐搜索链接格式 [显示文字](music://search/搜索关键词)
+	const musicLinkPattern = /\[([^\]]+)\]\(music:\/\/search\/([^\)]+)\)/g;
+	const musicProcessedMarkers: string[] = [];
+	let musicMarkerIndex = 0;
+	
+	result = result.replace(musicLinkPattern, (_, displayText, keyword) => {
+		console.log('🎵 发现音乐链接:', displayText, keyword);
+		const marker = `__MUSIC_LINK_${musicMarkerIndex}__`;
+		musicMarkerIndex++;
+		const html = `<a href="javascript:void(0)" data-music-search="${encodeURIComponent(keyword)}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--btn-plain-bg)] text-[var(--primary)] text-xs md:text-sm hover:bg-[var(--btn-plain-bg-hover)] transition-colors cursor-pointer">🎵 ${displayText}</a>`;
+		musicProcessedMarkers.push(html);
+		console.log('🎵 生成的HTML:', html);
+		return marker;
+	});
+	
+	// 再处理普通 Markdown 链接格式 [别名](链接)
 	// 临时标记一下已处理的链接，避免后面的正则再次匹配
 	const markdownLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
 	const processedMarkers: string[] = [];
@@ -57,7 +73,12 @@ export function linkifyContent(content: string): string {
 		return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--btn-plain-bg)] text-[var(--primary)] text-xs md:text-sm hover:bg-[var(--btn-plain-bg-hover)] transition-colors">🔗 ${displayText}</a>`;
 	});
 	
-	// 最后把临时标记替换回来
+	// 先替换音乐链接标记
+	for (let i = 0; i < musicMarkerIndex; i++) {
+		result = result.replace(`__MUSIC_LINK_${i}__`, musicProcessedMarkers[i]);
+	}
+	
+	// 再替换普通链接标记
 	for (let i = 0; i < markerIndex; i++) {
 		result = result.replace(`__MARKDOWN_LINK_${i}__`, processedMarkers[i]);
 	}

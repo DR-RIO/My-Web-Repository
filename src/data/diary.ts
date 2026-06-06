@@ -27,10 +27,24 @@ const diaryData: DiaryItem[] = [
 	// 	tags: [""],
 	// 	pinned: true/false,
 	// },
-	
+	{
+		id: 7,
+		content: `真心喜欢一位音乐制作人 @PIKASONIC　
+		[在站内搜索PIKASONIC的歌](music://search/PIKASONIC)　[PIKASONIC_ナナツカゼ](https://space.bilibili.com/262995951?spm_id_from=333.337.0.0)`,
+		date: "2026-06-03T04:24:00Z",
+		images: [
+			"https://easyimage.isu183s.top/i/2026/06/07/030352.jpg",
+			"https://easyimage.isu183s.top/i/2026/06/07/030400.jpg",
+			"https://easyimage.isu183s.top/i/2026/06/07/030404.jpg"
+		],
+		location: "Bilibili",
+		mood: "仰望",
+		tags: ["音乐"],
+		pinned: false,
+	},
 	{
 		id: 6,
-		content:"黄埔!黄埔!　　　　tips:黄埔军校不给拍照，差点当罕见了",
+		content: `Welcome to the world of photography!　　　　tips:黄埔军校不给拍照，差点当罕见了`,		
 		date: "2026-06-03T04:24:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/06/05/022101.jpg",
@@ -55,7 +69,7 @@ const diaryData: DiaryItem[] = [
 	},
 	{
 		id: 4,
-		content:"Today:　　　　　　　　　　　　*OS:王牌一代目自然是可爱！",
+		content: `Today:　　　　　　　　　　　　*OS:王牌一代目自然是可爱！`,
 		date: "2026-04-23T04:24:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/25/003620.png",
@@ -72,7 +86,7 @@ const diaryData: DiaryItem[] = [
 	{
 		id: 3,
 		content:
-			"写代码不无聊吗？” 　　“比在玩游戏时收不到及时的正向反馈还要舒服。” ",
+			`"写代码不无聊吗？" 　　"收获的正向反馈不比游戏少。" `,
 		date: "2026-04-23T04:24:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/23/6vcfkt.png",

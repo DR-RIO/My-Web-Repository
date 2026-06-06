@@ -31,6 +31,15 @@
 			);
 		});
 		window.addEventListener("music-sidebar:state", handleStateUpdate);
+		
+		// 监听音乐搜索事件（和点击艺术家按钮一样）
+		window.addEventListener("music-sidebar:search", (event) => {
+			const customEvent = event as CustomEvent<{ keyword: string }>;
+			if (customEvent.detail?.keyword) {
+				console.log('🎵 SidebarMusicClient 收到搜索请求:', customEvent.detail.keyword);
+				handleSearch(customEvent.detail.keyword);
+			}
+		});
 	});
 
 	onDestroy(() => {
@@ -79,9 +88,11 @@
 	}
 
 	function handleSearch(keyword: string) {
+		console.log('🎵 SidebarMusicClient 开始搜索:', keyword);
 		initialSearchKeyword = keyword;
 		musicPlayerStore.searchSongs(keyword);
 		showPlaylist = true;
+		console.log('🎵 SidebarMusicClient 搜索已触发');
 	}
 
 	function handleClearSearch() {
