@@ -14,16 +14,13 @@
 	let state: MusicPlayerState = $state(musicPlayerStore.getState());
 	let showPlaylist = $state(false);
 	let initialSearchKeyword = $state("");
-
-	function handleStateUpdate(event: Event) {
-		const custom = event as CustomEvent<MusicPlayerState>;
-		if (custom.detail) {
-			state = custom.detail;
-		}
-	}
+	let unsubscribe: (() => void) | undefined;
 
 	onMount(() => {
-		window.addEventListener("music-sidebar:state", handleStateUpdate);
+		// 使用 store 的 subscribe 方法
+		unsubscribe = musicPlayerStore.subscribe((nextState) => {
+			state = nextState;
+		});
 		
 		// 监听音乐搜索事件
 		window.addEventListener("music-sidebar:search", (event) => {
@@ -37,11 +34,8 @@
 	});
 
 	onDestroy(() => {
-		if (typeof window !== "undefined") {
-			window.removeEventListener(
-				"music-sidebar:state",
-				handleStateUpdate,
-			);
+		if (unsubscribe) {
+			unsubscribe();
 		}
 	});
 
@@ -120,6 +114,7 @@
 	<SidebarLyrics
 		currentSong={state.currentSong}
 		currentTime={state.currentTime}
+		isLoading={state.isLoading}
 	/>
 
 	<SidebarProgress
