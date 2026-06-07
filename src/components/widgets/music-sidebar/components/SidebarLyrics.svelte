@@ -4,9 +4,10 @@
 	interface Props {
 		currentSong: Song;
 		currentTime: number;
+		isLoading: boolean;
 	}
 
-	const { currentSong, currentTime }: Props = $props();
+	const { currentSong, currentTime, isLoading }: Props = $props();
 
 	interface ParsedLyric {
 		time: number;
@@ -82,7 +83,11 @@
 	});
 </script>
 
-{#if lyrics.length}
+{#if isLoading}
+<div class="lyrics">
+	<div class="loading loading-dots">正在加载</div>
+</div>
+{:else if lyrics.length}
 <div class="lyrics">
 	{#key current?.time}
 		<div class="group">
@@ -144,6 +149,43 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.loading {
+	font-size: 12px;
+	color: #999;
+}
+
+.loading-dots::after {
+	content: '';
+	animation: loading-dots 2s steps(7, end) infinite;
+}
+
+@keyframes loading-dots {
+	0% {
+		content: '';
+	}
+	14.28% {
+		content: '.';
+	}
+	28.57% {
+		content: '..';
+	}
+	42.85% {
+		content: '...';
+	}
+	57.14% {
+		content: '....';
+	}
+	71.42% {
+		content: '.....';
+	}
+	85.71% {
+		content: '......';
+	}
+	100% {
+		content: '';
+	}
 }
 
 .group {

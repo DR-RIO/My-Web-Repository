@@ -169,6 +169,26 @@ class MusicPlayerStore {
 			this.state.isLoading = true;
 			this.broadcastState();
 		});
+
+		this.audio.addEventListener("waiting", () => {
+			this.state.isLoading = true;
+			this.broadcastState();
+		});
+
+		this.audio.addEventListener("playing", () => {
+			this.state.isLoading = false;
+			this.broadcastState();
+		});
+
+		this.audio.addEventListener("canplay", () => {
+			this.state.isLoading = false;
+			this.broadcastState();
+		});
+
+		this.audio.addEventListener("canplaythrough", () => {
+			this.state.isLoading = false;
+			this.broadcastState();
+		});
 	}
 
 	private handleAudioEnded(): void {

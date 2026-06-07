@@ -15,6 +15,7 @@
 	let state: MusicPlayerState = $state(musicPlayerStore.getState());
 	let showPlaylist = $state(false);
 	let initialSearchKeyword = $state("");
+	let unsubscribe: (() => void) | undefined;
 
 	function handleStateUpdate(event: Event) {
 		const custom = event as CustomEvent<MusicPlayerState>;
@@ -30,6 +31,12 @@
 				error,
 			);
 		});
+		
+		// 使用 store 的 subscribe 方法来获取最新状态（更可靠）
+		unsubscribe = musicPlayerStore.subscribe((nextState) => {
+			state = nextState;
+		});
+		
 		window.addEventListener("music-sidebar:state", handleStateUpdate);
 		
 		// 监听音乐搜索事件（和点击艺术家按钮一样）
@@ -43,6 +50,9 @@
 	});
 
 	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
 		if (typeof window !== "undefined") {
 			window.removeEventListener(
 				"music-sidebar:state",
@@ -126,6 +136,7 @@
 	<SidebarLyrics
 		currentSong={state.currentSong}
 		currentTime={state.currentTime}
+		isLoading={state.isLoading}
 		/>
 
 	<SidebarProgress
