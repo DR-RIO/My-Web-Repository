@@ -52,8 +52,8 @@
 	const buttonNormalBottom = positionY + canvasHeight + 20;
 	const buttonMinimizedBottom = 20;
 
-	const avatarNormal = "/pio/models/UGOfficial/icon.png";
-	const avatarMinimized = "/pio/models/UGOfficial/icon.png";
+	const avatarNormal = "/pio/models/UGOfficial/ZBU.png";
+	const avatarMinimized = "/pio/models/UGOfficial/ZBU.png";
 
 	function loadSavedState() {
 		const saved = localStorage.getItem("live2d_minimized");
