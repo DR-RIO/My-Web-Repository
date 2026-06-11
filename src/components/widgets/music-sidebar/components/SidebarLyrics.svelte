@@ -26,8 +26,13 @@
 		return { original: text, translation: "" };
 	}
 
+	function isLyricUrl(str: string | undefined): boolean {
+		if (!str) return false;
+		return str.startsWith('http://') || str.startsWith('https://');
+	}
+
 	function parseLyric(str: string): ParsedLyric[] {
-		if (!str) {return [];}
+		if (!str || isLyricUrl(str)) {return [];}
 
 		const reg = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/;
 
@@ -51,6 +56,9 @@
 			.filter(Boolean)
 			.sort((a, b) => a!.time - b!.time) as ParsedLyric[];
 	}
+	
+	// 检测歌词是否为URL（正在加载中）
+	const isLyricLoading = $derived(isLyricUrl(currentSong?.lyric));
 
 	function getIndex(list: ParsedLyric[], t: number) {
 		let i = -1;
@@ -83,9 +91,9 @@
 	});
 </script>
 
-{#if isLoading}
+{#if isLoading || isLyricLoading}
 <div class="lyrics">
-	<div class="loading loading-dots">正在加载</div>
+	<div class="loading loading-dots">{isLyricLoading ? '歌词加载中' : '正在加载'}</div>
 </div>
 {:else if lyrics.length}
 <div class="lyrics">
@@ -141,6 +149,10 @@
 		</div>
 	{/key}
 </div>
+{:else}
+<div class="lyrics">
+	<div class="no-lyrics">暂无歌词</div>
+</div>
 {/if}
 
 <style>
@@ -152,6 +164,11 @@
 }
 
 .loading {
+	font-size: 12px;
+	color: #999;
+}
+
+.no-lyrics {
 	font-size: 12px;
 	color: #999;
 }

@@ -412,14 +412,26 @@ class MusicPlayerStore {
 			if (this.state.playlist.length === 0) {
 				this.showError("未找到相关歌曲");
 			} else {
+				// 尝试找到当前播放的歌曲在搜索结果中的位置
 				if (this.state.currentSong) {
 					const currentSongIndex = this.state.playlist.findIndex(
 						song => song.title === this.state.currentSong.title && 
 							   song.artist === this.state.currentSong.artist
 					);
-					this.state.currentIndex = currentSongIndex;
+					
+					if (currentSongIndex !== -1) {
+						// 找到匹配的歌曲，立即更新封面
+						this.state.currentIndex = currentSongIndex;
+						this.state.currentSong = this.state.playlist[currentSongIndex];
+					} else {
+						// 没有匹配的歌曲，自动切换到第一首搜索结果
+						this.state.currentIndex = 0;
+						this.loadSong(this.state.playlist[0], false);
+					}
 				} else {
-					this.state.currentIndex = -1;
+					// 没有当前歌曲，选择第一首
+					this.state.currentIndex = 0;
+					this.loadSong(this.state.playlist[0], false);
 				}
 			}
 		} catch (e) {
@@ -440,8 +452,27 @@ class MusicPlayerStore {
 		this.state.playlist = [...this.originalPlaylist];
 		// 恢复原来的播放模式
 		this.state.isRepeating = this.originalRepeatMode;
-		// 取消高亮，不匹配任何歌曲
-		this.state.currentIndex = -1;
+		
+		// 如果当前正在播放的歌曲在原始歌单中存在，找到它的索引
+		if (this.state.currentSong && this.state.currentSong.title) {
+			const foundIndex = this.state.playlist.findIndex(
+				(song) => song.title === this.state.currentSong?.title && 
+				          song.artist === this.state.currentSong?.artist
+			);
+			if (foundIndex !== -1) {
+				this.state.currentIndex = foundIndex;
+			} else {
+				// 如果当前歌曲不在原始歌单中，选择第一首歌
+				this.state.currentIndex = 0;
+				if (this.state.playlist.length > 0) {
+					this.loadSong(this.state.playlist[0], false);
+				}
+			}
+		} else {
+			// 如果没有当前歌曲，选择第一首歌
+			this.state.currentIndex = this.state.playlist.length > 0 ? 0 : -1;
+		}
+		
 		this.broadcastState();
 	}
 
@@ -490,28 +521,16 @@ class MusicPlayerStore {
 			return;
 		}
 		if (song.url !== this.state.currentSong.url) {
-			// 复制歌曲信息
-			const newSong = { ...song };
-			
-			// 如果歌词是URL，尝试获取歌词内容
-			if (newSong.lyric && (newSong.lyric.startsWith('http://') || newSong.lyric.startsWith('https://'))) {
-				try {
-					const response = await fetch(newSong.lyric);
-					if (response.ok) {
-						newSong.lyric = await response.text();
-					}
-				} catch (error) {
-					console.error('Failed to fetch lyrics:', error);
-					// 如果获取失败，保持原URL
-				}
-			}
-			
-			this.state.currentSong = newSong;
+			// 立即更新当前歌曲（包括封面），提升响应速度
+			this.state.currentSong = { ...song };
 			if (song.url) {
 				this.state.isLoading = true;
 			} else {
 				this.state.isLoading = false;
 			}
+			
+			// 异步加载歌词，不阻塞歌曲播放
+			this.loadLyricsAsync(song);
 		}
 		this.state.willAutoPlay = autoPlay;
 		this.state.isPlaying = false;  // 重置播放状态
@@ -521,6 +540,26 @@ class MusicPlayerStore {
 		} else {
 		}
 		this.broadcastState();
+	}
+	
+	private async loadLyricsAsync(song: Song): Promise<void> {
+		// 如果歌词是URL，异步获取歌词内容
+		if (song.lyric && (song.lyric.startsWith('http://') || song.lyric.startsWith('https://'))) {
+			try {
+				const response = await fetch(song.lyric);
+				if (response.ok) {
+					const lyricContent = await response.text();
+					// 只有当当前歌曲未改变时，才更新歌词
+					if (this.state.currentSong.url === song.url) {
+						this.state.currentSong = { ...this.state.currentSong, lyric: lyricContent };
+						this.broadcastState();
+					}
+				}
+			} catch (error) {
+				console.error('Failed to fetch lyrics:', error);
+				// 如果获取失败，保持原URL，不影响播放
+			}
+		}
 	}
 
 	
