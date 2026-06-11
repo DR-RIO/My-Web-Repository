@@ -69,10 +69,28 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
 	<script>
 		import("../scripts/right-sidebar-layout.js");
 		import { loadIconify } from "../utils/icon-loader";
+		import { preloadPageImages } from "../scripts/handlers/image-preload-handler";
 
 		loadIconify().catch((error) => {
 			console.error("Failed to load Iconify:", error);
 		});
+
+		// 页面加载完成后预加载时间线图片
+		function initTimelineImagePreload() {
+			setTimeout(() => {
+				preloadPageImages({
+					parallel: 3,
+					useIdleCallback: true,
+					idleTimeout: 3000
+				});
+			}, 500);
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initTimelineImagePreload);
+		} else {
+			initTimelineImagePreload();
+		}
 	</script>
 
 	<script is:inline src="/js/filter-tabs-handler.js"></script>

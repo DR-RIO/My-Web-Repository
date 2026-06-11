@@ -24,6 +24,52 @@ const daysAgo = i18n(I18nKey.diaryDaysAgo);
 <MainGridLayout title={i18n(I18nKey.diary)} description="即刻短文">
 	<script>
 		import('../scripts/right-sidebar-layout.js');
+		import { preloadPageImages } from '../scripts/handlers/image-preload-handler';
+		
+		function scrollToDiary() {
+			const hash = window.location.hash;
+			if (hash.startsWith('#diary-')) {
+				const diaryId = hash.replace('#diary-', '');
+				const element = document.getElementById(`diary-${diaryId}`);
+				if (element) {
+					const headerOffset = 80;
+					const elementPosition = element.getBoundingClientRect().top;
+					const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+					setTimeout(() => {
+						window.scrollTo({
+							top: offsetPosition,
+							behavior: 'smooth'
+						});
+					}, 100);
+				}
+			}
+		}
+		
+		// 立即检查 hash（页面加载时）
+		if (window.location.hash) {
+			setTimeout(scrollToDiary, 100);
+		}
+		
+		// 监听 hashchange
+		window.addEventListener('hashchange', scrollToDiary);
+
+		// 页面加载完成后预加载图片
+		function initImagePreload() {
+			// 延迟一点执行，确保 DOM 完全加载
+			setTimeout(() => {
+				preloadPageImages({
+					parallel: 3,
+					useIdleCallback: true,
+					idleTimeout: 3000
+				});
+			}, 500);
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initImagePreload);
+		} else {
+			initImagePreload();
+		}
 	</script>
 
 	<div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
