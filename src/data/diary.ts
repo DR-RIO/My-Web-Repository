@@ -27,6 +27,8 @@ const diaryData: DiaryItem[] = [
 	// 	tags: [""],
 	// 	pinned: true/false,
 	// },
+	
+
 	{
 		id: 7,
 		content: `真心喜欢一位音乐制作人 @PIKASONIC　
@@ -42,6 +44,7 @@ const diaryData: DiaryItem[] = [
 		tags: ["音乐"],
 		pinned: false,
 	},
+
 	{
 		id: 6,
 		content: `Welcome to the world of photography!　　　　tips:黄埔军校不给拍照，差点当罕见了`,		
@@ -55,6 +58,7 @@ const diaryData: DiaryItem[] = [
 		tags: ["黄埔军校"],
 		pinned: false,
 	},
+
 	{
 		id: 5,
 		content: `今日份主谓祈使句: "猫！你去把老鼠打败！"　[为了打败老鼠特地买了个狸花猫](https://www.bilibili.com/video/BV1BdGy6dEeh/?spm_id_from=333.337.search-card.all.click&vd_source=6a6cd981e4537c9742d3abfd226b8198)`,
@@ -67,6 +71,7 @@ const diaryData: DiaryItem[] = [
 		tags: ["bilibili"],
 		pinned: false
 	},
+
 	{
 		id: 4,
 		content: `Today:　　　　　　　　　　　　*OS:王牌一代目自然是可爱！`,
@@ -86,7 +91,7 @@ const diaryData: DiaryItem[] = [
 	{
 		id: 3,
 		content:
-			`"写代码不无聊吗？" 　　"收获的正向反馈不比游戏少。" `,
+			`"写代码不无聊吗？" 　　"是的先生,收获的正向反馈不比游戏少。" `,
 		date: "2026-04-23T04:24:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/23/6vcfkt.png",
@@ -104,21 +109,21 @@ const diaryData: DiaryItem[] = [
 			
 				　　谁说完美的恋情一定是两个人都很优秀的？ 也许只要有一个人足够优秀，另一个人就会觉得自己很幸运了吧。
 				
-				　　　　　　　　　　　　　　　　“喜欢一个女孩子，就多给她一点偏爱吧。"`,
+				　　　　　　　　　　　　　　　　　　　　“喜欢一个女孩子，就多给她一点偏爱吧。"`,
 		date: "2026-04-20T00:00:00Z",
 		images: [
 			"https://easyimage.isu183s.top/app/thumb.php?img=/i/2026/04/20/6u5mv.webp"
 		],
 		location: "心里",
-		mood: "疑惑",
+		mood: "疑难杂症",
 		tags: ["自我思考"],
-		pinned: true, // ⭐ 这条置顶
+		pinned: false,
 	},
 
 	{
 		id: 1,
 		content:
-			"你知道吗？ 你一句: “我一直等着你。” 　　　　—— 对于我来说是多大的救赎吗？",
+			"你知道吗？ 你一句: “我一直等着你。” 　　—— 对于我来说是多大的救赎吗？",
 		date: "2026-04-19T01:00:00Z",
 		images: [
 			"https://easyimage.isu183s.top/i/2026/04/19/12ybk7v-0.jpg",
