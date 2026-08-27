@@ -87,7 +87,7 @@
 					<input
 						type="text"
 						bind:value={searchKeyword}
-						placeholder="在网易云搜索...( •̀ ω •́ )✧"
+						placeholder="在网易云搜索... ( •̀ ω •́ )✧"
 						onkeydown={handleKeydown}
 						class="search-input flex-1 min-w-[80px] bg-transparent border-none outline-none text-xs text-black/75 dark:text-white p-0"
 					/>
